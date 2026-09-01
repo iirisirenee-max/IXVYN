@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ===================================================== */
 
     const initiateButton =
-        document.querySelector(".hero-button");
+        document.querySelector(".hero-button, .initiate");
 
     if (initiateButton) {
 
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        DIRECTION / BEGIN BUTTON
-    ===================================================== */
+       ===================================================== */
 
     const beginButton =
         document.getElementById("begin-button");
@@ -132,10 +132,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        HEADER SCROLL STATE
-    ===================================================== */
+       ===================================================== */
 
     const header =
-        document.querySelector(".site-header");
+        document.querySelector(".site-header, .system-header");
 
     if (header) {
 
@@ -162,12 +162,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        SCROLL REVEAL
-    ===================================================== */
+       ===================================================== */
 
     const revealElements = document.querySelectorAll(
         ".section-intro, " +
         ".system-card, " +
         ".direction-page, " +
+        ".direction, " +
         ".about, " +
         ".system-footer"
     );
@@ -215,24 +216,302 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       HERO PARALLAX
-    ===================================================== */
+       HERO — LIVING INFRASTRUCTURE NETWORK
+       ===================================================== */
 
     const geometry =
         document.querySelector(".hero-geometry");
 
     const heroContent =
-        document.querySelector(".hero-content");
+        document.querySelector(".hero-main, .hero-content");
 
-    if (
-        geometry &&
-        heroContent &&
+    const hero =
+        document.querySelector(".hero");
+
+    const motionEnabled =
         window.matchMedia(
             "(prefers-reduced-motion: no-preference)"
-        ).matches
-    ) {
+        ).matches;
+
+
+    if (geometry && motionEnabled) {
+
+        /* -------------------------------------------------
+           Preserve the existing CSS geometry.
+           We enhance it rather than replacing it.
+        ------------------------------------------------- */
+
+        const nodes =
+            geometry.querySelectorAll(".geometry-node");
+
+        const rings =
+            geometry.querySelectorAll(".geometry-ring");
+
+        const lines =
+            geometry.querySelectorAll(".geometry-line");
+
+        const core =
+            geometry.querySelector(".geometry-core");
+
+
+        /* -------------------------------------------------
+           NODE PULSES
+           Infrastructure points occasionally wake up.
+        ------------------------------------------------- */
+
+        nodes.forEach((node, index) => {
+
+            node.style.transition =
+                "transform 0.8s cubic-bezier(.16,1,.3,1), " +
+                "background 0.5s ease, " +
+                "box-shadow 0.5s ease";
+
+
+            const pulseNode = () => {
+
+                node.classList.add("network-pulse");
+
+                setTimeout(() => {
+                    node.classList.remove("network-pulse");
+                }, 900);
+
+
+                const nextDelay =
+                    1800 +
+                    Math.random() * 4200 +
+                    index * 500;
+
+                setTimeout(
+                    pulseNode,
+                    nextDelay
+                );
+
+            };
+
+
+            setTimeout(
+                pulseNode,
+                1200 + index * 850
+            );
+
+        });
+
+
+        /* -------------------------------------------------
+           SIGNAL PULSE
+           A tiny light travels through the geometry.
+        ------------------------------------------------- */
+
+        const signal =
+            document.createElement("span");
+
+        signal.className =
+            "hero-signal";
+
+        geometry.appendChild(signal);
+
+
+        let signalTimer = null;
+
+
+        const launchSignal = () => {
+
+            signal.classList.remove("traveling");
+
+            /*
+             * Force a reflow so the animation can restart.
+             */
+            void signal.offsetWidth;
+
+            signal.classList.add("traveling");
+
+            signalTimer =
+                setTimeout(
+                    launchSignal,
+                    4200 + Math.random() * 3600
+                );
+
+        };
+
+
+        setTimeout(
+            launchSignal,
+            2200
+        );
+
+
+        /* -------------------------------------------------
+           MOUSE FIELD
+           The network subtly responds to the viewer.
+        ------------------------------------------------- */
+
+        let mouseX = 0;
+        let mouseY = 0;
+
+        let targetX = 0;
+        let targetY = 0;
+
+        let currentX = 0;
+        let currentY = 0;
+
+        let frameRequested = false;
+
+
+        const updateNetwork = () => {
+
+            currentX +=
+                (targetX - currentX) * 0.055;
+
+            currentY +=
+                (targetY - currentY) * 0.055;
+
+
+            geometry.style.setProperty(
+                "--network-x",
+                `${currentX}px`
+            );
+
+            geometry.style.setProperty(
+                "--network-y",
+                `${currentY}px`
+            );
+
+
+            /*
+             * Individual nodes drift a fraction of a pixel.
+             * This keeps the geometry alive without making
+             * it look like a dashboard animation.
+             */
+
+            nodes.forEach((node, index) => {
+
+                const factor =
+                    0.35 + index * 0.08;
+
+                const nodeX =
+                    currentX * factor;
+
+                const nodeY =
+                    currentY * factor;
+
+                node.style.transform =
+                    `translate3d(${nodeX}px, ${nodeY}px, 0)`;
+
+            });
+
+
+            frameRequested = false;
+
+        };
+
+
+        const requestNetworkUpdate = () => {
+
+            if (frameRequested) {
+                return;
+            }
+
+            frameRequested = true;
+
+            requestAnimationFrame(
+                updateNetwork
+            );
+
+        };
+
+
+        document.addEventListener(
+            "mousemove",
+            (event) => {
+
+                mouseX =
+                    event.clientX /
+                    window.innerWidth -
+                    0.5;
+
+                mouseY =
+                    event.clientY /
+                    window.innerHeight -
+                    0.5;
+
+
+                targetX =
+                    mouseX * 22;
+
+                targetY =
+                    mouseY * 18;
+
+
+                requestNetworkUpdate();
+
+            }
+        );
+
+
+        /* -------------------------------------------------
+           CORE RESPONSE
+           The central IX responds slightly to movement.
+        ------------------------------------------------- */
+
+        if (core) {
+
+            core.style.transition =
+                "transform 0.8s cubic-bezier(.16,1,.3,1)";
+
+
+            const updateCore = () => {
+
+                const x =
+                    currentX * 0.18;
+
+                const y =
+                    currentY * 0.18;
+
+                core.style.transform =
+                    `translate3d(${x}px, ${y}px, 0)`;
+
+            };
+
+
+            const coreLoop = () => {
+
+                updateCore();
+
+                requestAnimationFrame(
+                    coreLoop
+                );
+
+            };
+
+
+            coreLoop();
+
+        }
+
+
+        /* -------------------------------------------------
+           RING BREATHING
+           Very subtle scale variation.
+        ------------------------------------------------- */
+
+        rings.forEach((ring, index) => {
+
+            const duration =
+                9000 +
+                index * 1800;
+
+            ring.style.animationDuration =
+                `${duration}ms`;
+
+        });
+
+
+        /* -------------------------------------------------
+           HERO PARALLAX
+        ------------------------------------------------- */
 
         let ticking = false;
+
 
         window.addEventListener(
             "scroll",
@@ -253,11 +532,22 @@ document.addEventListener("DOMContentLoaded", () => {
                             45
                         );
 
+                    geometry.style.setProperty(
+                        "--scroll-y",
+                        `${movement}px`
+                    );
+
                     geometry.style.transform =
                         `translate3d(0, ${movement}px, 0)`;
 
-                    heroContent.style.transform =
-                        `translate3d(0, ${scrollY * 0.025}px, 0)`;
+
+                    if (heroContent) {
+
+                        heroContent.style.transform =
+                            `translate3d(0, ${scrollY * 0.025}px, 0)`;
+
+                    }
+
 
                     ticking = false;
 
@@ -274,7 +564,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        CURSOR GEOMETRY
-    ===================================================== */
+       ===================================================== */
 
     const cursor =
         document.createElement("div");
@@ -289,9 +579,7 @@ document.addEventListener("DOMContentLoaded", () => {
         window.matchMedia(
             "(pointer: fine)"
         ).matches &&
-        window.matchMedia(
-            "(prefers-reduced-motion: no-preference)"
-        ).matches
+        motionEnabled
     ) {
 
         let mouseX = 0;
@@ -367,7 +655,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        ACTIVE SYSTEM INDICATOR
-    ===================================================== */
+       ===================================================== */
 
     const statusDot =
         document.querySelector(".status-dot");
@@ -387,7 +675,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        KEYBOARD NAVIGATION
-    ===================================================== */
+       ===================================================== */
 
     document.addEventListener(
         "keydown",
@@ -407,7 +695,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        PAGE ENTRY
-    ===================================================== */
+       ===================================================== */
 
     requestAnimationFrame(() => {
 
