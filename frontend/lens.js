@@ -572,40 +572,84 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
+        /*
+         * IMPORTANT:
+         *
+         * Read the response as text first.
+         *
+         * This lets IXVYN see the REAL server error
+         * instead of blindly assuming that the response
+         * is valid JSON.
+         */
+
         let data = null;
+
+        const responseText =
+            await response.text();
+
 
         try {
 
             data =
-                await response.json();
+                responseText
+                    ? JSON.parse(responseText)
+                    : null;
 
-        } catch {
+        } catch (parseError) {
+
+            console.error(
+                "IXVYN: /api/analyze returned non-JSON:",
+                responseText
+            );
 
             throw new Error(
-                "The analysis server returned an invalid response."
+                `Analysis server returned HTTP ${response.status}.`
             );
         }
 
+
+        /*
+         * HTTP ERROR
+         */
 
         if (!response.ok) {
 
+            console.error(
+                "IXVYN: Analysis API error:",
+                response.status,
+                data
+            );
+
             throw new Error(
+                data?.details ||
                 data?.error ||
-                "The AI analysis request failed."
+                data?.message ||
+                `Gemini analysis failed with HTTP ${response.status}.`
             );
         }
 
 
-        if (!data) {
+        /*
+         * INVALID APPLICATION RESPONSE
+         */
+
+        if (
+            !data ||
+            data.success === false
+        ) {
 
             throw new Error(
-                "No analysis result was returned."
+                data?.details ||
+                data?.error ||
+                data?.message ||
+                "No valid analysis result was returned."
             );
         }
 
 
         console.log(
-            "IXVYN LENS: Gemini analysis received."
+            "IXVYN LENS: Gemini analysis received:",
+            data
         );
 
 
@@ -850,6 +894,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultDescription.textContent =
                 result.description ||
+                result.analysis ||
                 "No actionable infrastructure anomaly was identified.";
         }
 
@@ -893,6 +938,14 @@ document.addEventListener("DOMContentLoaded", () => {
             systemState.textContent =
                 "NO ACTIONABLE ANOMALY";
 
+        } else if (
+            result.anomalyDetected ===
+            false
+        ) {
+
+            systemState.textContent =
+                "NO ACTIONABLE ANOMALY";
+
         } else {
 
             systemState.textContent =
@@ -903,6 +956,14 @@ document.addEventListener("DOMContentLoaded", () => {
         /* ---------------------------------------------
            LOCATION
         --------------------------------------------- */
+
+        /*
+         * Gemini cannot know the phone's actual GPS
+         * coordinates from an ordinary photograph.
+         *
+         * IXVYN therefore gets the inspection location
+         * from the browser.
+         */
 
         requestLocation();
     }
@@ -934,6 +995,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return;
         }
+
+
+        resultLat.textContent =
+            "LOCATING...";
+
+        resultLon.textContent =
+            "LOCATING...";
 
 
         navigator.geolocation.getCurrentPosition(
