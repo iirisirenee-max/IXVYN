@@ -325,8 +325,6 @@ Do not claim structural danger from an image alone.
     responseMimeType:
         "application/json",
 
-}
-                }
                     }
 
                 })
