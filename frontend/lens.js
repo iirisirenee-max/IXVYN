@@ -73,6 +73,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const newInspection =
         document.getElementById("new-inspection");
+   const saveMemoryButton =
+    document.getElementById("save-memory");
+
+let currentAnalysisResult = null;
+let currentLatitude = null;
+let currentLongitude = null;
+let memorySaved = false;
 
 
     /* =====================================================
@@ -829,6 +836,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!result) {
             return;
         }
+       currentAnalysisResult = result;
+memorySaved = false;
+resetMemoryButton();
 
 
         /* ---------------------------------------------
@@ -1469,6 +1479,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const longitude =
                     position.coords.longitude;
+               currentLatitude = latitude;
+currentLongitude = longitude;
 
 
                 resultLat.textContent =
@@ -1621,7 +1633,215 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+/* =====================================================
+   MEMORY — SAVE INSPECTION
+   ===================================================== */
 
+function saveCurrentInspection() {
+
+    if (
+        !currentAnalysisResult ||
+        !currentAnalysisResult.result
+    ) {
+
+        console.warn(
+            "IXVYN LENS: No completed analysis available to save."
+        );
+
+        return;
+
+    }
+
+    if (memorySaved) {
+        return;
+    }
+
+
+    const result =
+        currentAnalysisResult.result;
+
+
+    const record = {
+
+        id:
+            `IXVYN-${Date.now()}`,
+
+        defect:
+            result.defect ||
+            "UNKNOWN ANOMALY",
+
+        confidence:
+            result.confidence ??
+            "",
+
+        severity:
+            result.severity ||
+            "UNKNOWN",
+
+        priority:
+            result.priority ||
+            "—",
+
+        description:
+            result.description ||
+            result.analysis ||
+            "",
+
+        action:
+            result.recommendedAction ||
+            result.action ||
+            "",
+
+        latitude:
+            Number.isFinite(
+                Number(currentLatitude)
+            )
+                ? Number(currentLatitude)
+                : null,
+
+        longitude:
+            Number.isFinite(
+                Number(currentLongitude)
+            )
+                ? Number(currentLongitude)
+                : null,
+
+        timestamp:
+            new Date().toISOString(),
+
+        status:
+            "active"
+
+    };
+
+
+    const STORAGE_KEY =
+        "ixvyn_infrastructure_memory";
+
+
+    let records = [];
+
+
+    try {
+
+        const stored =
+            localStorage.getItem(
+                STORAGE_KEY
+            );
+
+        if (stored) {
+
+            const parsed =
+                JSON.parse(stored);
+
+            if (Array.isArray(parsed)) {
+
+                records =
+                    parsed;
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "IXVYN LENS: Could not read MEMORY.",
+            error
+        );
+
+    }
+
+
+    records.push(
+        record
+    );
+
+
+    try {
+
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(records)
+        );
+
+        memorySaved =
+            true;
+
+        setMemorySavedState();
+
+
+        console.log(
+            "IXVYN LENS: Inspection saved.",
+            record
+        );
+
+    } catch (error) {
+
+        console.error(
+            "IXVYN LENS: Could not save inspection.",
+            error
+        );
+
+        resetMemoryButton();
+
+    }
+
+}
+
+
+/* =====================================================
+   MEMORY — BUTTON STATES
+   ===================================================== */
+
+function setMemorySavedState() {
+
+    if (!saveMemoryButton) {
+        return;
+    }
+
+    saveMemoryButton.disabled =
+        true;
+
+    saveMemoryButton.innerHTML =
+        `
+            SAVED TO MEMORY
+            <span>✓</span>
+        `;
+
+}
+
+
+function resetMemoryButton() {
+
+    if (!saveMemoryButton) {
+        return;
+    }
+
+    saveMemoryButton.disabled =
+        false;
+
+    saveMemoryButton.innerHTML =
+        `
+            SAVE TO MEMORY
+            <span>↗</span>
+        `;
+
+}
+
+
+/* =====================================================
+   MEMORY — BUTTON EVENT
+   ===================================================== */
+
+if (saveMemoryButton) {
+
+    saveMemoryButton.addEventListener(
+        "click",
+        saveCurrentInspection
+    );
+
+}
     /* =====================================================
        NEW INSPECTION
     ===================================================== */
@@ -1640,6 +1860,12 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(
             "IXVYN LENS: Resetting inspection."
         );
+       currentAnalysisResult = null;
+currentLatitude = null;
+currentLongitude = null;
+memorySaved = false;
+
+resetMemoryButton();
 
 
         selectedFile =
