@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="IXVYN LENS — Understand where you are before deciding where to go.">
+
+    <title>IXVYN — LENS</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="lens.css">
+
+</head>
+
+
+<body class="lens-page">
+
+
+    <!-- =================================================
+         HEADER
+    ================================================== -->
+
+    <header class="system-header">
+
+        <a href="index.html"
+           class="wordmark"
+           aria-label="IXVYN home">
+
+            I X V Y N
+
+        </a>
+
+
+        <nav class="system-nav">
+
+            <a href="systems.html">
+                Systems
+            </a>
+
+            <a href="index.html#about">
+                About
+            </a>
+
+        </nav>
+
+
+        <div class="system-status">
+
+            <span class="status-dot"></span>
+
+            SYSTEM ONLINE
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =================================================
+         LENS EXPERIENCE
+    ================================================== -->
+
+    <main class="lens-experience">
+
+
+        <!-- =================================================
+             BACKGROUND
+        ================================================== -->
+
+        <div class="lens-geometry"
+             aria-hidden="true">
+
+            <div class="lens-ring lens-ring-a"></div>
+            <div class="lens-ring lens-ring-b"></div>
+            <div class="lens-ring lens-ring-c"></div>
+
+            <div class="lens-axis lens-axis-x"></div>
+            <div class="lens-axis lens-axis-y"></div>
+
+            <div class="lens-focus"></div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PROGRESS
+        ================================================== -->
+
+        <div class="lens-progress">
+
+            <span id="progress-label">
+                LENS / 01 — INTENT
+            </span>
+
+            <span id="progress-count">
+                01 / 03
+            </span>
+
+        </div>
+
+
+
+        <!-- =================================================
+             STEP 01 — INTENT
+        ================================================== -->
+
+        <section
+            class="lens-step is-active"
+            data-step="1">
+
+            <p class="eyebrow">
+                LENS / DIAGNOSTIC
+            </p>
+
+            <h1>
+                WHAT ARE YOU
+                <span>TRYING TO ACHIEVE?</span>
+            </h1>
+
+            <p class="lens-lead">
+                Tell IXVYN what you're trying to
+                learn, explore, build, or accomplish.
+            </p>
+
+
+            <div class="input-block">
+
+                <label for="intent">
+                    YOUR INTENTION
+                </label>
+
+                <textarea
+                    id="intent"
+                    name="intent"
+                    rows="5"
+                    maxlength="1000"
+                    placeholder="I want to..."
+                    autocomplete="off"></textarea>
+
+                <div class="input-meta">
+
+                    <span>
+                        Be as specific as you want.
+                    </span>
+
+                    <span id="intent-count">
+                        0 / 1000
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="lens-button"
+                id="intent-next"
+                type="button">
+
+                CONTINUE
+
+                <span>↗</span>
+
+            </button>
+
+        </section>
+
+
+
+        <!-- =================================================
+             STEP 02 — CURRENT STATE
+        ================================================== -->
+
+        <section
+            class="lens-step"
+            data-step="2">
+
+            <p class="eyebrow">
+                LENS / CURRENT STATE
+            </p>
+
+            <h1>
+                WHERE ARE
+                <span>YOU NOW?</span>
+            </h1>
+
+            <p class="lens-lead">
+                There are no right answers.
+                IXVYN needs your starting point,
+                not a perfect description.
+            </p>
+
+
+            <div class="input-grid">
+
+
+                <div class="input-block">
+
+                    <label for="knowledge">
+                        WHAT DO YOU ALREADY KNOW?
+                    </label>
+
+                    <textarea
+                        id="knowledge"
+                        rows="5"
+                        maxlength="800"
+                        placeholder="I already know..."
+                        autocomplete="off"></textarea>
+
+                </div>
+
+
+
+                <div class="input-block">
+
+                    <label for="experience">
+                        WHAT HAVE YOU ALREADY TRIED?
+                    </label>
+
+                    <textarea
+                        id="experience"
+                        rows="5"
+                        maxlength="800"
+                        placeholder="I've tried..."
+                        autocomplete="off"></textarea>
+
+                </div>
+
+
+
+                <div class="input-block input-block-wide">
+
+                    <label for="interest">
+                        WHAT MAKES YOU CURIOUS ABOUT THIS?
+                    </label>
+
+                    <textarea
+                        id="interest"
+                        rows="4"
+                        maxlength="800"
+                        placeholder="I'm curious because..."
+                        autocomplete="off"></textarea>
+
+                </div>
+
+            </div>
+
+
+            <div class="step-actions">
+
+                <button
+                    class="lens-button lens-button-secondary"
+                    id="state-back"
+                    type="button">
+
+                    <span>↖</span>
+
+                    BACK
+
+                </button>
+
+
+                <button
+                    class="lens-button"
+                    id="analyze-button"
+                    type="button">
+
+                    ANALYZE
+
+                    <span>↗</span>
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             STEP 03 — DIAGNOSIS
+        ================================================== -->
+
+        <section
+            class="lens-step diagnosis-step"
+            data-step="3">
+
+            <div class="diagnosis-header">
+
+                <div>
+
+                    <p class="eyebrow">
+                        LENS / DIAGNOSIS
+                    </p>
+
+                    <h1>
+                        YOUR CURRENT
+                        <span>STATE.</span>
+                    </h1>
+
+                </div>
+
+
+                <div class="diagnosis-marker">
+                    IXVYN / ANALYSIS
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 STATE METRICS
+            ================================================== -->
+
+            <div class="metrics-grid">
+
+
+                <div class="metric">
+
+                    <span class="metric-label">
+                        KNOWLEDGE
+                    </span>
+
+                    <strong id="metric-knowledge">
+                        —
+                    </strong>
+
+                    <div class="metric-line">
+                        <span id="bar-knowledge"></span>
+                    </div>
+
+                </div>
+
+
+
+                <div class="metric">
+
+                    <span class="metric-label">
+                        EXPERIENCE
+                    </span>
+
+                    <strong id="metric-experience">
+                        —
+                    </strong>
+
+                    <div class="metric-line">
+                        <span id="bar-experience"></span>
+                    </div>
+
+                </div>
+
+
+
+                <div class="metric">
+
+                    <span class="metric-label">
+                        EXPOSURE
+                    </span>
+
+                    <strong id="metric-exposure">
+                        —
+                    </strong>
+
+                    <div class="metric-line">
+                        <span id="bar-exposure"></span>
+                    </div>
+
+                </div>
+
+
+
+                <div class="metric">
+
+                    <span class="metric-label">
+                        CLARITY
+                    </span>
+
+                    <strong id="metric-clarity">
+                        —
+                    </strong>
+
+                    <div class="metric-line">
+                        <span id="bar-clarity"></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 GAPS
+            ================================================== -->
+
+            <div class="diagnosis-section">
+
+                <div class="diagnosis-section-heading">
+
+                    <span>
+                        01
+                    </span>
+
+                    <h2>
+                        GAPS IDENTIFIED
+                    </h2>
+
+                </div>
+
+
+                <div
+                    class="gap-list"
+                    id="gap-list">
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 NEXT EVIDENCE
+            ================================================== -->
+
+            <div class="diagnosis-section">
+
+                <div class="diagnosis-section-heading">
+
+                    <span>
+                        02
+                    </span>
+
+                    <h2>
+                        NEXT EVIDENCE
+                    </h2>
+
+                </div>
+
+
+                <div
+                    class="next-list"
+                    id="next-list">
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 FOOTER ACTIONS
+            ================================================== -->
+
+            <div class="diagnosis-actions">
+
+                <button
+                    class="lens-button lens-button-secondary"
+                    id="diagnosis-back"
+                    type="button">
+
+                    <span>↖</span>
+
+                    REASSESS
+
+                </button>
+
+
+                <a
+                    href="systems.html"
+                    class="lens-button lens-link">
+
+                    RETURN TO SYSTEMS
+
+                    <span>↗</span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <footer class="lens-footer">
+
+            <span>
+                IXVYN / LENS
+            </span>
+
+            <span>
+                DIAGNOSTIC SYSTEM
+            </span>
+
+            <span>
+                BUILD 001
+            </span>
+
+        </footer>
+
+    </main>
+
+
+
+    <script src="lens.js"></script>
+
+</body>
+
+</html>
