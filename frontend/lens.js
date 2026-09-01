@@ -391,7 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /* =================================================
            SHOW ANALYSIS SCREEN
-        ================================================= */
+        ================================================== */
 
         analysisState.hidden =
             false;
@@ -414,7 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /* =================================================
            RESET PROGRESS
-        ================================================= */
+        ================================================== */
 
         setProgress(
             progressVision,
@@ -503,6 +503,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
             /* ---------------------------------------------
                START REAL AI REQUEST
+
+               The AI request starts immediately.
+               The visual progress animation runs separately.
             --------------------------------------------- */
 
             const aiRequest =
@@ -510,50 +513,56 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
             /* ---------------------------------------------
-               VISUAL ANALYSIS
+               RUN VISUAL PROGRESS IN PARALLEL
             --------------------------------------------- */
 
-            await animateProgress(
-                progressVision,
-                barVision,
-                100,
-                1100,
-                "VISUAL ANALYSIS"
-            );
+            const progressSequence =
+                (async () => {
+
+                    await animateProgress(
+                        progressVision,
+                        barVision,
+                        100,
+                        1100,
+                        "VISUAL ANALYSIS"
+                    );
 
 
-            /* ---------------------------------------------
-               CLASSIFICATION
-            --------------------------------------------- */
-
-            await animateProgress(
-                progressClassification,
-                barClassification,
-                100,
-                900,
-                "DEFECT CLASSIFICATION"
-            );
+                    await animateProgress(
+                        progressClassification,
+                        barClassification,
+                        100,
+                        900,
+                        "DEFECT CLASSIFICATION"
+                    );
 
 
-            /* ---------------------------------------------
-               SEVERITY
-            --------------------------------------------- */
+                    await animateProgress(
+                        progressSeverity,
+                        barSeverity,
+                        100,
+                        700,
+                        "SEVERITY ASSESSMENT"
+                    );
 
-            await animateProgress(
-                progressSeverity,
-                barSeverity,
-                100,
-                700,
-                "SEVERITY ASSESSMENT"
-            );
+                })();
 
 
             /* ---------------------------------------------
                WAIT FOR REAL GEMINI RESULT
+
+               If the API fails, this throws immediately.
             --------------------------------------------- */
 
             const result =
                 await aiRequest;
+
+
+            /* ---------------------------------------------
+               LET THE VISUAL PIPELINE FINISH
+            --------------------------------------------- */
+
+            await progressSequence;
 
 
             /* ---------------------------------------------
@@ -629,7 +638,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
 
             /* ---------------------------------------------
-               STOP TIMER ON ERROR
+               STOP TIMER IMMEDIATELY ON ERROR
             --------------------------------------------- */
 
             if (analysisTimerInterval) {
@@ -640,6 +649,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 analysisTimerInterval =
                     null;
+
+            }
+
+
+            if (
+                Number.isFinite(
+                    analysisStartTime
+                )
+            ) {
+
+                analysisElapsedTime =
+                    (
+                        performance.now() -
+                        analysisStartTime
+                    ) / 1000;
+
+            }
+
+
+            if (
+                analysisTimer &&
+                Number.isFinite(
+                    analysisElapsedTime
+                )
+            ) {
+
+                analysisTimer.textContent =
+                    `${analysisElapsedTime.toFixed(2)}s`;
 
             }
 
@@ -1598,10 +1635,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "sih_lon",
             fLon
         );
-    }
-
-
-    /* =====================================================
+    }    /* =====================================================
        MEMORY — SAVE INSPECTION
     ===================================================== */
 
@@ -1800,7 +1834,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       NEW INSPECTION OVERRIDE RESET
+       NEW INSPECTION
     ===================================================== */
 
     if (newInspection) {
@@ -1889,7 +1923,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* ---------------------------------------------
-           RESET INPUT DOM ELEMENT
+           RESET FILE INPUT
         --------------------------------------------- */
 
         imageInput.value =
@@ -1897,7 +1931,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* ---------------------------------------------
-           RESET IMAGE SRC VISUALS
+           RESET IMAGE PREVIEWS
         --------------------------------------------- */
 
         previewImage.src =
@@ -1912,7 +1946,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* ---------------------------------------------
-           RESET BOUNDING SELECTION OVERLAY
+           RESET DETECTION OVERLAY
         --------------------------------------------- */
 
         if (resultOverlay) {
@@ -1939,7 +1973,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* ---------------------------------------------
-           RESET DATA FIELD CONTENT WRAPPERS
+           RESET TEXT
         --------------------------------------------- */
 
         if (fileName) {
@@ -2013,7 +2047,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* ---------------------------------------------
-           RESET PROGRESS COUNTERS
+           RESET PROGRESS
         --------------------------------------------- */
 
         setProgress(
@@ -2036,7 +2070,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* ---------------------------------------------
-           RESET SCREEN VISIBILITY LAYERS
+           RESET VISIBILITY
         --------------------------------------------- */
 
         inspectionResults.hidden =
@@ -2053,7 +2087,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* ---------------------------------------------
-           RESET SELECTION TOGGLE BUTTON
+           RESET ANALYZE BUTTON
         --------------------------------------------- */
 
         analyzeButton.disabled =
@@ -2061,7 +2095,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* ---------------------------------------------
-           RESET UPLOAD DRAG BOX STYLES
+           RESET UPLOAD STATE
         --------------------------------------------- */
 
         uploadZone.classList.remove(
@@ -2071,7 +2105,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /* ---------------------------------------------
-           RESET CENTRAL STATUS TEXT LOGS
+           RESET STATUS
         --------------------------------------------- */
 
         systemState.textContent =
@@ -2089,7 +2123,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       PROGRESS LOADER METRIC CALCULATIONS
+       PROGRESS
     ===================================================== */
 
     function setProgress(
@@ -2114,7 +2148,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       ANIMATE PROGRESS TIMELINE EASING CURVES
+       ANIMATE PROGRESS
     ===================================================== */
 
     async function animateProgress(
@@ -2148,8 +2182,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             1
                         );
 
-
-                    /* Smooth ease-out cubic computation */
 
                     const eased =
                         1 -
@@ -2190,7 +2222,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       SLEEP TIMEOUT CONTROLS
+       SLEEP
     ===================================================== */
 
     function sleep(
@@ -2222,6 +2254,7 @@ document.addEventListener("DOMContentLoaded", () => {
         inspectionResults.hidden =
             false;
 
+
         inspectionResults.scrollIntoView({
             behavior: "smooth",
             block: "start"
@@ -2243,6 +2276,7 @@ document.addEventListener("DOMContentLoaded", () => {
         inspectionResults.hidden =
             true;
 
+
         analysisStatus.textContent =
             "ANALYSIS FAILED";
 
@@ -2255,7 +2289,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       INITIAL VISIBILITY STATUS DEFINITIONS
+       INITIAL VISIBILITY
     ===================================================== */
 
     inspectionPreview.hidden =
