@@ -1,4 +1,3 @@
-```javascript
 /* =========================================================
    IXVYN — LENS / VISUAL INFRASTRUCTURE INTELLIGENCE
    ========================================================= */
@@ -125,8 +124,8 @@ document.addEventListener("DOMContentLoaded", () => {
         !inspectionResults
     ) {
 
-        console.warn(
-            "IXVYN LENS: Required interface elements missing."
+        console.error(
+            "IXVYN LENS: Required interface elements are missing."
         );
 
         return;
@@ -134,26 +133,95 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       IMAGE SELECTION
+       IMAGE INPUT
+       MOBILE-SAFE
     ===================================================== */
 
     imageInput.addEventListener(
         "change",
-        handleFileSelection
+        (event) => {
+
+            console.log(
+                "IXVYN LENS: File input changed."
+            );
+
+            handleFileSelection(event);
+
+        }
     );
 
 
+    /*
+       Explicitly open the native file picker
+       when the upload area is tapped.
+    */
+
+    uploadZone.addEventListener(
+        "click",
+        () => {
+
+            if (!selectedFile) {
+
+                imageInput.click();
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       FILE SELECTION
+    ===================================================== */
+
     function handleFileSelection(event) {
 
-        const file =
-            event.target.files?.[0];
+        console.log(
+            "IXVYN LENS: Processing selected file..."
+        );
 
-        if (!file) return;
 
-        if (!file.type.startsWith("image/")) {
+        const files =
+            event.target.files;
+
+
+        if (
+            !files ||
+            files.length === 0
+        ) {
 
             console.warn(
-                "IXVYN LENS: Selected file is not an image."
+                "IXVYN LENS: No file selected."
+            );
+
+            return;
+        }
+
+
+        const file =
+            files[0];
+
+
+        console.log(
+            "IXVYN LENS: Selected:",
+            file.name,
+            file.type,
+            file.size
+        );
+
+
+        /*
+           Make sure the selected file
+           is actually an image.
+        */
+
+        if (
+            !file.type ||
+            !file.type.startsWith("image/")
+        ) {
+
+            alert(
+                "Please select an image file."
             );
 
             return;
@@ -164,9 +232,9 @@ document.addEventListener("DOMContentLoaded", () => {
             file;
 
 
-        /* ---------------------------------------------
-           CLEAN PREVIOUS OBJECT URL
-        --------------------------------------------- */
+        /* =================================================
+           CLEAN PREVIOUS IMAGE URL
+           ================================================= */
 
         if (selectedImageURL) {
 
@@ -177,32 +245,49 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
+        /* =================================================
+           CREATE LOCAL IMAGE PREVIEW
+           ================================================= */
+
         selectedImageURL =
             URL.createObjectURL(file);
 
 
-        /* ---------------------------------------------
-           PREVIEW
-        --------------------------------------------- */
-
         previewImage.src =
             selectedImageURL;
+
 
         resultImage.src =
             selectedImageURL;
 
 
+        /* =================================================
+           FILE INFORMATION
+           ================================================= */
+
         fileName.textContent =
             file.name;
 
+
+        /* =================================================
+           SHOW PREVIEW
+           ================================================= */
 
         inspectionPreview.hidden =
             false;
 
 
+        /* =================================================
+           ENABLE ANALYSIS
+           ================================================= */
+
         analyzeButton.disabled =
             false;
 
+
+        /* =================================================
+           UPDATE SYSTEM STATE
+           ================================================= */
 
         systemState.textContent =
             "FRAME READY";
@@ -214,16 +299,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         console.log(
-            "IXVYN LENS: Frame loaded:",
-            file.name
+            "IXVYN LENS: FRAME READY."
         );
 
     }
 
 
     /* =====================================================
-       DRAG + DROP
-    ===================================================== */
+       DRAG AND DROP
+       ===================================================== */
 
     uploadZone.addEventListener(
         "dragover",
@@ -265,70 +349,107 @@ document.addEventListener("DOMContentLoaded", () => {
             const file =
                 event.dataTransfer.files?.[0];
 
-            if (!file) return;
+
+            if (!file) {
+
+                return;
+
+            }
 
 
-            if (!file.type.startsWith("image/")) {
+            if (
+                !file.type ||
+                !file.type.startsWith("image/")
+            ) {
 
-                console.warn(
-                    "IXVYN LENS: Dropped file is not an image."
+                alert(
+                    "Please drop an image file."
                 );
 
                 return;
-            }
-
-
-            selectedFile =
-                file;
-
-
-            if (selectedImageURL) {
-
-                URL.revokeObjectURL(
-                    selectedImageURL
-                );
 
             }
 
 
-            selectedImageURL =
-                URL.createObjectURL(file);
+            /*
+               Reuse the same file-processing
+               logic as the normal picker.
+            */
 
-
-            previewImage.src =
-                selectedImageURL;
-
-            resultImage.src =
-                selectedImageURL;
-
-
-            fileName.textContent =
-                file.name;
-
-
-            inspectionPreview.hidden =
-                false;
-
-
-            analyzeButton.disabled =
-                false;
-
-
-            systemState.textContent =
-                "FRAME READY";
-
-
-            uploadZone.classList.add(
-                "has-file"
-            );
+            processFile(file);
 
         }
     );
 
 
     /* =====================================================
-       ANALYSIS
-    ===================================================== */
+       SHARED FILE PROCESSOR
+       ===================================================== */
+
+    function processFile(file) {
+
+        console.log(
+            "IXVYN LENS: Processing:",
+            file.name
+        );
+
+
+        selectedFile =
+            file;
+
+
+        if (selectedImageURL) {
+
+            URL.revokeObjectURL(
+                selectedImageURL
+            );
+
+        }
+
+
+        selectedImageURL =
+            URL.createObjectURL(file);
+
+
+        previewImage.src =
+            selectedImageURL;
+
+
+        resultImage.src =
+            selectedImageURL;
+
+
+        fileName.textContent =
+            file.name;
+
+
+        inspectionPreview.hidden =
+            false;
+
+
+        analyzeButton.disabled =
+            false;
+
+
+        systemState.textContent =
+            "FRAME READY";
+
+
+        uploadZone.classList.add(
+            "has-file"
+        );
+
+
+        console.log(
+            "IXVYN LENS: FRAME READY."
+        );
+
+    }
+
+
+    /* =====================================================
+       ANALYSIS BUTTON
+       ===================================================== */
 
     analyzeButton.addEventListener(
         "click",
@@ -336,13 +457,19 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 
+    /* =====================================================
+       BEGIN ANALYSIS
+       ===================================================== */
+
     async function beginAnalysis() {
 
         if (
             !selectedFile ||
             analysisRunning
         ) {
+
             return;
+
         }
 
 
@@ -358,9 +485,9 @@ document.addEventListener("DOMContentLoaded", () => {
             "ANALYZING";
 
 
-        /* ---------------------------------------------
-           SHOW ANALYSIS STATE
-        --------------------------------------------- */
+        /* =================================================
+           SHOW ANALYSIS
+           ================================================= */
 
         analysisState.hidden =
             false;
@@ -384,9 +511,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
 
-        /* ---------------------------------------------
+        /* =================================================
            RESET PROGRESS
-        --------------------------------------------- */
+           ================================================= */
 
         setProgress(
             progressVision,
@@ -394,11 +521,13 @@ document.addEventListener("DOMContentLoaded", () => {
             0
         );
 
+
         setProgress(
             progressClassification,
             barClassification,
             0
         );
+
 
         setProgress(
             progressSeverity,
@@ -411,9 +540,9 @@ document.addEventListener("DOMContentLoaded", () => {
             "INITIALIZING";
 
 
-        /* ---------------------------------------------
-           PROCESSING SEQUENCE
-        --------------------------------------------- */
+        /* =================================================
+           VISUAL ANALYSIS
+           ================================================= */
 
         await animateProgress(
             progressVision,
@@ -424,6 +553,10 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
+        /* =================================================
+           CLASSIFICATION
+           ================================================= */
+
         await animateProgress(
             progressClassification,
             barClassification,
@@ -432,6 +565,10 @@ document.addEventListener("DOMContentLoaded", () => {
             "DEFECT CLASSIFICATION"
         );
 
+
+        /* =================================================
+           SEVERITY
+           ================================================= */
 
         await animateProgress(
             progressSeverity,
@@ -442,20 +579,22 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
+        /* =================================================
+           COMPLETE
+           ================================================= */
+
         analysisStatus.textContent =
             "ANALYSIS COMPLETE";
 
 
         /*
-        =================================================
+        =====================================================
         TEMPORARY DEMO RESULT
 
-        IMPORTANT:
-        This is NOT the final AI result.
+        THIS WILL BE REPLACED WITH REAL AI.
 
-        We will replace this section with the real
-        multimodal vision request next.
-        =================================================
+        DO NOT PRESENT THIS AS REAL AI DETECTION.
+        =====================================================
         */
 
         const result =
@@ -519,17 +658,22 @@ document.addEventListener("DOMContentLoaded", () => {
         resultDefect.textContent =
             result.defect;
 
+
         resultConfidence.textContent =
             result.confidence;
+
 
         resultSeverity.textContent =
             result.severity;
 
+
         resultPriority.textContent =
             result.priority;
 
+
         resultDescription.textContent =
             result.description;
+
 
         resultAction.textContent =
             result.action;
@@ -550,15 +694,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function requestLocation() {
 
-        if (!navigator.geolocation) {
+        if (
+            !navigator.geolocation
+        ) {
 
             resultLat.textContent =
                 "UNAVAILABLE";
 
+
             resultLon.textContent =
                 "UNAVAILABLE";
 
+
             return;
+
         }
 
 
@@ -569,6 +718,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const latitude =
                     position.coords.latitude;
 
+
                 const longitude =
                     position.coords.longitude;
 
@@ -576,25 +726,45 @@ document.addEventListener("DOMContentLoaded", () => {
                 resultLat.textContent =
                     latitude.toFixed(5);
 
+
                 resultLon.textContent =
                     longitude.toFixed(5);
 
+
+                console.log(
+                    "IXVYN LENS: Location captured.",
+                    latitude,
+                    longitude
+                );
+
             },
 
-            () => {
+
+            (error) => {
+
+                console.warn(
+                    "IXVYN LENS: Location unavailable.",
+                    error.message
+                );
+
 
                 resultLat.textContent =
-                    "PERMISSION DENIED";
+                    "UNAVAILABLE";
+
 
                 resultLon.textContent =
-                    "PERMISSION DENIED";
+                    "UNAVAILABLE";
 
             },
+
 
             {
                 enableHighAccuracy: true,
+
                 timeout: 8000,
+
                 maximumAge: 0
+
             }
 
         );
@@ -604,7 +774,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        SHOW RESULTS
-    ===================================================== */
+       ===================================================== */
 
     function showResults() {
 
@@ -625,12 +795,17 @@ document.addEventListener("DOMContentLoaded", () => {
             block: "start"
         });
 
+
+        console.log(
+            "IXVYN LENS: Result displayed."
+        );
+
     }
 
 
     /* =====================================================
        NEW INSPECTION
-    ===================================================== */
+       ===================================================== */
 
     if (newInspection) {
 
@@ -644,9 +819,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function resetInspection() {
 
+        console.log(
+            "IXVYN LENS: Resetting inspection."
+        );
+
+
         selectedFile =
             null;
 
+
+        /* ---------------------------------------------
+           CLEAN OBJECT URL
+        --------------------------------------------- */
 
         if (selectedImageURL) {
 
@@ -660,16 +844,29 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
+        /* ---------------------------------------------
+           RESET INPUT
+        --------------------------------------------- */
+
         imageInput.value =
             "";
 
 
+        /* ---------------------------------------------
+           RESET IMAGES
+        --------------------------------------------- */
+
         previewImage.src =
             "";
+
 
         resultImage.src =
             "";
 
+
+        /* ---------------------------------------------
+           RESET TEXT
+        --------------------------------------------- */
 
         fileName.textContent =
             "—";
@@ -678,50 +875,76 @@ document.addEventListener("DOMContentLoaded", () => {
         resultDefect.textContent =
             "—";
 
+
         resultConfidence.textContent =
             "—";
+
 
         resultSeverity.textContent =
             "—";
 
+
         resultPriority.textContent =
             "—";
+
 
         resultDescription.textContent =
             "—";
 
+
         resultAction.textContent =
             "—";
 
+
         resultLat.textContent =
             "—";
+
 
         resultLon.textContent =
             "—";
 
 
+        /* ---------------------------------------------
+           RESET SCREENS
+        --------------------------------------------- */
+
         inspectionResults.hidden =
             true;
+
 
         analysisState.hidden =
             true;
 
+
         inspectionInput.hidden =
             false;
+
 
         inspectionPreview.hidden =
             true;
 
 
+        /* ---------------------------------------------
+           RESET BUTTON
+        --------------------------------------------- */
+
         analyzeButton.disabled =
             true;
 
+
+        /* ---------------------------------------------
+           RESET UPLOAD STATE
+        --------------------------------------------- */
 
         uploadZone.classList.remove(
             "has-file",
             "is-dragging"
         );
 
+
+        /* ---------------------------------------------
+           RESET SYSTEM
+        --------------------------------------------- */
 
         systemState.textContent =
             "READY";
@@ -740,8 +963,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       PROGRESS HELPERS
-    ===================================================== */
+       PROGRESS
+       ===================================================== */
 
     function setProgress(
         numberElement,
@@ -766,6 +989,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
+    /* =====================================================
+       ANIMATE PROGRESS
+       ===================================================== */
 
     async function animateProgress(
         numberElement,
@@ -799,6 +1026,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
 
 
+                    /*
+                       Smooth ease-out.
+                    */
+
                     const eased =
                         1 -
                         Math.pow(
@@ -814,7 +1045,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     );
 
 
-                    if (progress < 1) {
+                    if (
+                        progress < 1
+                    ) {
 
                         requestAnimationFrame(
                             frame
@@ -841,9 +1074,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        UTILITY
-    ===================================================== */
+       ===================================================== */
 
-    function sleep(milliseconds) {
+    function sleep(
+        milliseconds
+    ) {
 
         return new Promise(
             (resolve) => {
@@ -861,16 +1096,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        INITIAL STATE
-    ===================================================== */
+       ===================================================== */
 
     inspectionPreview.hidden =
         true;
 
+
     analysisState.hidden =
         true;
 
+
     inspectionResults.hidden =
         true;
+
 
     analyzeButton.disabled =
         true;
@@ -881,4 +1119,3 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
 });
-```
