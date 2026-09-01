@@ -1,11 +1,10 @@
 /* =========================================================
-   IXVYN — LENS / VISUAL INFRASTRUCTURE INTELLIGENCE
+   IXVYN — LENS / REAL VISUAL INFRASTRUCTURE INTELLIGENCE
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
     console.log("IXVYN LENS visual intelligence online.");
-
 
     /* =====================================================
        ELEMENTS
@@ -103,9 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ===================================================== */
 
     let selectedFile = null;
-
     let selectedImageURL = null;
-
     let analysisRunning = false;
 
 
@@ -134,7 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        IMAGE INPUT
-       MOBILE-SAFE
     ===================================================== */
 
     imageInput.addEventListener(
@@ -145,25 +141,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 "IXVYN LENS: File input changed."
             );
 
-            handleFileSelection(event);
+            const file =
+                event.target.files?.[0];
 
+            if (!file) {
+                return;
+            }
+
+            processFile(file);
         }
     );
 
 
-    /*
-       Explicitly open the native file picker
-       when the upload area is tapped.
-    */
+    /* =====================================================
+       UPLOAD ZONE
+    ===================================================== */
 
     uploadZone.addEventListener(
         "click",
         () => {
 
             if (!selectedFile) {
-
                 imageInput.click();
-
             }
 
         }
@@ -171,49 +170,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       FILE SELECTION
+       PROCESS FILE
     ===================================================== */
 
-    function handleFileSelection(event) {
+    function processFile(file) {
 
         console.log(
-            "IXVYN LENS: Processing selected file..."
+            "IXVYN LENS: Processing:",
+            file.name
         );
-
-
-        const files =
-            event.target.files;
-
-
-        if (
-            !files ||
-            files.length === 0
-        ) {
-
-            console.warn(
-                "IXVYN LENS: No file selected."
-            );
-
-            return;
-        }
-
-
-        const file =
-            files[0];
-
-
-        console.log(
-            "IXVYN LENS: Selected:",
-            file.name,
-            file.type,
-            file.size
-        );
-
-
-        /*
-           Make sure the selected file
-           is actually an image.
-        */
 
         if (
             !file.type ||
@@ -227,71 +192,72 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-
         selectedFile =
             file;
 
 
-        /* =================================================
-           CLEAN PREVIOUS IMAGE URL
-           ================================================= */
+        /* ---------------------------------------------
+           CLEAN PREVIOUS OBJECT URL
+        --------------------------------------------- */
 
         if (selectedImageURL) {
 
             URL.revokeObjectURL(
                 selectedImageURL
             );
-
         }
 
 
-        /* =================================================
-           CREATE LOCAL IMAGE PREVIEW
-           ================================================= */
+        /* ---------------------------------------------
+           CREATE PREVIEW
+        --------------------------------------------- */
 
         selectedImageURL =
             URL.createObjectURL(file);
 
-
         previewImage.src =
             selectedImageURL;
 
+        if (resultImage) {
 
-        resultImage.src =
-            selectedImageURL;
+            resultImage.src =
+                selectedImageURL;
+        }
 
 
-        /* =================================================
+        /* ---------------------------------------------
            FILE INFORMATION
-           ================================================= */
+        --------------------------------------------- */
 
-        fileName.textContent =
-            file.name;
+        if (fileName) {
+
+            fileName.textContent =
+                file.name;
+        }
 
 
-        /* =================================================
+        /* ---------------------------------------------
            SHOW PREVIEW
-           ================================================= */
+        --------------------------------------------- */
 
         inspectionPreview.hidden =
             false;
 
 
-        /* =================================================
+        /* ---------------------------------------------
            ENABLE ANALYSIS
-           ================================================= */
+        --------------------------------------------- */
 
         analyzeButton.disabled =
             false;
 
 
-        /* =================================================
-           UPDATE SYSTEM STATE
-           ================================================= */
+        /* ---------------------------------------------
+           SYSTEM STATE
+        --------------------------------------------- */
 
         systemState.textContent =
             "FRAME READY";
-
 
         uploadZone.classList.add(
             "has-file"
@@ -301,13 +267,12 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(
             "IXVYN LENS: FRAME READY."
         );
-
     }
 
 
     /* =====================================================
        DRAG AND DROP
-       ===================================================== */
+    ===================================================== */
 
     uploadZone.addEventListener(
         "dragover",
@@ -345,111 +310,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 "is-dragging"
             );
 
-
             const file =
                 event.dataTransfer.files?.[0];
 
-
             if (!file) {
-
                 return;
-
             }
-
-
-            if (
-                !file.type ||
-                !file.type.startsWith("image/")
-            ) {
-
-                alert(
-                    "Please drop an image file."
-                );
-
-                return;
-
-            }
-
-
-            /*
-               Reuse the same file-processing
-               logic as the normal picker.
-            */
 
             processFile(file);
-
         }
     );
 
 
     /* =====================================================
-       SHARED FILE PROCESSOR
-       ===================================================== */
-
-    function processFile(file) {
-
-        console.log(
-            "IXVYN LENS: Processing:",
-            file.name
-        );
-
-
-        selectedFile =
-            file;
-
-
-        if (selectedImageURL) {
-
-            URL.revokeObjectURL(
-                selectedImageURL
-            );
-
-        }
-
-
-        selectedImageURL =
-            URL.createObjectURL(file);
-
-
-        previewImage.src =
-            selectedImageURL;
-
-
-        resultImage.src =
-            selectedImageURL;
-
-
-        fileName.textContent =
-            file.name;
-
-
-        inspectionPreview.hidden =
-            false;
-
-
-        analyzeButton.disabled =
-            false;
-
-
-        systemState.textContent =
-            "FRAME READY";
-
-
-        uploadZone.classList.add(
-            "has-file"
-        );
-
-
-        console.log(
-            "IXVYN LENS: FRAME READY."
-        );
-
-    }
-
-
-    /* =====================================================
        ANALYSIS BUTTON
-       ===================================================== */
+    ===================================================== */
 
     analyzeButton.addEventListener(
         "click",
@@ -458,8 +333,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       BEGIN ANALYSIS
-       ===================================================== */
+       BEGIN REAL ANALYSIS
+    ===================================================== */
 
     async function beginAnalysis() {
 
@@ -467,39 +342,32 @@ document.addEventListener("DOMContentLoaded", () => {
             !selectedFile ||
             analysisRunning
         ) {
-
             return;
-
         }
 
 
         analysisRunning =
             true;
 
-
         analyzeButton.disabled =
             true;
-
 
         systemState.textContent =
             "ANALYZING";
 
 
         /* =================================================
-           SHOW ANALYSIS
-           ================================================= */
+           SHOW ANALYSIS SCREEN
+        ================================================= */
 
         analysisState.hidden =
             false;
 
-
         inspectionInput.hidden =
             true;
 
-
         inspectionPreview.hidden =
             true;
-
 
         inspectionResults.hidden =
             true;
@@ -513,7 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /* =================================================
            RESET PROGRESS
-           ================================================= */
+        ================================================= */
 
         setProgress(
             progressVision,
@@ -521,13 +389,11 @@ document.addEventListener("DOMContentLoaded", () => {
             0
         );
 
-
         setProgress(
             progressClassification,
             barClassification,
             0
         );
-
 
         setProgress(
             progressSeverity,
@@ -540,159 +406,521 @@ document.addEventListener("DOMContentLoaded", () => {
             "INITIALIZING";
 
 
-        /* =================================================
-           VISUAL ANALYSIS
-           ================================================= */
+        try {
 
-        await animateProgress(
-            progressVision,
-            barVision,
-            100,
-            1400,
-            "VISUAL ANALYSIS"
-        );
+            /*
+             * Start REAL AI request immediately.
+             *
+             * While Gemini is analyzing the image,
+             * IXVYN runs its visual interface animation.
+             */
 
-
-        /* =================================================
-           CLASSIFICATION
-           ================================================= */
-
-        await animateProgress(
-            progressClassification,
-            barClassification,
-            100,
-            1100,
-            "DEFECT CLASSIFICATION"
-        );
+            const aiRequest =
+                analyzeImageWithGemini();
 
 
-        /* =================================================
-           SEVERITY
-           ================================================= */
+            /* ---------------------------------------------
+               VISUAL ANALYSIS
+            --------------------------------------------- */
 
-        await animateProgress(
-            progressSeverity,
-            barSeverity,
-            100,
-            900,
-            "SEVERITY ASSESSMENT"
-        );
-
-
-        /* =================================================
-           COMPLETE
-           ================================================= */
-
-        analysisStatus.textContent =
-            "ANALYSIS COMPLETE";
+            await animateProgress(
+                progressVision,
+                barVision,
+                100,
+                1100,
+                "VISUAL ANALYSIS"
+            );
 
 
-        /*
-        =====================================================
-        TEMPORARY DEMO RESULT
+            /* ---------------------------------------------
+               CLASSIFICATION
+            --------------------------------------------- */
 
-        THIS WILL BE REPLACED WITH REAL AI.
-
-        DO NOT PRESENT THIS AS REAL AI DETECTION.
-        =====================================================
-        */
-
-        const result =
-            createTemporaryResult();
-
-
-        renderResult(
-            result
-        );
+            await animateProgress(
+                progressClassification,
+                barClassification,
+                100,
+                900,
+                "DEFECT CLASSIFICATION"
+            );
 
 
-        await sleep(500);
+            /* ---------------------------------------------
+               SEVERITY
+            --------------------------------------------- */
+
+            await animateProgress(
+                progressSeverity,
+                barSeverity,
+                100,
+                700,
+                "SEVERITY ASSESSMENT"
+            );
 
 
-        showResults();
+            /*
+             * Wait for the REAL Gemini result.
+             */
+
+            const result =
+                await aiRequest;
+
+
+            analysisStatus.textContent =
+                "ANALYSIS COMPLETE";
+
+
+            console.log(
+                "IXVYN LENS: REAL AI RESULT:",
+                result
+            );
+
+
+            renderResult(
+                result
+            );
+
+
+            await sleep(500);
+
+            showResults();
+
+
+        } catch (error) {
+
+            console.error(
+                "IXVYN LENS: Analysis failed:",
+                error
+            );
+
+
+            analysisStatus.textContent =
+                "ANALYSIS FAILED";
+
+
+            showAnalysisError(
+                error
+            );
+
+
+            analysisRunning =
+                false;
+
+            analyzeButton.disabled =
+                false;
+
+            systemState.textContent =
+                "ANALYSIS ERROR";
+
+            return;
+        }
 
 
         analysisRunning =
             false;
-
     }
 
 
     /* =====================================================
-       TEMPORARY RESULT
-       ===================================================== */
+       REAL GEMINI REQUEST
+    ===================================================== */
 
-    function createTemporaryResult() {
+    async function analyzeImageWithGemini() {
 
-        return {
+        console.log(
+            "IXVYN LENS: Preparing image for AI..."
+        );
 
-            defect:
-                "POTHOLE",
 
-            confidence:
-                96.8,
+        /*
+         * Resize/compress the image before sending it.
+         *
+         * This prevents huge phone photographs from
+         * producing unnecessarily large API requests.
+         */
 
-            severity:
-                "HIGH",
+        const preparedImage =
+            await prepareImageForAI(
+                selectedFile
+            );
 
-            priority:
-                "P1",
 
-            description:
-                "Visible road-surface deformation detected within the submitted frame.",
+        console.log(
+            "IXVYN LENS: Sending frame to /api/analyze..."
+        );
 
-            action:
-                "Prioritize field verification and repair assessment."
 
-        };
+        const response =
+            await fetch(
+                "/api/analyze",
+                {
+                    method: "POST",
 
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        image:
+                            preparedImage.data,
+
+                        mimeType:
+                            preparedImage.mimeType
+                    })
+                }
+            );
+
+
+        let data = null;
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch {
+
+            throw new Error(
+                "The analysis server returned an invalid response."
+            );
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data?.error ||
+                "The AI analysis request failed."
+            );
+        }
+
+
+        if (!data) {
+
+            throw new Error(
+                "No analysis result was returned."
+            );
+        }
+
+
+        console.log(
+            "IXVYN LENS: Gemini analysis received."
+        );
+
+
+        return data;
     }
 
 
     /* =====================================================
-       RENDER RESULT
-       ===================================================== */
+       PREPARE IMAGE
+    ===================================================== */
+
+    function prepareImageForAI(file) {
+
+        return new Promise(
+            (resolve, reject) => {
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload =
+                    () => {
+
+                        const image =
+                            new Image();
+
+
+                        image.onload =
+                            () => {
+
+                                /*
+                                 * Maximum dimension.
+                                 */
+
+                                const MAX_SIZE =
+                                    1600;
+
+
+                                let width =
+                                    image.naturalWidth;
+
+                                let height =
+                                    image.naturalHeight;
+
+
+                                if (
+                                    width >
+                                    MAX_SIZE ||
+                                    height >
+                                    MAX_SIZE
+                                ) {
+
+                                    const scale =
+                                        Math.min(
+                                            MAX_SIZE / width,
+                                            MAX_SIZE / height
+                                        );
+
+                                    width =
+                                        Math.round(
+                                            width * scale
+                                        );
+
+                                    height =
+                                        Math.round(
+                                            height * scale
+                                        );
+                                }
+
+
+                                const canvas =
+                                    document.createElement(
+                                        "canvas"
+                                    );
+
+
+                                canvas.width =
+                                    width;
+
+                                canvas.height =
+                                    height;
+
+
+                                const context =
+                                    canvas.getContext(
+                                        "2d"
+                                    );
+
+
+                                if (!context) {
+
+                                    reject(
+                                        new Error(
+                                            "Could not prepare image."
+                                        )
+                                    );
+
+                                    return;
+                                }
+
+
+                                context.drawImage(
+                                    image,
+                                    0,
+                                    0,
+                                    width,
+                                    height
+                                );
+
+
+                                /*
+                                 * JPEG keeps the request
+                                 * reasonably small while
+                                 * retaining enough detail
+                                 * for infrastructure inspection.
+                                 */
+
+                                const dataURL =
+                                    canvas.toDataURL(
+                                        "image/jpeg",
+                                        0.82
+                                    );
+
+
+                                resolve({
+
+                                    data:
+                                        dataURL,
+
+                                    mimeType:
+                                        "image/jpeg"
+
+                                });
+                            };
+
+
+                        image.onerror =
+                            () => {
+
+                                reject(
+                                    new Error(
+                                        "Could not read the selected image."
+                                    )
+                                );
+                            };
+
+
+                        image.src =
+                            reader.result;
+                    };
+
+
+                reader.onerror =
+                    () => {
+
+                        reject(
+                            new Error(
+                                "Could not load image file."
+                            )
+                        );
+                    };
+
+
+                reader.readAsDataURL(
+                    file
+                );
+            }
+        );
+    }
+
+
+    /* =====================================================
+       RENDER REAL RESULT
+    ===================================================== */
 
     function renderResult(result) {
 
-        resultDefect.textContent =
-            result.defect;
+        if (!result) {
+            return;
+        }
 
 
-        resultConfidence.textContent =
-            result.confidence;
+        /* ---------------------------------------------
+           DEFECT
+        --------------------------------------------- */
+
+        if (resultDefect) {
+
+            resultDefect.textContent =
+                result.defect ||
+                "NO ACTIONABLE ANOMALY";
+        }
 
 
-        resultSeverity.textContent =
-            result.severity;
+        /* ---------------------------------------------
+           CONFIDENCE
+        --------------------------------------------- */
+
+        if (resultConfidence) {
+
+            const confidence =
+                Number(
+                    result.confidence
+                );
+
+            resultConfidence.textContent =
+                Number.isFinite(confidence)
+                    ? `${confidence.toFixed(1)}%`
+                    : "—";
+        }
 
 
-        resultPriority.textContent =
-            result.priority;
+        /* ---------------------------------------------
+           SEVERITY
+        --------------------------------------------- */
+
+        if (resultSeverity) {
+
+            resultSeverity.textContent =
+                result.severity ||
+                "—";
+        }
 
 
-        resultDescription.textContent =
-            result.description;
+        /* ---------------------------------------------
+           PRIORITY
+        --------------------------------------------- */
+
+        if (resultPriority) {
+
+            resultPriority.textContent =
+                result.priority ||
+                "—";
+        }
 
 
-        resultAction.textContent =
-            result.action;
+        /* ---------------------------------------------
+           DESCRIPTION
+        --------------------------------------------- */
+
+        if (resultDescription) {
+
+            resultDescription.textContent =
+                result.description ||
+                "No actionable infrastructure anomaly was identified.";
+        }
 
 
-        resultImage.src =
-            selectedImageURL;
+        /* ---------------------------------------------
+           ACTION
+        --------------------------------------------- */
 
+        if (resultAction) {
+
+            resultAction.textContent =
+                result.recommendedAction ||
+                result.action ||
+                "No immediate action recommended.";
+        }
+
+
+        /* ---------------------------------------------
+           RESULT IMAGE
+        --------------------------------------------- */
+
+        if (
+            resultImage &&
+            selectedImageURL
+        ) {
+
+            resultImage.src =
+                selectedImageURL;
+        }
+
+
+        /* ---------------------------------------------
+           SYSTEM STATE
+        --------------------------------------------- */
+
+        if (
+            result.status ===
+            "no_actionable_anomaly"
+        ) {
+
+            systemState.textContent =
+                "NO ACTIONABLE ANOMALY";
+
+        } else {
+
+            systemState.textContent =
+                "ANOMALY DETECTED";
+        }
+
+
+        /* ---------------------------------------------
+           LOCATION
+        --------------------------------------------- */
 
         requestLocation();
-
     }
 
 
     /* =====================================================
        GEOLOCATION
-       ===================================================== */
+    ===================================================== */
 
     function requestLocation() {
+
+        if (
+            !resultLat ||
+            !resultLon
+        ) {
+            return;
+        }
+
 
         if (
             !navigator.geolocation
@@ -701,13 +929,10 @@ document.addEventListener("DOMContentLoaded", () => {
             resultLat.textContent =
                 "UNAVAILABLE";
 
-
             resultLon.textContent =
                 "UNAVAILABLE";
 
-
             return;
-
         }
 
 
@@ -718,14 +943,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 const latitude =
                     position.coords.latitude;
 
-
                 const longitude =
                     position.coords.longitude;
 
 
                 resultLat.textContent =
                     latitude.toFixed(5);
-
 
                 resultLon.textContent =
                     longitude.toFixed(5);
@@ -736,7 +959,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     latitude,
                     longitude
                 );
-
             },
 
 
@@ -751,43 +973,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 resultLat.textContent =
                     "UNAVAILABLE";
 
-
                 resultLon.textContent =
                     "UNAVAILABLE";
-
             },
 
 
             {
                 enableHighAccuracy: true,
-
                 timeout: 8000,
-
                 maximumAge: 0
-
             }
-
         );
-
     }
 
 
     /* =====================================================
        SHOW RESULTS
-       ===================================================== */
+    ===================================================== */
 
     function showResults() {
 
         analysisState.hidden =
             true;
 
-
         inspectionResults.hidden =
             false;
-
-
-        systemState.textContent =
-            "ANOMALY DETECTED";
 
 
         inspectionResults.scrollIntoView({
@@ -799,13 +1009,82 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(
             "IXVYN LENS: Result displayed."
         );
+    }
 
+
+    /* =====================================================
+       ERROR SCREEN
+    ===================================================== */
+
+    function showAnalysisError(error) {
+
+        if (resultDefect) {
+
+            resultDefect.textContent =
+                "ANALYSIS UNAVAILABLE";
+        }
+
+
+        if (resultConfidence) {
+
+            resultConfidence.textContent =
+                "—";
+        }
+
+
+        if (resultSeverity) {
+
+            resultSeverity.textContent =
+                "—";
+        }
+
+
+        if (resultPriority) {
+
+            resultPriority.textContent =
+                "—";
+        }
+
+
+        if (resultDescription) {
+
+            resultDescription.textContent =
+                error?.message ||
+                "The visual analysis could not be completed.";
+        }
+
+
+        if (resultAction) {
+
+            resultAction.textContent =
+                "Please retry the inspection.";
+        }
+
+
+        if (resultImage) {
+
+            resultImage.src =
+                selectedImageURL || "";
+        }
+
+
+        analysisState.hidden =
+            true;
+
+        inspectionResults.hidden =
+            false;
+
+
+        inspectionResults.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
     }
 
 
     /* =====================================================
        NEW INSPECTION
-       ===================================================== */
+    ===================================================== */
 
     if (newInspection) {
 
@@ -813,7 +1092,6 @@ document.addEventListener("DOMContentLoaded", () => {
             "click",
             resetInspection
         );
-
     }
 
 
@@ -828,6 +1106,10 @@ document.addEventListener("DOMContentLoaded", () => {
             null;
 
 
+        analysisRunning =
+            false;
+
+
         /* ---------------------------------------------
            CLEAN OBJECT URL
         --------------------------------------------- */
@@ -840,7 +1122,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             selectedImageURL =
                 null;
-
         }
 
 
@@ -859,49 +1140,93 @@ document.addEventListener("DOMContentLoaded", () => {
         previewImage.src =
             "";
 
+        if (resultImage) {
 
-        resultImage.src =
-            "";
+            resultImage.src =
+                "";
+        }
 
 
         /* ---------------------------------------------
            RESET TEXT
         --------------------------------------------- */
 
-        fileName.textContent =
-            "—";
+        if (fileName) {
+
+            fileName.textContent =
+                "—";
+        }
+
+        if (resultDefect) {
+
+            resultDefect.textContent =
+                "—";
+        }
+
+        if (resultConfidence) {
+
+            resultConfidence.textContent =
+                "—";
+        }
+
+        if (resultSeverity) {
+
+            resultSeverity.textContent =
+                "—";
+        }
+
+        if (resultPriority) {
+
+            resultPriority.textContent =
+                "—";
+        }
+
+        if (resultDescription) {
+
+            resultDescription.textContent =
+                "—";
+        }
+
+        if (resultAction) {
+
+            resultAction.textContent =
+                "—";
+        }
+
+        if (resultLat) {
+
+            resultLat.textContent =
+                "—";
+        }
+
+        if (resultLon) {
+
+            resultLon.textContent =
+                "—";
+        }
 
 
-        resultDefect.textContent =
-            "—";
+        /* ---------------------------------------------
+           RESET PROGRESS
+        --------------------------------------------- */
 
+        setProgress(
+            progressVision,
+            barVision,
+            0
+        );
 
-        resultConfidence.textContent =
-            "—";
+        setProgress(
+            progressClassification,
+            barClassification,
+            0
+        );
 
-
-        resultSeverity.textContent =
-            "—";
-
-
-        resultPriority.textContent =
-            "—";
-
-
-        resultDescription.textContent =
-            "—";
-
-
-        resultAction.textContent =
-            "—";
-
-
-        resultLat.textContent =
-            "—";
-
-
-        resultLon.textContent =
-            "—";
+        setProgress(
+            progressSeverity,
+            barSeverity,
+            0
+        );
 
 
         /* ---------------------------------------------
@@ -911,14 +1236,11 @@ document.addEventListener("DOMContentLoaded", () => {
         inspectionResults.hidden =
             true;
 
-
         analysisState.hidden =
             true;
 
-
         inspectionInput.hidden =
             false;
-
 
         inspectionPreview.hidden =
             true;
@@ -949,22 +1271,20 @@ document.addEventListener("DOMContentLoaded", () => {
         systemState.textContent =
             "READY";
 
-
-        analysisRunning =
-            false;
+        analysisStatus.textContent =
+            "READY";
 
 
         inspectionInput.scrollIntoView({
             behavior: "smooth",
             block: "start"
         });
-
     }
 
 
     /* =====================================================
        PROGRESS
-       ===================================================== */
+    ===================================================== */
 
     function setProgress(
         numberElement,
@@ -976,7 +1296,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             numberElement.textContent =
                 Math.round(value);
-
         }
 
 
@@ -984,15 +1303,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             barElement.style.width =
                 `${value}%`;
-
         }
-
     }
 
 
     /* =====================================================
        ANIMATE PROGRESS
-       ===================================================== */
+    ===================================================== */
 
     async function animateProgress(
         numberElement,
@@ -1027,8 +1344,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                     /*
-                       Smooth ease-out.
-                    */
+                     * Smooth ease-out.
+                     */
 
                     const eased =
                         1 -
@@ -1056,25 +1373,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else {
 
                         resolve();
-
                     }
-
                 }
 
 
                 requestAnimationFrame(
                     frame
                 );
-
             }
         );
-
     }
 
 
     /* =====================================================
        UTILITY
-       ===================================================== */
+    ===================================================== */
 
     function sleep(
         milliseconds
@@ -1087,35 +1400,30 @@ document.addEventListener("DOMContentLoaded", () => {
                     resolve,
                     milliseconds
                 );
-
             }
         );
-
     }
 
 
     /* =====================================================
        INITIAL STATE
-       ===================================================== */
+    ===================================================== */
 
     inspectionPreview.hidden =
         true;
 
-
     analysisState.hidden =
         true;
 
-
     inspectionResults.hidden =
         true;
-
 
     analyzeButton.disabled =
         true;
 
 
     console.log(
-        "IXVYN LENS: Visual inspection interface ready."
+        "IXVYN LENS: Real visual inspection interface ready."
     );
 
 });
