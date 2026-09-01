@@ -706,3 +706,139 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 });
+/* =====================================================
+   IXVYN — SYSTEM INTELLIGENCE FLOWS
+   ===================================================== */
+
+const systemFlows = {
+    lens: [
+        "IMAGE",
+        "EVIDENCE",
+        "DEFECT",
+        "SEVERITY",
+        "LOCATION"
+    ],
+
+    pathfinder: [
+        "CONDITION",
+        "PRIORITY",
+        "RISK",
+        "ROUTE",
+        "RESPONSE"
+    ],
+
+    civic: [
+        "EVIDENCE",
+        "REPORT",
+        "MUNICIPAL",
+        "ACTION",
+        "STATUS"
+    ],
+
+    echo: [
+        "FIELD",
+        "VOICE",
+        "FEEDBACK",
+        "CONTEXT",
+        "ADAPT"
+    ],
+
+    memory: [
+        "OBSERVATION",
+        "RECORD",
+        "HISTORY",
+        "CHANGE",
+        "MEMORY"
+    ]
+};
+
+
+document
+    .querySelectorAll(".system-card")
+    .forEach((card) => {
+
+        const module =
+            card.dataset.module ||
+            card.dataset.system;
+
+        const flow =
+            systemFlows[module];
+
+        if (!flow) {
+            return;
+        }
+
+
+        /* Create the visual pathway */
+
+        const flowElement =
+            document.createElement("div");
+
+        flowElement.className =
+            "system-flow";
+
+
+        flow.forEach((step, index) => {
+
+            const stepElement =
+                document.createElement("span");
+
+            stepElement.className =
+                "system-flow-step";
+
+            stepElement.textContent =
+                step;
+
+            flowElement.appendChild(
+                stepElement
+            );
+
+
+            if (index < flow.length - 1) {
+
+                const arrow =
+                    document.createElement("i");
+
+                arrow.textContent = "→";
+
+                arrow.className =
+                    "system-flow-arrow";
+
+                flowElement.appendChild(
+                    arrow
+                );
+
+            }
+
+        });
+
+
+        card.appendChild(flowElement);
+
+
+        /* Desktop interaction */
+
+        card.addEventListener(
+            "mouseenter",
+            () => {
+
+                flowElement.classList.add(
+                    "flow-active"
+                );
+
+            }
+        );
+
+
+        card.addEventListener(
+            "mouseleave",
+            () => {
+
+                flowElement.classList.remove(
+                    "flow-active"
+                );
+
+            }
+        );
+
+    });
