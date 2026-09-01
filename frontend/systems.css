@@ -1,320 +1,614 @@
 /* =========================================================
-   IXVYN — SYSTEMS
+   IXVYN — SYSTEM INTERFACE
    ========================================================= */
 
 :root {
     --bg: #08090b;
-    --text: #f1f0eb;
+    --white: #f2f1ec;
     --muted: #777a7d;
-    --line: rgba(255,255,255,.14);
-    --accent: #b8ff38;
+    --dim: #4d5053;
+    --line: rgba(255,255,255,.13);
+    --soft-line: rgba(255,255,255,.06);
+    --acid: #b8ff38;
 }
 
 * {
     box-sizing: border-box;
 }
 
-html {
-    scroll-behavior: smooth;
-}
-
 body.systems-page {
     margin: 0;
+    min-height: 100vh;
     background: var(--bg);
-    color: var(--text);
-    font-family: Arial, Helvetica, sans-serif;
+    color: var(--white);
+    font-family: Inter, Arial, sans-serif;
     overflow-x: hidden;
 }
+
+button {
+    font: inherit;
+}
+
 
 /* =========================================================
    HEADER
    ========================================================= */
 
 .systems-page .system-header {
+    position: fixed;
+    inset: 0 0 auto 0;
     height: 74px;
+
     padding: 0 4vw;
-    display: flex;
+
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--line);
-    position: relative;
-    z-index: 20;
+
+    border-bottom: 1px solid var(--soft-line);
+
+    background: rgba(8,9,11,.72);
+    backdrop-filter: blur(18px);
+
+    z-index: 100;
 }
 
 .systems-page .wordmark {
-    color: var(--text);
+    color: var(--white);
     text-decoration: none;
-    font-family: monospace;
-    font-weight: 700;
-    letter-spacing: .65em;
-    font-size: 15px;
+
+    font-family: "DM Mono", monospace;
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: .42em;
 }
 
 .systems-page .system-nav {
     display: flex;
-    gap: 42px;
+    gap: 38px;
 }
 
 .systems-page .system-nav a {
-    color: #777;
+    color: var(--muted);
     text-decoration: none;
-    font: 10px monospace;
-    letter-spacing: .18em;
+
+    font-family: "DM Mono", monospace;
+    font-size: 9px;
+    letter-spacing: .14em;
     text-transform: uppercase;
+
     transition: color .3s ease;
 }
 
 .systems-page .system-nav a:hover {
-    color: var(--text);
+    color: var(--white);
 }
 
 .systems-page .system-status {
-    color: #666;
-    font: 9px monospace;
-    letter-spacing: .16em;
+    justify-self: end;
+
+    color: var(--muted);
+
+    font-family: "DM Mono", monospace;
+    font-size: 9px;
+    letter-spacing: .12em;
 }
 
 .systems-page .status-dot {
+    display: inline-block;
+
     width: 6px;
     height: 6px;
-    display: inline-block;
-    border-radius: 50%;
-    background: var(--accent);
+
     margin-right: 8px;
-    box-shadow: 0 0 12px rgba(184,255,56,.55);
+
+    border-radius: 50%;
+    background: var(--acid);
+
+    box-shadow: 0 0 14px rgba(184,255,56,.45);
 }
+
 
 /* =========================================================
-   SYSTEMS PAGE
+   MAIN EXPERIENCE
    ========================================================= */
 
-.systems-page {
-    min-height: 100vh;
-}
-
-.systems-page .systems-hero {
-    min-height: 58vh;
-    padding: 9vh 4vw 7vh;
+.system-experience {
     position: relative;
+
+    min-height: 100vh;
+
+    padding-top: 74px;
+
     overflow: hidden;
 }
 
-.systems-page .systems-hero::before {
-    content: "";
-    position: absolute;
-    width: 65vw;
-    height: 65vw;
-    max-width: 900px;
-    max-height: 900px;
-    border: 1px solid rgba(255,255,255,.07);
-    border-radius: 50%;
-    right: -18vw;
-    top: -30vw;
+
+/* =========================================================
+   BACKGROUND GEOMETRY
+   ========================================================= */
+
+.experience-geometry {
+    position: fixed;
+
+    width: 72vw;
+    height: 72vw;
+
+    max-width: 1000px;
+    max-height: 1000px;
+
+    top: 47%;
+    left: 62%;
+
+    transform: translate(-50%, -50%);
+
     pointer-events: none;
+
+    opacity: .55;
+
+    transition:
+        transform 1.2s cubic-bezier(.16,1,.3,1),
+        opacity .8s ease;
 }
 
-.systems-page .systems-hero::after {
-    content: "";
+.experience-ring {
     position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-        linear-gradient(115deg,
-            transparent 0 58%,
-            rgba(255,255,255,.035) 58.1%,
-            transparent 58.2%);
+
+    left: 50%;
+    top: 50%;
+
+    border: 1px solid var(--soft-line);
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
 }
+
+.ring-a {
+    width: 100%;
+    height: 100%;
+}
+
+.ring-b {
+    width: 68%;
+    height: 68%;
+}
+
+.ring-c {
+    width: 35%;
+    height: 35%;
+}
+
+.experience-axis {
+    position: absolute;
+
+    width: 130%;
+    height: 1px;
+
+    left: -15%;
+    top: 50%;
+
+    background: var(--soft-line);
+}
+
+.axis-x {
+    transform: rotate(38deg);
+}
+
+.axis-y {
+    transform: rotate(-38deg);
+}
+
+.experience-node {
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    border: 1px solid rgba(255,255,255,.65);
+    background: var(--bg);
+}
+
+.node-a {
+    top: 16%;
+    left: 50%;
+}
+
+.node-b {
+    right: 14%;
+    top: 50%;
+}
+
+.node-c {
+    bottom: 16%;
+    left: 50%;
+}
+
+.experience-core {
+    position: absolute;
+
+    width: 74px;
+    height: 74px;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(255,255,255,.35);
+
+    font-family: "DM Mono", monospace;
+    font-size: 10px;
+    letter-spacing: .2em;
+}
+
 
 /* =========================================================
    INTRO
    ========================================================= */
 
-.systems-page .section-intro {
+.system-intro {
     position: relative;
-    z-index: 2;
-    display: grid;
-    grid-template-columns: 1.35fr .65fr;
-    gap: 8vw;
-    align-items: end;
-    margin-bottom: 90px;
+    z-index: 3;
+
+    padding: 105px 4vw 65px;
+
+    max-width: 1150px;
 }
 
-.systems-page .eyebrow {
-    margin: 0 0 25px;
-    color: #626568;
-    font: 10px monospace;
-    letter-spacing: .24em;
-    text-transform: uppercase;
+.system-intro .eyebrow {
+    margin-bottom: 30px;
+
+    color: var(--dim);
+
+    font-family: "DM Mono", monospace;
+    font-size: 9px;
+    letter-spacing: .22em;
 }
 
-.systems-page .section-intro h1,
-.systems-page .section-intro h2 {
+.system-intro h1 {
     margin: 0;
-    font-size: clamp(55px, 8vw, 125px);
-    line-height: .84;
+
+    font-size: clamp(65px, 9vw, 145px);
+    line-height: .78;
+
     letter-spacing: -.075em;
     font-weight: 800;
 }
 
-.systems-page .section-intro h1 span,
-.systems-page .section-intro h2 span {
-    color: #66686a;
+.system-intro h1 span {
+    display: block;
+
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(242,241,236,.65);
 }
 
-.systems-page .section-copy {
-    max-width: 430px;
-    color: #777a7d;
-    font-size: 14px;
-    line-height: 1.7;
+.system-intro > p:last-child {
+    margin-top: 38px;
+
+    color: var(--muted);
+
+    font-family: "DM Mono", monospace;
+    font-size: 10px;
+    letter-spacing: .08em;
 }
+
 
 /* =========================================================
-   GRID
+   MODULE SELECTOR
    ========================================================= */
 
-.systems-page .system-grid {
+.module-selector {
     position: relative;
-    z-index: 3;
-    margin: 0 4vw;
+    z-index: 5;
+
+    margin: 0 4vw 80px;
+
     display: grid;
     grid-template-columns: 1fr 1fr;
+
     border-top: 1px solid var(--line);
     border-left: 1px solid var(--line);
 }
 
-.systems-page .system-card {
-    min-height: 390px;
-    padding: 30px;
+
+/* =========================================================
+   MODULE PANEL
+   ========================================================= */
+
+.module-panel {
     position: relative;
-    overflow: hidden;
+
+    min-height: 355px;
+
+    padding: 27px 29px;
+
+    display: flex;
+    flex-direction: column;
+
+    border: 0;
     border-right: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
+
+    background: rgba(255,255,255,.008);
+    color: var(--white);
+
+    text-align: left;
+
     cursor: pointer;
+
+    overflow: hidden;
+
     isolation: isolate;
+
     transition:
-        background .5s ease,
-        transform .5s cubic-bezier(.16,1,.3,1);
+        background .55s ease,
+        transform .8s cubic-bezier(.16,1,.3,1),
+        opacity .8s ease;
 }
 
-.systems-page .system-card-wide {
+.module-panel-wide {
     grid-column: 1 / -1;
-    min-height: 350px;
+    min-height: 315px;
 }
+
 
 /* =========================================================
-   CARD GEOMETRY
+   PANEL GEOMETRY
    ========================================================= */
 
-.systems-page .system-card::before {
+.module-panel::before {
     content: "";
+
     position: absolute;
-    width: 420px;
-    height: 420px;
+
+    width: 300px;
+    height: 300px;
+
+    right: -155px;
+    bottom: -170px;
+
     border: 1px solid rgba(255,255,255,.09);
+
     border-radius: 50%;
-    right: -210px;
-    bottom: -260px;
+
+    transition:
+        transform 1.1s cubic-bezier(.16,1,.3,1),
+        border-color .7s ease;
+}
+
+.module-panel::after {
+    content: "";
+
+    position: absolute;
+
+    width: 1px;
+    height: 150%;
+
+    left: 50%;
+    top: -25%;
+
+    background: rgba(255,255,255,.055);
+
+    transform: rotate(45deg) scaleY(.4);
+
+    transform-origin: center;
+
     transition:
         transform 1s cubic-bezier(.16,1,.3,1),
-        border-color .5s ease;
-    z-index: -1;
+        background .7s ease;
 }
 
-.systems-page .system-card::after {
-    content: "";
-    position: absolute;
-    width: 280px;
-    height: 1px;
-    background: rgba(184,255,56,.45);
-    right: -70px;
-    bottom: 55px;
-    transform: rotate(-45deg) scaleX(0);
-    transform-origin: right center;
-    transition:
-        transform .8s cubic-bezier(.16,1,.3,1);
-    z-index: -1;
-}
 
 /* =========================================================
-   CARD TEXT
+   PANEL META
    ========================================================= */
 
-.systems-page .module-top,
-.systems-page .module-bottom {
-    display: flex;
-    justify-content: space-between;
-    color: #55585b;
-    font: 9px monospace;
-    letter-spacing: .18em;
-    text-transform: uppercase;
+.panel-number,
+.panel-category,
+.panel-action {
+    position: relative;
+    z-index: 3;
+
+    font-family: "DM Mono", monospace;
+    font-size: 9px;
+    letter-spacing: .16em;
 }
 
-.systems-page .module-content {
+.panel-number {
+    color: var(--dim);
+}
+
+.panel-category {
     position: absolute;
-    left: 30px;
-    bottom: 85px;
-    max-width: 600px;
+    top: 27px;
+    right: 29px;
+
+    color: var(--dim);
 }
 
-.systems-page .module-content h3 {
-    margin: 0 0 20px;
-    font-size: clamp(44px, 5vw, 76px);
-    line-height: .9;
-    letter-spacing: -.055em;
-}
-
-.systems-page .module-content p {
-    margin: 0;
-    max-width: 410px;
-    color: #777;
-    font-size: 14px;
-    line-height: 1.7;
-}
-
-.systems-page .module-bottom {
-    position: absolute;
-    left: 30px;
-    right: 30px;
-    bottom: 28px;
-}
-
-.systems-page .module-arrow {
-    font-size: 16px;
-    color: #666;
-    transition:
-        transform .5s cubic-bezier(.16,1,.3,1),
-        color .3s ease;
-}
 
 /* =========================================================
-   HOVER — SUBTLE, NOT EYE-SHOCKING
+   PANEL TITLE
    ========================================================= */
 
-.systems-page .system-card:hover {
+.panel-title {
+    position: absolute;
+
+    left: 29px;
+    bottom: 91px;
+
+    z-index: 3;
+
+    font-size: clamp(45px, 5.3vw, 82px);
+    line-height: .82;
+
+    letter-spacing: -.065em;
+    font-weight: 800;
+
+    transition:
+        transform .75s cubic-bezier(.16,1,.3,1),
+        letter-spacing .75s ease;
+}
+
+.panel-description {
+    position: absolute;
+
+    left: 30px;
+    bottom: 29px;
+
+    max-width: 390px;
+
+    z-index: 3;
+
+    color: var(--muted);
+
+    font-size: 12px;
+    line-height: 1.65;
+
+    transition:
+        opacity .5s ease,
+        transform .7s cubic-bezier(.16,1,.3,1);
+}
+
+.panel-action {
+    position: absolute;
+
+    right: 29px;
+    bottom: 29px;
+
+    z-index: 3;
+
+    color: var(--dim);
+
+    transition:
+        color .4s ease,
+        transform .7s cubic-bezier(.16,1,.3,1);
+}
+
+.panel-action span {
+    margin-left: 8px;
+}
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
+.module-panel:hover {
     background: rgba(255,255,255,.025);
 }
 
-.systems-page .system-card:hover::before {
-    transform: scale(1.35);
-    border-color: rgba(184,255,56,.22);
+.module-panel:hover::before {
+    transform: scale(1.45);
+
+    border-color: rgba(184,255,56,.2);
 }
 
-.systems-page .system-card:hover::after {
-    transform: rotate(-45deg) scaleX(1);
+.module-panel:hover::after {
+    transform: rotate(45deg) scaleY(1.2);
+
+    background: rgba(184,255,56,.18);
 }
 
-.systems-page .system-card:hover .module-arrow {
-    color: var(--accent);
-    transform: translate(5px,-5px);
+.module-panel:hover .panel-title {
+    transform: translateX(7px);
+    letter-spacing: -.052em;
 }
 
-.systems-page .system-card:hover .module-content h3 {
-    transform: translateX(5px);
+.module-panel:hover .panel-action {
+    color: var(--acid);
+    transform: translate(4px,-4px);
 }
 
-.systems-page .module-content h3 {
-    transition: transform .5s cubic-bezier(.16,1,.3,1);
+
+/* =========================================================
+   CINEMATIC SELECTION STATES
+   ========================================================= */
+
+.systems-page.system-transition .module-panel {
+    pointer-events: none;
 }
+
+.systems-page.system-transition .module-panel.is-receding {
+    opacity: .12;
+
+    transform:
+        scale(.96)
+        translateY(12px);
+
+    filter: blur(1px);
+}
+
+.systems-page.system-transition .module-panel.is-selected {
+    z-index: 20;
+
+    background: rgba(255,255,255,.035);
+
+    transform:
+        scale(1.025);
+
+    box-shadow:
+        0 0 0 1px rgba(184,255,56,.16);
+}
+
+.systems-page.system-transition .module-panel.is-selected::before {
+    transform: scale(2.2);
+
+    border-color: rgba(184,255,56,.38);
+}
+
+.systems-page.system-transition .module-panel.is-selected::after {
+    transform:
+        rotate(45deg)
+        scaleY(2);
+}
+
+.systems-page.system-transition .module-panel.is-selected .panel-title {
+    transform: translateX(18px);
+}
+
+.systems-page.system-transition .module-panel.is-selected .panel-description {
+    transform: translateY(8px);
+    opacity: .55;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.experience-footer {
+    position: relative;
+    z-index: 5;
+
+    min-height: 52px;
+
+    padding: 0 4vw;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+
+    border-top: 1px solid var(--soft-line);
+
+    color: var(--dim);
+
+    font-family: "DM Mono", monospace;
+    font-size: 8px;
+    letter-spacing: .14em;
+}
+
+.experience-footer span:nth-child(2) {
+    text-align: center;
+}
+
+.experience-footer span:last-child {
+    text-align: right;
+}
+
 
 /* =========================================================
    MOBILE
@@ -324,50 +618,69 @@ body.systems-page {
 
     .systems-page .system-header {
         padding: 0 20px;
+        grid-template-columns: 1fr auto;
     }
 
     .systems-page .system-nav {
         display: none;
     }
 
-    .systems-page .systems-hero {
-        padding: 70px 20px 50px;
+    .systems-page .system-status {
+        font-size: 8px;
     }
 
-    .systems-page .section-intro {
-        grid-template-columns: 1fr;
-        gap: 35px;
-        margin-bottom: 55px;
+    .system-intro {
+        padding: 90px 20px 55px;
     }
 
-    .systems-page .section-intro h1,
-    .systems-page .section-intro h2 {
-        font-size: clamp(48px, 14vw, 85px);
+    .system-intro h1 {
+        font-size: clamp(52px, 15vw, 90px);
     }
 
-    .systems-page .system-grid {
-        margin: 0 20px;
+    .module-selector {
+        margin: 0 20px 60px;
+
         grid-template-columns: 1fr;
     }
 
-    .systems-page .system-card,
-    .systems-page .system-card-wide {
+    .module-panel,
+    .module-panel-wide {
         grid-column: auto;
-        min-height: 340px;
+
+        min-height: 330px;
     }
 
-    .systems-page .module-content {
-        left: 22px;
-        bottom: 75px;
+    .experience-geometry {
+        width: 125vw;
+        height: 125vw;
+
+        left: 75%;
+
+        opacity: .28;
     }
 
-    .systems-page .module-bottom {
-        left: 22px;
-        right: 22px;
+    .experience-footer {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        padding: 15px 20px;
+    }
+
+    .experience-footer span:nth-child(2) {
+        display: none;
+    }
+
+    .experience-footer span:last-child {
+        text-align: right;
     }
 }
 
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
 @media (prefers-reduced-motion: reduce) {
+
     .systems-page *,
     .systems-page *::before,
     .systems-page *::after {
