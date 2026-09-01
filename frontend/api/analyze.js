@@ -321,9 +321,7 @@ Do not claim structural danger from an image alone.
                     ],
 
                     generationConfig: {
-
-                        temperature: 0.1,
-
+                        
                         responseMimeType:
                             "application/json"
 
