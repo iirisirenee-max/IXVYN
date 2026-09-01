@@ -5,16 +5,29 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <meta name="description"
-          content="IXVYN LENS — Understand where you are before deciding where to go.">
+    <meta
+        name="description"
+        content="IXVYN LENS — Visual infrastructure intelligence."
+    >
 
     <title>IXVYN — LENS</title>
 
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="lens.css">
+    <!-- Existing global IXVYN styles -->
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <!-- LENS styles -->
+    <link
+        rel="stylesheet"
+        href="lens.css"
+    >
 
 </head>
 
@@ -22,18 +35,18 @@
 <body class="lens-page">
 
 
-    <!-- =================================================
+    <!-- =====================================================
          HEADER
-    ================================================== -->
+    ====================================================== -->
 
     <header class="system-header">
 
-        <a href="index.html"
-           class="wordmark"
-           aria-label="IXVYN home">
-
+        <a
+            href="index.html"
+            class="wordmark"
+            aria-label="IXVYN home"
+        >
             I X V Y N
-
         </a>
 
 
@@ -62,25 +75,30 @@
 
 
 
-    <!-- =================================================
+    <!-- =====================================================
          LENS EXPERIENCE
-    ================================================== -->
+    ====================================================== -->
 
     <main class="lens-experience">
 
 
         <!-- =================================================
-             BACKGROUND
+             IXVYN GEOMETRY
         ================================================== -->
 
-        <div class="lens-geometry"
-             aria-hidden="true">
+        <div
+            class="lens-geometry"
+            aria-hidden="true"
+        >
 
             <div class="lens-ring lens-ring-a"></div>
+
             <div class="lens-ring lens-ring-b"></div>
+
             <div class="lens-ring lens-ring-c"></div>
 
             <div class="lens-axis lens-axis-x"></div>
+
             <div class="lens-axis lens-axis-y"></div>
 
             <div class="lens-focus"></div>
@@ -90,17 +108,17 @@
 
 
         <!-- =================================================
-             PROGRESS
+             SYSTEM IDENTIFICATION
         ================================================== -->
 
         <div class="lens-progress">
 
-            <span id="progress-label">
-                LENS / 01 — INTENT
+            <span>
+                LENS / VISUAL INSPECTION
             </span>
 
-            <span id="progress-count">
-                01 / 03
+            <span id="system-state">
+                READY
             </span>
 
         </div>
@@ -108,175 +126,171 @@
 
 
         <!-- =================================================
-             STEP 01 — INTENT
+             HERO
         ================================================== -->
 
         <section
-            class="lens-step is-active"
-            data-step="1">
+            class="lens-inspection"
+            id="inspection"
+        >
 
             <p class="eyebrow">
-                LENS / DIAGNOSTIC
+                IXVYN / LENS
             </p>
+
 
             <h1>
-                WHAT ARE YOU
-                <span>TRYING TO ACHIEVE?</span>
+
+                SEE WHAT THE
+                <span>CITY CANNOT.</span>
+
             </h1>
 
+
             <p class="lens-lead">
-                Tell IXVYN what you're trying to
-                learn, explore, build, or accomplish.
+
+                Visual intelligence for detecting,
+                classifying, and prioritizing visible
+                infrastructure anomalies.
+
             </p>
 
 
-            <div class="input-block">
 
-                <label for="intent">
-                    YOUR INTENTION
-                </label>
+            <!-- =================================================
+                 INPUT AREA
+            ================================================== -->
 
-                <textarea
-                    id="intent"
-                    name="intent"
-                    rows="5"
-                    maxlength="1000"
-                    placeholder="I want to..."
-                    autocomplete="off"></textarea>
+            <div
+                class="inspection-input"
+                id="inspection-input"
+            >
 
-                <div class="input-meta">
+
+                <div class="inspection-input-header">
 
                     <span>
-                        Be as specific as you want.
+                        VISUAL INPUT
                     </span>
 
-                    <span id="intent-count">
-                        0 / 1000
+                    <span>
+                        FRAME / 001
                     </span>
+
+                </div>
+
+
+
+                <label
+                    class="upload-zone"
+                    for="image-input"
+                    id="upload-zone"
+                >
+
+                    <div class="upload-cross">
+                        +
+                    </div>
+
+
+                    <strong>
+                        DROP IMAGE
+                    </strong>
+
+
+                    <span>
+                        OR SELECT A FRAME FOR ANALYSIS
+                    </span>
+
+
+                    <input
+                        type="file"
+                        id="image-input"
+                        accept="image/*"
+                        hidden
+                    >
+
+                </label>
+
+
+
+                <div class="inspection-controls">
+
+                    <button
+                        type="button"
+                        class="lens-button"
+                        id="analyze-button"
+                        disabled
+                    >
+
+                        INITIATE ANALYSIS
+
+                        <span>
+                            ↗
+                        </span>
+
+                    </button>
 
                 </div>
 
             </div>
 
 
-            <button
-                class="lens-button"
-                id="intent-next"
-                type="button">
 
-                CONTINUE
+            <!-- =================================================
+                 IMAGE PREVIEW
+            ================================================== -->
 
-                <span>↗</span>
+            <div
+                class="inspection-preview"
+                id="inspection-preview"
+                hidden
+            >
 
-            </button>
+                <div class="inspection-preview-header">
 
-        </section>
+                    <span>
+                        SOURCE FRAME
+                    </span>
 
-
-
-        <!-- =================================================
-             STEP 02 — CURRENT STATE
-        ================================================== -->
-
-        <section
-            class="lens-step"
-            data-step="2">
-
-            <p class="eyebrow">
-                LENS / CURRENT STATE
-            </p>
-
-            <h1>
-                WHERE ARE
-                <span>YOU NOW?</span>
-            </h1>
-
-            <p class="lens-lead">
-                There are no right answers.
-                IXVYN needs your starting point,
-                not a perfect description.
-            </p>
-
-
-            <div class="input-grid">
-
-
-                <div class="input-block">
-
-                    <label for="knowledge">
-                        WHAT DO YOU ALREADY KNOW?
-                    </label>
-
-                    <textarea
-                        id="knowledge"
-                        rows="5"
-                        maxlength="800"
-                        placeholder="I already know..."
-                        autocomplete="off"></textarea>
+                    <span id="file-name">
+                        —
+                    </span>
 
                 </div>
 
 
+                <div class="preview-stage">
 
-                <div class="input-block">
+                    <img
+                        id="preview-image"
+                        src=""
+                        alt="Selected infrastructure frame"
+                    >
 
-                    <label for="experience">
-                        WHAT HAVE YOU ALREADY TRIED?
-                    </label>
 
-                    <textarea
-                        id="experience"
-                        rows="5"
-                        maxlength="800"
-                        placeholder="I've tried..."
-                        autocomplete="off"></textarea>
+                    <div
+                        class="scan-line"
+                        id="scan-line"
+                    ></div>
+
+
+                    <div
+                        class="scan-corner scan-corner-tl"
+                    ></div>
+
+                    <div
+                        class="scan-corner scan-corner-tr"
+                    ></div>
+
+                    <div
+                        class="scan-corner scan-corner-bl"
+                    ></div>
+
+                    <div
+                        class="scan-corner scan-corner-br"
+                    ></div>
 
                 </div>
-
-
-
-                <div class="input-block input-block-wide">
-
-                    <label for="interest">
-                        WHAT MAKES YOU CURIOUS ABOUT THIS?
-                    </label>
-
-                    <textarea
-                        id="interest"
-                        rows="4"
-                        maxlength="800"
-                        placeholder="I'm curious because..."
-                        autocomplete="off"></textarea>
-
-                </div>
-
-            </div>
-
-
-            <div class="step-actions">
-
-                <button
-                    class="lens-button lens-button-secondary"
-                    id="state-back"
-                    type="button">
-
-                    <span>↖</span>
-
-                    BACK
-
-                </button>
-
-
-                <button
-                    class="lens-button"
-                    id="analyze-button"
-                    type="button">
-
-                    ANALYZE
-
-                    <span>↗</span>
-
-                </button>
 
             </div>
 
@@ -284,169 +298,320 @@
 
 
 
-        <!-- =================================================
-             STEP 03 — DIAGNOSIS
-        ================================================== -->
+        <!-- =====================================================
+             ANALYSIS STATE
+        ====================================================== -->
 
         <section
-            class="lens-step diagnosis-step"
-            data-step="3">
+            class="inspection-analysis"
+            id="analysis-state"
+            hidden
+        >
 
-            <div class="diagnosis-header">
+            <div class="analysis-header">
 
                 <div>
 
                     <p class="eyebrow">
-                        LENS / DIAGNOSIS
+                        LENS / ANALYSIS
                     </p>
 
-                    <h1>
-                        YOUR CURRENT
-                        <span>STATE.</span>
-                    </h1>
+                    <h2>
+                        PROCESSING
+                        <span>FRAME.</span>
+                    </h2>
 
                 </div>
 
 
-                <div class="diagnosis-marker">
-                    IXVYN / ANALYSIS
-                </div>
-
-            </div>
-
-
-
-            <!-- =================================================
-                 STATE METRICS
-            ================================================== -->
-
-            <div class="metrics-grid">
-
-
-                <div class="metric">
-
-                    <span class="metric-label">
-                        KNOWLEDGE
-                    </span>
-
-                    <strong id="metric-knowledge">
-                        —
-                    </strong>
-
-                    <div class="metric-line">
-                        <span id="bar-knowledge"></span>
-                    </div>
-
-                </div>
-
-
-
-                <div class="metric">
-
-                    <span class="metric-label">
-                        EXPERIENCE
-                    </span>
-
-                    <strong id="metric-experience">
-                        —
-                    </strong>
-
-                    <div class="metric-line">
-                        <span id="bar-experience"></span>
-                    </div>
-
-                </div>
-
-
-
-                <div class="metric">
-
-                    <span class="metric-label">
-                        EXPOSURE
-                    </span>
-
-                    <strong id="metric-exposure">
-                        —
-                    </strong>
-
-                    <div class="metric-line">
-                        <span id="bar-exposure"></span>
-                    </div>
-
-                </div>
-
-
-
-                <div class="metric">
-
-                    <span class="metric-label">
-                        CLARITY
-                    </span>
-
-                    <strong id="metric-clarity">
-                        —
-                    </strong>
-
-                    <div class="metric-line">
-                        <span id="bar-clarity"></span>
-                    </div>
-
+                <div
+                    class="analysis-status"
+                    id="analysis-status"
+                >
+                    INITIALIZING
                 </div>
 
             </div>
 
 
 
-            <!-- =================================================
-                 GAPS
-            ================================================== -->
+            <div class="analysis-console">
 
-            <div class="diagnosis-section">
-
-                <div class="diagnosis-section-heading">
+                <div class="analysis-line">
 
                     <span>
                         01
                     </span>
 
-                    <h2>
-                        GAPS IDENTIFIED
-                    </h2>
+                    <span>
+                        FRAME RECEIVED
+                    </span>
+
+                    <strong>
+                        <span id="progress-frame">
+                            100
+                        </span>%
+                    </strong>
 
                 </div>
 
 
-                <div
-                    class="gap-list"
-                    id="gap-list">
+                <div class="analysis-bar">
+
+                    <span id="bar-frame"></span>
+
                 </div>
 
-            </div>
 
 
-
-            <!-- =================================================
-                 NEXT EVIDENCE
-            ================================================== -->
-
-            <div class="diagnosis-section">
-
-                <div class="diagnosis-section-heading">
+                <div class="analysis-line">
 
                     <span>
                         02
                     </span>
 
+                    <span>
+                        VISUAL ANALYSIS
+                    </span>
+
+                    <strong>
+                        <span id="progress-vision">
+                            0
+                        </span>%
+                    </strong>
+
+                </div>
+
+
+                <div class="analysis-bar">
+
+                    <span id="bar-vision"></span>
+
+                </div>
+
+
+
+                <div class="analysis-line">
+
+                    <span>
+                        03
+                    </span>
+
+                    <span>
+                        DEFECT CLASSIFICATION
+                    </span>
+
+                    <strong>
+                        <span id="progress-classification">
+                            0
+                        </span>%
+                    </strong>
+
+                </div>
+
+
+                <div class="analysis-bar">
+
+                    <span id="bar-classification"></span>
+
+                </div>
+
+
+
+                <div class="analysis-line">
+
+                    <span>
+                        04
+                    </span>
+
+                    <span>
+                        SEVERITY ASSESSMENT
+                    </span>
+
+                    <strong>
+                        <span id="progress-severity">
+                            0
+                        </span>%
+                    </strong>
+
+                </div>
+
+
+                <div class="analysis-bar">
+
+                    <span id="bar-severity"></span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             RESULTS
+        ====================================================== -->
+
+        <section
+            class="inspection-results"
+            id="inspection-results"
+            hidden
+        >
+
+            <div class="results-header">
+
+                <div>
+
+                    <p class="eyebrow">
+                        IXVYN / LENS
+                    </p>
+
                     <h2>
-                        NEXT EVIDENCE
+                        ANOMALY
+                        <span>DETECTED.</span>
                     </h2>
 
                 </div>
 
 
-                <div
-                    class="next-list"
-                    id="next-list">
+                <div class="results-marker">
+                    FRAME / ANALYZED
+                </div>
+
+            </div>
+
+
+
+            <div class="results-grid">
+
+
+                <!-- IMAGE -->
+
+                <div class="result-visual">
+
+                    <div class="result-label">
+                        VISUAL EVIDENCE
+                    </div>
+
+
+                    <div class="result-image-stage">
+
+                        <img
+                            id="result-image"
+                            src=""
+                            alt="Analyzed infrastructure frame"
+                        >
+
+
+                        <div
+                            class="result-overlay"
+                            id="result-overlay"
+                        >
+
+                            <span>
+                                ANOMALY
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- INTELLIGENCE -->
+
+                <div class="result-intelligence">
+
+                    <div class="intelligence-block">
+
+                        <span class="metric-label">
+                            DEFECT
+                        </span>
+
+                        <strong
+                            id="result-defect"
+                        >
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="intelligence-block">
+
+                        <span class="metric-label">
+                            CONFIDENCE
+                        </span>
+
+                        <strong>
+
+                            <span id="result-confidence">
+                                —
+                            </span>%
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="intelligence-block">
+
+                        <span class="metric-label">
+                            SEVERITY
+                        </span>
+
+                        <strong
+                            id="result-severity"
+                        >
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="intelligence-block">
+
+                        <span class="metric-label">
+                            PRIORITY
+                        </span>
+
+                        <strong
+                            id="result-priority"
+                        >
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="intelligence-description">
+
+                        <span class="metric-label">
+                            ANALYSIS
+                        </span>
+
+                        <p id="result-description">
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <div class="intelligence-action">
+
+                        <span class="metric-label">
+                            RECOMMENDED ACTION
+                        </span>
+
+                        <p id="result-action">
+                            —
+                        </p>
+
+                    </div>
+
                 </div>
 
             </div>
@@ -454,30 +619,77 @@
 
 
             <!-- =================================================
-                 FOOTER ACTIONS
+                 LOCATION
+            ================================================== -->
+
+            <div class="location-panel">
+
+                <div>
+
+                    <span class="metric-label">
+                        SPATIAL RECORD
+                    </span>
+
+                    <strong>
+                        INSPECTION LOCATION
+                    </strong>
+
+                </div>
+
+
+                <div class="coordinates">
+
+                    <span>
+                        LAT
+                        <strong id="result-lat">
+                            —
+                        </strong>
+                    </span>
+
+                    <span>
+                        LON
+                        <strong id="result-lon">
+                            —
+                        </strong>
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 ACTIONS
             ================================================== -->
 
             <div class="diagnosis-actions">
 
                 <button
                     class="lens-button lens-button-secondary"
-                    id="diagnosis-back"
-                    type="button">
+                    id="new-inspection"
+                    type="button"
+                >
 
-                    <span>↖</span>
+                    <span>
+                        ↺
+                    </span>
 
-                    REASSESS
+                    NEW INSPECTION
 
                 </button>
 
 
                 <a
                     href="systems.html"
-                    class="lens-button lens-link">
+                    class="lens-button lens-link"
+                >
 
                     RETURN TO SYSTEMS
 
-                    <span>↗</span>
+                    <span>
+                        ↗
+                    </span>
 
                 </a>
 
@@ -487,9 +699,9 @@
 
 
 
-        <!-- =================================================
+        <!-- =====================================================
              FOOTER
-        ================================================== -->
+        ====================================================== -->
 
         <footer class="lens-footer">
 
@@ -498,14 +710,15 @@
             </span>
 
             <span>
-                DIAGNOSTIC SYSTEM
+                VISUAL INTELLIGENCE SYSTEM
             </span>
 
             <span>
-                BUILD 001
+                BUILD 002
             </span>
 
         </footer>
+
 
     </main>
 
