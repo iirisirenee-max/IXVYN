@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        PROCESS FILE
-       ===================================================== */
+    ===================================================== */
 
     function processFile(file) {
 
@@ -202,8 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        selectedFile =
-            file;
+        selectedFile = file;
 
 
         /* ---------------------------------------------
@@ -215,7 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
             URL.revokeObjectURL(
                 selectedImageURL
             );
-
         }
 
 
@@ -234,7 +232,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultImage.src =
                 selectedImageURL;
-
         }
 
 
@@ -246,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             fileName.textContent =
                 file.name;
-
         }
 
 
@@ -287,7 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        DRAG AND DROP
-       ===================================================== */
+    ===================================================== */
 
     uploadZone.addEventListener(
         "dragover",
@@ -298,7 +294,6 @@ document.addEventListener("DOMContentLoaded", () => {
             uploadZone.classList.add(
                 "is-dragging"
             );
-
         }
     );
 
@@ -310,7 +305,6 @@ document.addEventListener("DOMContentLoaded", () => {
             uploadZone.classList.remove(
                 "is-dragging"
             );
-
         }
     );
 
@@ -339,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        ANALYSIS BUTTON
-       ===================================================== */
+    ===================================================== */
 
     analyzeButton.addEventListener(
         "click",
@@ -349,7 +343,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        BEGIN REAL ANALYSIS
-       ===================================================== */
+    ===================================================== */
 
     async function beginAnalysis() {
 
@@ -364,10 +358,8 @@ document.addEventListener("DOMContentLoaded", () => {
         analysisRunning =
             true;
 
-
         analyzeButton.disabled =
             true;
-
 
         systemState.textContent =
             "ANALYZING";
@@ -426,10 +418,10 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
 
             /*
-             * Start REAL AI request immediately.
+             * Start the REAL AI request immediately.
              *
-             * While Gemini is analyzing the image,
-             * IXVYN runs its visual interface animation.
+             * While Gemini is processing,
+             * IXVYN runs the visual telemetry animation.
              */
 
             const aiRequest =
@@ -500,7 +492,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             await sleep(500);
 
-
             showResults();
 
 
@@ -541,7 +532,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        REAL GEMINI REQUEST
-       ===================================================== */
+    ===================================================== */
 
     async function analyzeImageWithGemini() {
 
@@ -552,9 +543,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /*
          * Resize/compress the image before sending it.
-         *
-         * This prevents huge phone photographs from
-         * producing unnecessarily large API requests.
          */
 
         const preparedImage =
@@ -594,9 +582,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /*
          * Read response as text first.
-         *
-         * This lets IXVYN see the REAL server error
-         * instead of blindly assuming valid JSON.
          */
 
         let data = null;
@@ -637,6 +622,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 data
             );
 
+
             throw new Error(
                 data?.details ||
                 data?.error ||
@@ -676,7 +662,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        PREPARE IMAGE
-       ===================================================== */
+    ===================================================== */
 
     function prepareImageForAI(file) {
 
@@ -697,10 +683,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         image.onload =
                             () => {
 
-                                /*
-                                 * Maximum dimension.
-                                 */
-
                                 const MAX_SIZE =
                                     1600;
 
@@ -713,10 +695,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                                 if (
-                                    width >
-                                    MAX_SIZE ||
-                                    height >
-                                    MAX_SIZE
+                                    width > MAX_SIZE ||
+                                    height > MAX_SIZE
                                 ) {
 
                                     const scale =
@@ -724,6 +704,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                             MAX_SIZE / width,
                                             MAX_SIZE / height
                                         );
+
 
                                     width =
                                         Math.round(
@@ -778,10 +759,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                                 /*
-                                 * JPEG keeps the request
-                                 * reasonably small while
-                                 * retaining enough detail
-                                 * for infrastructure inspection.
+                                 * JPEG keeps requests reasonably small
+                                 * while retaining enough detail.
                                  */
 
                                 const dataURL =
@@ -829,7 +808,6 @@ document.addEventListener("DOMContentLoaded", () => {
                                 "Could not load image file."
                             )
                         );
-
                     };
 
 
@@ -844,7 +822,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        RENDER REAL RESULT
-       ===================================================== */
+    ===================================================== */
 
     function renderResult(result) {
 
@@ -862,7 +840,6 @@ document.addEventListener("DOMContentLoaded", () => {
             resultDefect.textContent =
                 result.defect ||
                 "NO ACTIONABLE ANOMALY";
-
         }
 
 
@@ -882,7 +859,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 Number.isFinite(confidence)
                     ? `${confidence.toFixed(1)}%`
                     : "—";
-
         }
 
 
@@ -895,7 +871,6 @@ document.addEventListener("DOMContentLoaded", () => {
             resultSeverity.textContent =
                 result.severity ||
                 "—";
-
         }
 
 
@@ -908,7 +883,6 @@ document.addEventListener("DOMContentLoaded", () => {
             resultPriority.textContent =
                 result.priority ||
                 "—";
-
         }
 
 
@@ -922,7 +896,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 result.description ||
                 result.analysis ||
                 "No actionable infrastructure anomaly was identified.";
-
         }
 
 
@@ -936,7 +909,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 result.recommendedAction ||
                 result.action ||
                 "No immediate action recommended.";
-
         }
 
 
@@ -951,7 +923,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultImage.src =
                 selectedImageURL;
-
         }
 
 
@@ -979,12 +950,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             systemState.textContent =
                 "ANOMALY DETECTED";
-
         }
 
 
         /* ---------------------------------------------
-           REAL DETECTION BOX
+           REAL AI DETECTION BOX
         --------------------------------------------- */
 
         renderBoundingBox(
@@ -1015,6 +985,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderBoundingBox(boundingBox) {
 
         if (!resultOverlay) {
+
             console.warn(
                 "IXVYN LENS: Result overlay element not found."
             );
@@ -1024,12 +995,232 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-         * If there is no anomaly, hide the box.
+         * No usable detection → hide overlay.
          */
 
         if (
             !boundingBox ||
-            !isValidBoundingBox(boundingBox)
+            typeof boundingBox !== "object"
+        ) {
+
+            resultOverlay.style.display =
+                "none";
+
+            resultOverlay.removeAttribute(
+                "data-ai-detection"
+            );
+
+            return;
+        }
+
+
+        let x;
+        let y;
+        let width;
+        let height;
+
+
+        /*
+         * =================================================
+         * FORMAT 1
+         *
+         * Gemini may return:
+         *
+         * {
+         *     xmin,
+         *     ymin,
+         *     xmax,
+         *     ymax
+         * }
+         * =================================================
+         */
+
+        if (
+            Number.isFinite(
+                Number(boundingBox.xmin)
+            ) &&
+            Number.isFinite(
+                Number(boundingBox.ymin)
+            ) &&
+            Number.isFinite(
+                Number(boundingBox.xmax)
+            ) &&
+            Number.isFinite(
+                Number(boundingBox.ymax)
+            )
+        ) {
+
+            const xmin =
+                Number(boundingBox.xmin);
+
+            const ymin =
+                Number(boundingBox.ymin);
+
+            const xmax =
+                Number(boundingBox.xmax);
+
+            const ymax =
+                Number(boundingBox.ymax);
+
+
+            x =
+                xmin;
+
+            y =
+                ymin;
+
+            width =
+                xmax - xmin;
+
+            height =
+                ymax - ymin;
+
+
+            /*
+             * Gemini's normalized coordinate space
+             * is generally 0–1000.
+             *
+             * If the numbers are larger than 1,
+             * convert to percentages.
+             */
+
+            if (
+                Math.max(
+                    Math.abs(x),
+                    Math.abs(y),
+                    Math.abs(width),
+                    Math.abs(height)
+                ) > 1
+            ) {
+
+                x /= 10;
+                y /= 10;
+                width /= 10;
+                height /= 10;
+            }
+        }
+
+
+        /*
+         * =================================================
+         * FORMAT 2
+         *
+         * Existing IXVYN format:
+         *
+         * {
+         *     x,
+         *     y,
+         *     width,
+         *     height
+         * }
+         * =================================================
+         */
+
+        else if (
+            Number.isFinite(
+                Number(boundingBox.x)
+            ) &&
+            Number.isFinite(
+                Number(boundingBox.y)
+            ) &&
+            Number.isFinite(
+                Number(boundingBox.width)
+            ) &&
+            Number.isFinite(
+                Number(boundingBox.height)
+            )
+        ) {
+
+            x =
+                Number(boundingBox.x);
+
+            y =
+                Number(boundingBox.y);
+
+            width =
+                Number(boundingBox.width);
+
+            height =
+                Number(boundingBox.height);
+
+
+            /*
+             * Automatically detect coordinate scale.
+             *
+             * 0–1     = normalized
+             * 0–100   = percentage
+             * 0–1000  = Gemini normalized
+             */
+
+            const largestValue =
+                Math.max(
+                    Math.abs(x),
+                    Math.abs(y),
+                    Math.abs(width),
+                    Math.abs(height)
+                );
+
+
+            if (largestValue <= 1) {
+
+                x *= 100;
+                y *= 100;
+                width *= 100;
+                height *= 100;
+
+            } else if (largestValue <= 100) {
+
+                /*
+                 * Already percentage coordinates.
+                 */
+
+            } else {
+
+                /*
+                 * Gemini 0–1000 coordinate space.
+                 */
+
+                x /= 10;
+                y /= 10;
+                width /= 10;
+                height /= 10;
+            }
+        }
+
+
+        /*
+         * Unsupported format.
+         */
+
+        else {
+
+            console.warn(
+                "IXVYN LENS: Unsupported bounding box format.",
+                boundingBox
+            );
+
+            resultOverlay.style.display =
+                "none";
+
+            resultOverlay.removeAttribute(
+                "data-ai-detection"
+            );
+
+            return;
+        }
+
+
+        /*
+         * =================================================
+         * SANITY CHECK
+         * =================================================
+         */
+
+        if (
+            !Number.isFinite(x) ||
+            !Number.isFinite(y) ||
+            !Number.isFinite(width) ||
+            !Number.isFinite(height)
         ) {
 
             resultOverlay.style.display =
@@ -1044,28 +1235,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-         * Gemini returns coordinates normalized
-         * from 0 → 1000.
-         *
-         * Convert them to percentages.
+         * Repair reversed coordinates.
          */
 
-        let x =
-            Number(boundingBox.x) / 10;
+        if (width < 0) {
 
-        let y =
-            Number(boundingBox.y) / 10;
+            x += width;
+            width =
+                Math.abs(width);
+        }
 
-        let width =
-            Number(boundingBox.width) / 10;
 
-        let height =
-            Number(boundingBox.height) / 10;
+        if (height < 0) {
+
+            y += height;
+            height =
+                Math.abs(height);
+        }
 
 
         /*
-         * Clamp values so malformed AI output
-         * cannot push the box outside the image.
+         * =================================================
+         * CLAMP
+         * =================================================
          */
 
         x =
@@ -1075,6 +1267,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 100
             );
 
+
         y =
             clamp(
                 y,
@@ -1082,12 +1275,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 100
             );
 
+
         width =
             clamp(
                 width,
                 0,
                 100 - x
             );
+
 
         height =
             clamp(
@@ -1098,24 +1293,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-         * Apply directly to the existing IXVYN
-         * detection frame.
+         * Ignore unusably tiny boxes.
          */
+
+        if (
+            width < 1 ||
+            height < 1
+        ) {
+
+            resultOverlay.style.display =
+                "none";
+
+            resultOverlay.removeAttribute(
+                "data-ai-detection"
+            );
+
+            return;
+        }
+
+
+        /*
+         * =================================================
+         * APPLY DETECTION
+         * ================================================= */
 
         resultOverlay.style.display =
             "block";
 
+
         resultOverlay.style.left =
             `${x}%`;
+
 
         resultOverlay.style.top =
             `${y}%`;
 
+
         resultOverlay.style.width =
             `${width}%`;
 
+
         resultOverlay.style.height =
             `${height}%`;
+
 
         resultOverlay.setAttribute(
             "data-ai-detection",
@@ -1129,7 +1349,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 x,
                 y,
                 width,
-                height
+                height,
+                original: boundingBox
             }
         );
     }
@@ -1137,7 +1358,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        VALIDATE BOUNDING BOX
-       ===================================================== */
+    ===================================================== */
 
     function isValidBoundingBox(box) {
 
@@ -1170,11 +1391,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
 
-        /*
-         * A zero-sized box means Gemini did not
-         * identify a useful region.
-         */
-
         if (
             width <= 0 ||
             height <= 0
@@ -1190,7 +1406,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        CLAMP
-       ===================================================== */
+    ===================================================== */
 
     function clamp(
         value,
@@ -1210,7 +1426,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        GEOLOCATION
-       ===================================================== */
+    ===================================================== */
 
     function requestLocation() {
 
@@ -1297,7 +1513,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        SHOW RESULTS
-       ===================================================== */
+    ===================================================== */
 
     function showResults() {
 
@@ -1322,7 +1538,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        ERROR SCREEN
-       ===================================================== */
+    ===================================================== */
 
     function showAnalysisError(error) {
 
@@ -1330,7 +1546,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultDefect.textContent =
                 "ANALYSIS UNAVAILABLE";
-
         }
 
 
@@ -1338,7 +1553,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultConfidence.textContent =
                 "—";
-
         }
 
 
@@ -1346,7 +1560,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultSeverity.textContent =
                 "—";
-
         }
 
 
@@ -1354,7 +1567,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultPriority.textContent =
                 "—";
-
         }
 
 
@@ -1363,7 +1575,6 @@ document.addEventListener("DOMContentLoaded", () => {
             resultDescription.textContent =
                 error?.message ||
                 "The visual analysis could not be completed.";
-
         }
 
 
@@ -1371,7 +1582,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultAction.textContent =
                 "Please retry the inspection.";
-
         }
 
 
@@ -1379,7 +1589,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultImage.src =
                 selectedImageURL || "";
-
         }
 
 
@@ -1393,6 +1602,9 @@ document.addEventListener("DOMContentLoaded", () => {
             resultOverlay.style.display =
                 "none";
 
+            resultOverlay.removeAttribute(
+                "data-ai-detection"
+            );
         }
 
 
@@ -1412,7 +1624,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        NEW INSPECTION
-       ===================================================== */
+    ===================================================== */
 
     if (newInspection) {
 
@@ -1432,7 +1644,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         selectedFile =
             null;
-
 
         analysisRunning =
             false;
@@ -1473,7 +1684,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultImage.src =
                 "";
-
         }
 
 
@@ -1512,7 +1722,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             fileName.textContent =
                 "—";
-
         }
 
 
@@ -1520,7 +1729,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultDefect.textContent =
                 "—";
-
         }
 
 
@@ -1528,7 +1736,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultConfidence.textContent =
                 "—";
-
         }
 
 
@@ -1536,7 +1743,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultSeverity.textContent =
                 "—";
-
         }
 
 
@@ -1544,7 +1750,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultPriority.textContent =
                 "—";
-
         }
 
 
@@ -1552,7 +1757,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultDescription.textContent =
                 "—";
-
         }
 
 
@@ -1560,7 +1764,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultAction.textContent =
                 "—";
-
         }
 
 
@@ -1568,7 +1771,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultLat.textContent =
                 "—";
-
         }
 
 
@@ -1576,7 +1778,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultLon.textContent =
                 "—";
-
         }
 
 
@@ -1658,7 +1859,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        PROGRESS
-       ===================================================== */
+    ===================================================== */
 
     function setProgress(
         numberElement,
@@ -1670,7 +1871,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             numberElement.textContent =
                 Math.round(value);
-
         }
 
 
@@ -1678,14 +1878,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             barElement.style.width =
                 `${value}%`;
-
         }
     }
 
 
     /* =====================================================
        ANIMATE PROGRESS
-       ===================================================== */
+    ===================================================== */
 
     async function animateProgress(
         numberElement,
@@ -1749,7 +1948,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     } else {
 
                         resolve();
-
                     }
                 }
 
@@ -1764,7 +1962,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        UTILITY
-       ===================================================== */
+    ===================================================== */
 
     function sleep(
         milliseconds
@@ -1785,7 +1983,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        INITIAL STATE
-       ===================================================== */
+    ===================================================== */
 
     inspectionPreview.hidden =
         true;
@@ -1801,7 +1999,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /*
-     * Hide the detection box until Gemini actually
+     * Hide detection box until Gemini
      * supplies a valid bounding box.
      */
 
