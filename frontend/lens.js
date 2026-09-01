@@ -1,1036 +1,1204 @@
 /* =========================================================
-   IXVYN / PATHFINDER
-   Operational Response Routing
+   IXVYN — LENS / REAL VISUAL INFRASTRUCTURE INTELLIGENCE
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    console.log("IXVYN LENS visual intelligence online.");
+
+
     /* =====================================================
-       DOM
-       ===================================================== */
+       ELEMENTS
+    ===================================================== */
+
+    const imageInput =
+        document.getElementById("image-input");
+
+    const uploadZone =
+        document.getElementById("upload-zone");
+
+    const analyzeButton =
+        document.getElementById("analyze-button");
+
+    const inspectionInput =
+        document.getElementById("inspection-input");
+
+    const inspectionPreview =
+        document.getElementById("inspection-preview");
+
+    const previewImage =
+        document.getElementById("preview-image");
+
+    const fileName =
+        document.getElementById("file-name");
 
     const systemState =
         document.getElementById("system-state");
 
-    const evidenceCard =
-        document.getElementById("evidence-card");
+    const analysisState =
+        document.getElementById("analysis-state");
 
-    const evidenceState =
-        document.getElementById("evidence-state");
+    const analysisStatus =
+        document.getElementById("analysis-status");
 
-    const condition =
-        document.getElementById("condition");
+    const inspectionResults =
+        document.getElementById("inspection-results");
 
-    const evidenceSeverity =
-        document.getElementById("evidence-severity");
+    const resultImage =
+        document.getElementById("result-image");
 
-    const evidenceConfidence =
-        document.getElementById("evidence-confidence");
+    const resultDefect =
+        document.getElementById("result-defect");
 
-    const locationValue =
-        document.getElementById("location-value");
+    const resultConfidence =
+        document.getElementById("result-confidence");
 
-    const locationCoordinates =
-        document.getElementById("location-coordinates");
+    const resultSeverity =
+        document.getElementById("result-severity");
 
-    const evidenceDescription =
-        document.getElementById("evidence-description");
+    const resultPriority =
+        document.getElementById("result-priority");
 
-    const generateButton =
-        document.getElementById("generate-button");
+    const resultDescription =
+        document.getElementById("result-description");
 
-    const routingSection =
-        document.getElementById("routing-section");
+    const resultAction =
+        document.getElementById("result-action");
 
-    const routeCondition =
-        document.getElementById("route-condition");
+    const analysisTimer =
+        document.getElementById("analysis-timer");
 
-    const priorityFill =
-        document.getElementById("priority-fill");
+    const resultProcessingTime =
+        document.getElementById("result-processing-time");
 
-    const routePriority =
-        document.getElementById("route-priority");
+    const resultLat =
+        document.getElementById("result-lat");
 
-    const priorityReason =
-        document.getElementById("priority-reason");
+    const resultLon =
+        document.getElementById("result-lon");
 
-    const routeRisk =
-        document.getElementById("route-risk");
+    const newInspection =
+        document.getElementById("new-inspection");
 
-    const riskDescription =
-        document.getElementById("risk-description");
+    const saveMemoryButton =
+        document.getElementById("save-memory");
 
-    const routeDestination =
-        document.getElementById("route-destination");
 
-    const routeDescription =
-        document.getElementById("route-description");
+    let currentAnalysisResult = null;
+    let currentLatitude = null;
+    let currentLongitude = null;
+    let memorySaved = false;
 
-    const responseStep1 =
-        document.getElementById("response-step-1");
 
-    const responseStep2 =
-        document.getElementById("response-step-2");
+    /* =====================================================
+       PROGRESS ELEMENTS
+    ===================================================== */
 
-    const responseStep3 =
-        document.getElementById("response-step-3");
+    const progressVision =
+        document.getElementById("progress-vision");
 
-    const responseDescription =
-        document.getElementById("response-description");
+    const progressClassification =
+        document.getElementById("progress-classification");
 
-    const summarySection =
-        document.getElementById("summary-section");
+    const progressSeverity =
+        document.getElementById("progress-severity");
 
-    const summaryTitle =
-        document.getElementById("summary-title");
+    const barVision =
+        document.getElementById("bar-vision");
 
-    const summaryText =
-        document.getElementById("summary-text");
+    const barClassification =
+        document.getElementById("bar-classification");
 
-    const summaryPriority =
-        document.getElementById("summary-priority");
+    const barSeverity =
+        document.getElementById("bar-severity");
 
-    const summaryRoute =
-        document.getElementById("summary-route");
 
-    const summaryStatus =
-        document.getElementById("summary-status");
+    /* =====================================================
+       DETECTION OVERLAY
+    ===================================================== */
 
-    const newRouteButton =
-        document.getElementById("new-route");
+    const resultOverlay =
+        document.querySelector(".result-overlay");
 
 
     /* =====================================================
        STATE
-       ===================================================== */
+    ===================================================== */
 
-    let lensEvidence = null;
-    let routeGenerated = false;
+    let selectedFile = null;
+    let selectedImageURL = null;
+    let analysisRunning = false;
+
+    let analysisStartTime = null;
+    let analysisElapsedTime = null;
+    let analysisTimerInterval = null;
 
 
     /* =====================================================
-       HELPERS
-       ===================================================== */
+       SAFETY CHECK
+    ===================================================== */
 
-    function sleep(milliseconds) {
-        return new Promise(resolve => {
-            setTimeout(resolve, milliseconds);
-        });
+    if (
+        !imageInput ||
+        !uploadZone ||
+        !analyzeButton ||
+        !inspectionInput ||
+        !inspectionPreview ||
+        !previewImage ||
+        !analysisState ||
+        !inspectionResults
+    ) {
+
+        console.error(
+            "IXVYN LENS: Required interface elements are missing."
+        );
+
+        return;
     }
 
 
-    function safeText(value, fallback = "—") {
+    /* =====================================================
+       IMAGE INPUT
+    ===================================================== */
 
-        if (
-            value === undefined ||
-            value === null ||
-            value === ""
-        ) {
-            return fallback;
+    imageInput.addEventListener(
+        "change",
+        (event) => {
+
+            console.log(
+                "IXVYN LENS: File input changed."
+            );
+
+            const file =
+                event.target.files?.[0];
+
+            if (!file) {
+                return;
+            }
+
+            processFile(file);
         }
-
-        return String(value);
-    }
-
-
-    function normalize(value) {
-
-        return String(value || "")
-            .trim()
-            .toUpperCase();
-    }
+    );
 
 
     /* =====================================================
-       LOAD LENS EVIDENCE
-       ===================================================== */
+       UPLOAD ZONE
+    ===================================================== */
 
-    function loadLensEvidence() {
-
-        /*
-         * These are the REAL keys currently written
-         * by LENS.
-         */
-
-        const defect =
-            sessionStorage.getItem("sih_defect");
-
-        const severity =
-            sessionStorage.getItem("sih_severity");
-
-        const trigger =
-            sessionStorage.getItem("sih_trigger");
-
-        const latitude =
-            sessionStorage.getItem("sih_lat");
-
-        const longitude =
-            sessionStorage.getItem("sih_lon");
+    /*
+     * IMPORTANT:
+     * lens.html already uses:
+     *
+     * <label for="image-input">
+     *
+     * Therefore we intentionally DO NOT call
+     * imageInput.click() from another click handler.
+     *
+     * This avoids the duplicate native file-picker
+     * trigger that can break file selection on mobile.
+     */
 
 
-        /*
-         * PATHFINDER activates only when LENS has
-         * actually produced an inspection.
-         */
+    /* =====================================================
+       PROCESS FILE
+    ===================================================== */
+
+    function processFile(file) {
+
+        console.log(
+            "IXVYN LENS: Processing:",
+            file.name
+        );
 
         if (
-            trigger !== "true" ||
-            !defect ||
-            !severity
+            !file.type ||
+            !file.type.startsWith("image/")
         ) {
 
-            showWaitingState();
+            alert(
+                "Please select an image file."
+            );
 
             return;
         }
 
 
-        lensEvidence = {
+        selectedFile =
+            file;
 
-            defect: defect,
 
-            severity: severity,
+        /* ---------------------------------------------
+           CLEAN PREVIOUS OBJECT URL
+        --------------------------------------------- */
 
-            latitude:
-                latitude
-                    ? Number(latitude)
-                    : null,
+        if (selectedImageURL) {
 
-            longitude:
-                longitude
-                    ? Number(longitude)
-                    : null,
+            URL.revokeObjectURL(
+                selectedImageURL
+            );
+        }
 
-            confidence: null,
 
-            description:
-                "Infrastructure evidence forwarded from LENS visual inspection."
+        /* ---------------------------------------------
+           CREATE PREVIEW
+        --------------------------------------------- */
 
-        };
+        selectedImageURL =
+            URL.createObjectURL(file);
+
+        previewImage.src =
+            selectedImageURL;
+
+
+        if (resultImage) {
+
+            resultImage.src =
+                selectedImageURL;
+        }
+
+
+        /* ---------------------------------------------
+           FILE INFORMATION
+        --------------------------------------------- */
+
+        if (fileName) {
+
+            fileName.textContent =
+                file.name;
+        }
+
+
+        /* ---------------------------------------------
+           SHOW PREVIEW
+        --------------------------------------------- */
+
+        inspectionPreview.hidden =
+            false;
+
+
+        /* ---------------------------------------------
+           ENABLE ANALYSIS
+        --------------------------------------------- */
+
+        analyzeButton.disabled =
+            false;
+
+
+        /* ---------------------------------------------
+           SYSTEM STATE
+        --------------------------------------------- */
+
+        systemState.textContent =
+            "FRAME READY";
+
+
+        uploadZone.classList.add(
+            "has-file"
+        );
 
 
         console.log(
-            "[PATHFINDER] LENS evidence received:",
-            lensEvidence
-        );
-
-
-        populateEvidence(
-            lensEvidence
+            "IXVYN LENS: FRAME READY."
         );
     }
 
 
     /* =====================================================
-       WAITING STATE
-       ===================================================== */
+       DRAG AND DROP
+    ===================================================== */
 
-    function showWaitingState() {
+    uploadZone.addEventListener(
+        "dragover",
+        (event) => {
 
-        lensEvidence = null;
+            event.preventDefault();
 
-        evidenceCard.classList.remove(
-            "is-loaded"
-        );
-
-        evidenceState.textContent =
-            "WAITING";
-
-        condition.textContent =
-            "—";
-
-        evidenceSeverity.textContent =
-            "SEVERITY —";
-
-        evidenceConfidence.textContent =
-            "CONFIDENCE —";
-
-        locationValue.textContent =
-            "—";
-
-        locationCoordinates.textContent =
-            "NO COORDINATES";
-
-        evidenceDescription.textContent =
-            "No LENS inspection has been forwarded yet.";
-
-        generateButton.disabled =
-            true;
-
-        systemState.textContent =
-            "AWAITING EVIDENCE";
-    }
+            uploadZone.classList.add(
+                "is-dragging"
+            );
+        }
+    );
 
 
-    /* =====================================================
-       POPULATE EVIDENCE
-       ===================================================== */
+    uploadZone.addEventListener(
+        "dragleave",
+        () => {
 
-    function populateEvidence(data) {
-
-        evidenceCard.classList.add(
-            "is-loaded"
-        );
-
-        evidenceState.textContent =
-            "RECEIVED";
-
-        systemState.textContent =
-            "EVIDENCE RECEIVED";
-
-        generateButton.disabled =
-            false;
+            uploadZone.classList.remove(
+                "is-dragging"
+            );
+        }
+    );
 
 
-        const defect =
-            data.defect ||
-            data.classification ||
-            data.condition ||
-            data.label ||
-            "UNKNOWN CONDITION";
+    uploadZone.addEventListener(
+        "drop",
+        (event) => {
 
+            event.preventDefault();
 
-        const severity =
-            data.severity ||
-            "UNKNOWN";
+            uploadZone.classList.remove(
+                "is-dragging"
+            );
 
+            const file =
+                event.dataTransfer.files?.[0];
 
-        condition.textContent =
-            normalize(defect);
-
-
-        evidenceSeverity.textContent =
-            `SEVERITY ${normalize(severity)}`;
-
-
-        if (
-            data.confidence !== null &&
-            data.confidence !== undefined
-        ) {
-
-            const confidence =
-                parseFloat(data.confidence);
-
-
-            if (
-                Number.isFinite(confidence)
-            ) {
-
-                const percentage =
-                    confidence <= 1
-                        ? Math.round(confidence * 100)
-                        : Math.round(confidence);
-
-                evidenceConfidence.textContent =
-                    `CONFIDENCE ${percentage}%`;
-
-            } else {
-
-                evidenceConfidence.textContent =
-                    "CONFIDENCE —";
+            if (!file) {
+                return;
             }
 
-        } else {
-
-            evidenceConfidence.textContent =
-                "CONFIDENCE —";
+            processFile(file);
         }
-
-
-        evidenceDescription.textContent =
-            safeText(
-                data.description,
-                "Infrastructure evidence forwarded from LENS visual inspection."
-            );
-
-
-        /* -------------------------------------------------
-           LOCATION
-           ------------------------------------------------- */
-
-        const latitude =
-            data.latitude;
-
-        const longitude =
-            data.longitude;
-
-
-        if (
-            Number.isFinite(latitude) &&
-            Number.isFinite(longitude)
-        ) {
-
-            locationValue.textContent =
-                "GEOLOCATED";
-
-            locationCoordinates.textContent =
-                `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
-
-        } else {
-
-            locationValue.textContent =
-                "LOCATION PENDING";
-
-            locationCoordinates.textContent =
-                "NO COORDINATES";
-        }
-    }
+    );
 
 
     /* =====================================================
-       DECISION ENGINE
-       ===================================================== */
-
-    function deriveRoute(data) {
-
-        const defect =
-            normalize(
-                data.defect
-            );
-
-
-        const severity =
-            normalize(
-                data.severity
-            );
-
-
-        /* =================================================
-           PRIORITY
-           ================================================= */
-
-        let priority =
-            "MEDIUM";
-
-        let priorityScore =
-            62;
-
-
-        if (
-            severity.includes("CRITICAL") ||
-            severity.includes("SEVERE") ||
-            severity.includes("HIGH")
-        ) {
-
-            priority =
-                "HIGH";
-
-            priorityScore =
-                92;
-
-        } else if (
-            severity.includes("LOW") ||
-            severity.includes("MINOR")
-        ) {
-
-            priority =
-                "LOW";
-
-            priorityScore =
-                35;
-        }
-
-
-        /* =================================================
-           RISK
-           ================================================= */
-
-        let risk =
-            "INFRASTRUCTURE HAZARD";
-
-
-        let riskDescriptionText =
-            "Observed damage may affect safe use of public infrastructure.";
-
-
-        if (
-            defect.includes("POTHOLE")
-        ) {
-
-            risk =
-                "VEHICLE / PEDESTRIAN HAZARD";
-
-            riskDescriptionText =
-                "Road-surface damage may create collision, vehicle-damage, or pedestrian safety risk.";
-
-        } else if (
-            defect.includes("CRACK") ||
-            defect.includes("ROAD DAMAGE") ||
-            defect.includes("DAMAGE")
-        ) {
-
-            risk =
-                "ROAD SAFETY HAZARD";
-
-            riskDescriptionText =
-                "Surface deterioration may worsen with traffic and environmental exposure.";
-
-        } else if (
-            defect.includes("WASTE") ||
-            defect.includes("OBSTRUCTION") ||
-            defect.includes("DEBRIS")
-        ) {
-
-            risk =
-                "ACCESS / SANITATION HAZARD";
-
-            riskDescriptionText =
-                "The obstruction may restrict access, mobility, or normal public-space use.";
-        }
-
-
-        /* =================================================
-           ROUTE
-           ================================================= */
-
-        let route =
-            "INFRASTRUCTURE MAINTENANCE";
-
-
-        let routeDescriptionText =
-            "Forward the observation to the appropriate municipal maintenance workflow.";
-
-
-        if (
-            defect.includes("POTHOLE") ||
-            defect.includes("ROAD") ||
-            defect.includes("CRACK") ||
-            defect.includes("DAMAGE")
-        ) {
-
-            route =
-                "ROAD MAINTENANCE";
-
-            routeDescriptionText =
-                "Route to road-maintenance inspection and repair workflow.";
-
-        } else if (
-            defect.includes("WASTE") ||
-            defect.includes("OBSTRUCTION") ||
-            defect.includes("DEBRIS")
-        ) {
-
-            route =
-                "SANITATION / CLEARANCE";
-
-            routeDescriptionText =
-                "Route to clearance or sanitation response workflow.";
-        }
-
-
-        /* =================================================
-           RESPONSE
-           ================================================= */
-
-        let response = {
-
-            step1:
-                "INSPECT",
-
-            step2:
-                "REPAIR",
-
-            step3:
-                "VERIFY",
-
-            description:
-                "Inspect the reported condition, execute the appropriate intervention, then verify the outcome."
-
-        };
-
-
-        if (
-            defect.includes("WASTE") ||
-            defect.includes("OBSTRUCTION") ||
-            defect.includes("DEBRIS")
-        ) {
-
-            response = {
-
-                step1:
-                    "INSPECT",
-
-                step2:
-                    "CLEAR",
-
-                step3:
-                    "VERIFY",
-
-                description:
-                    "Inspect the obstruction, clear the affected area, then verify that access has been restored."
-
-            };
-        }
-
-
-        return {
-
-            condition:
-                defect ||
-                "UNKNOWN CONDITION",
-
-            priority,
-
-            priorityScore,
-
-            priorityReason:
-                `Priority derived from observed severity: ${severity || "UNSPECIFIED"}.`,
-
-            risk,
-
-            riskDescription:
-                riskDescriptionText,
-
-            route,
-
-            routeDescription:
-                routeDescriptionText,
-
-            response
-        };
-    }
+       ANALYSIS BUTTON
+    ===================================================== */
+
+    analyzeButton.addEventListener(
+        "click",
+        beginAnalysis
+    );
 
 
     /* =====================================================
-       GENERATE ROUTE
-       ===================================================== */
+       BEGIN REAL ANALYSIS
+    ===================================================== */
 
-    async function generateRoute() {
+    async function beginAnalysis() {
 
         if (
-            !lensEvidence ||
-            routeGenerated
+            !selectedFile ||
+            analysisRunning
         ) {
             return;
         }
 
 
-        routeGenerated =
+        analysisRunning =
             true;
 
-
-        generateButton.disabled =
+        analyzeButton.disabled =
             true;
-
-
-        generateButton
-            .querySelector(
-                "span:first-child"
-            )
-            .textContent =
-                "ROUTING EVIDENCE";
-
 
         systemState.textContent =
-            "ROUTING";
+            "ANALYZING";
 
 
-        const header =
-            document.querySelector(
-                ".pf-header"
-            );
+        /* =================================================
+           SHOW ANALYSIS SCREEN
+        ================================================= */
+
+        analysisState.hidden =
+            false;
+
+        inspectionInput.hidden =
+            true;
+
+        inspectionPreview.hidden =
+            true;
+
+        inspectionResults.hidden =
+            true;
 
 
-        if (header) {
-            header.classList.add(
-                "is-active"
-            );
-        }
-
-
-        clearRouteState();
-
-
-        const route =
-            deriveRoute(
-                lensEvidence
-            );
-
-
-        /* -------------------------------------------------
-           CONDITION
-           ------------------------------------------------- */
-
-        await sleep(450);
-
-
-        routeCondition.textContent =
-            route.condition;
-
-
-        activateNode(
-            "condition"
-        );
-
-
-        /* -------------------------------------------------
-           PRIORITY
-           ------------------------------------------------- */
-
-        await sleep(350);
-
-
-        routePriority.textContent =
-            route.priority;
-
-
-        priorityReason.textContent =
-            route.priorityReason;
-
-
-        activateNode(
-            "priority"
-        );
-
-
-        requestAnimationFrame(() => {
-
-            priorityFill.style.width =
-                `${route.priorityScore}%`;
-
+        analysisState.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
         });
 
 
-        /* -------------------------------------------------
-           RISK
-           ------------------------------------------------- */
+        /* =================================================
+           RESET PROGRESS
+        ================================================= */
 
-        await sleep(350);
+        setProgress(
+            progressVision,
+            barVision,
+            0
+        );
 
+        setProgress(
+            progressClassification,
+            barClassification,
+            0
+        );
 
-        routeRisk.textContent =
-            route.risk;
-
-
-        riskDescription.textContent =
-            route.riskDescription;
-
-
-        activateNode(
-            "risk"
+        setProgress(
+            progressSeverity,
+            barSeverity,
+            0
         );
 
 
-        /* -------------------------------------------------
-           ROUTE
-           ------------------------------------------------- */
-
-        await sleep(350);
+        analysisStatus.textContent =
+            "INITIALIZING";
 
 
-        routeDestination.textContent =
-            route.route;
+        try {
+
+            /* ---------------------------------------------
+               START REAL AI TIMER
+            --------------------------------------------- */
+
+            analysisStartTime =
+                performance.now();
+
+            analysisElapsedTime =
+                null;
 
 
-        routeDescription.textContent =
-            route.routeDescription;
+            if (analysisTimerInterval) {
+
+                clearInterval(
+                    analysisTimerInterval
+                );
+
+                analysisTimerInterval =
+                    null;
+            }
 
 
-        activateNode(
-            "route"
-        );
+            if (analysisTimer) {
+
+                analysisTimer.textContent =
+                    "0.00s";
+            }
 
 
-        /* -------------------------------------------------
-           RESPONSE
-           ------------------------------------------------- */
+            analysisTimerInterval =
+                setInterval(
+                    () => {
 
-        await sleep(350);
-
-
-        responseStep1.textContent =
-            route.response.step1;
-
-        responseStep2.textContent =
-            route.response.step2;
-
-        responseStep3.textContent =
-            route.response.step3;
-
-        responseDescription.textContent =
-            route.response.description;
+                        if (
+                            !Number.isFinite(
+                                analysisStartTime
+                            )
+                        ) {
+                            return;
+                        }
 
 
-        activateNode(
-            "response"
-        );
+                        const elapsed =
+                            (
+                                performance.now() -
+                                analysisStartTime
+                            ) / 1000;
 
 
-        routingSection.classList.add(
-            "is-generated"
-        );
+                        if (analysisTimer) {
+
+                            analysisTimer.textContent =
+                                `${elapsed.toFixed(2)}s`;
+                        }
+
+                    },
+                    50
+                );
 
 
-        /* -------------------------------------------------
-           SUMMARY
-           ------------------------------------------------- */
+            /*
+             * Start the REAL AI request immediately.
+             */
 
-        await sleep(500);
-
-
-        renderSummary(
-            route
-        );
+            const aiRequest =
+                analyzeImageWithGemini();
 
 
-        summarySection.classList.add(
-            "is-generated"
-        );
+            /* ---------------------------------------------
+               VISUAL ANALYSIS
+            --------------------------------------------- */
 
-
-        systemState.textContent =
-            "ROUTE IDENTIFIED";
-
-
-        generateButton
-            .querySelector(
-                "span:first-child"
-            )
-            .textContent =
-                "ROUTE GENERATED";
-
-
-        if (header) {
-
-            header.classList.remove(
-                "is-active"
-            );
-        }
-    }
-
-
-    /* =====================================================
-       ACTIVATE NODE
-       ===================================================== */
-
-    function activateNode(
-        nodeName
-    ) {
-
-        const node =
-            document.querySelector(
-                `.pf-route-node[data-node="${nodeName}"]`
+            await animateProgress(
+                progressVision,
+                barVision,
+                100,
+                1100,
+                "VISUAL ANALYSIS"
             );
 
 
-        if (!node) {
+            /* ---------------------------------------------
+               CLASSIFICATION
+            --------------------------------------------- */
+
+            await animateProgress(
+                progressClassification,
+                barClassification,
+                100,
+                900,
+                "DEFECT CLASSIFICATION"
+            );
+
+
+            /* ---------------------------------------------
+               SEVERITY
+            --------------------------------------------- */
+
+            await animateProgress(
+                progressSeverity,
+                barSeverity,
+                100,
+                700,
+                "SEVERITY ASSESSMENT"
+            );
+
+
+            /* ---------------------------------------------
+               WAIT FOR REAL AI RESULT
+            --------------------------------------------- */
+
+            const result =
+                await aiRequest;
+
+
+            /*
+             * Stop REAL timer when Gemini actually responds.
+             */
+
+            if (
+                Number.isFinite(
+                    analysisStartTime
+                )
+            ) {
+
+                analysisElapsedTime =
+                    (
+                        performance.now() -
+                        analysisStartTime
+                    ) / 1000;
+            }
+
+
+            if (analysisTimerInterval) {
+
+                clearInterval(
+                    analysisTimerInterval
+                );
+
+                analysisTimerInterval =
+                    null;
+            }
+
+
+            if (analysisTimer) {
+
+                analysisTimer.textContent =
+                    `${(
+                        analysisElapsedTime || 0
+                    ).toFixed(2)}s`;
+            }
+
+
+            if (resultProcessingTime) {
+
+                resultProcessingTime.textContent =
+                    `${(
+                        analysisElapsedTime || 0
+                    ).toFixed(2)}s`;
+            }
+
+
+            analysisStatus.textContent =
+                "ANALYSIS COMPLETE";
+
+
+            console.log(
+                "IXVYN LENS: REAL AI RESULT:",
+                result
+            );
+
+
+            renderResult(
+                result
+            );
+
+
+            await sleep(
+                500
+            );
+
+
+            showResults();
+
+
+        } catch (error) {
+
+            console.error(
+                "IXVYN LENS: Analysis failed:",
+                error
+            );
+
+
+            if (analysisTimerInterval) {
+
+                clearInterval(
+                    analysisTimerInterval
+                );
+
+                analysisTimerInterval =
+                    null;
+            }
+
+
+            analysisStatus.textContent =
+                "ANALYSIS FAILED";
+
+
+            showAnalysisError(
+                error
+            );
+
+
+            analysisRunning =
+                false;
+
+            analyzeButton.disabled =
+                false;
+
+            systemState.textContent =
+                "ANALYSIS ERROR";
+
             return;
         }
 
 
-        node.classList.add(
-            "is-active"
+        analysisRunning =
+            false;
+    }
+
+
+    /* =====================================================
+       REAL GEMINI REQUEST
+    ===================================================== */
+
+    async function analyzeImageWithGemini() {
+
+        console.log(
+            "IXVYN LENS: Preparing image for AI..."
         );
 
 
-        const previousLine =
-            node.previousElementSibling;
+        const preparedImage =
+            await prepareImageForAI(
+                selectedFile
+            );
+
+
+        console.log(
+            "IXVYN LENS: Sending frame to /api/analyze..."
+        );
+
+
+        const response =
+            await fetch(
+                "/api/analyze",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        image:
+                            preparedImage.data,
+
+                        mimeType:
+                            preparedImage.mimeType
+                    })
+                }
+            );
+
+
+        let data = null;
+
+        const responseText =
+            await response.text();
+
+
+        try {
+
+            data =
+                responseText
+                    ? JSON.parse(
+                        responseText
+                    )
+                    : null;
+
+        } catch (parseError) {
+
+            console.error(
+                "IXVYN: /api/analyze returned non-JSON:",
+                responseText
+            );
+
+            throw new Error(
+                `Analysis server returned HTTP ${response.status}.`
+            );
+        }
+
+
+        if (!response.ok) {
+
+            console.error(
+                "IXVYN: Analysis API error:",
+                response.status,
+                data
+            );
+
+            throw new Error(
+                data?.details ||
+                data?.error ||
+                data?.message ||
+                `Gemini analysis failed with HTTP ${response.status}.`
+            );
+        }
 
 
         if (
-            previousLine &&
-            previousLine.classList.contains(
-                "pf-route-line"
-            )
+            !data ||
+            data.success === false
         ) {
 
-            previousLine.classList.add(
-                "is-active"
+            throw new Error(
+                data?.details ||
+                data?.error ||
+                data?.message ||
+                "No valid analysis result was returned."
             );
         }
-    }
 
 
-    /* =====================================================
-       CLEAR ROUTE
-       ===================================================== */
-
-    function clearRouteState() {
-
-        document
-            .querySelectorAll(
-                ".pf-route-node"
-            )
-            .forEach(node => {
-
-                node.classList.remove(
-                    "is-active"
-                );
-
-            });
-
-
-        document
-            .querySelectorAll(
-                ".pf-route-line"
-            )
-            .forEach(line => {
-
-                line.classList.remove(
-                    "is-active"
-                );
-
-            });
-
-
-        routingSection.classList.remove(
-            "is-generated"
+        console.log(
+            "IXVYN LENS: Gemini analysis received:",
+            data
         );
 
 
-        summarySection.classList.remove(
-            "is-generated"
+        return data;
+    }
+
+
+    /* =====================================================
+       PREPARE IMAGE
+    ===================================================== */
+
+    function prepareImageForAI(file) {
+
+        return new Promise(
+            (resolve, reject) => {
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload =
+                    () => {
+
+                        const image =
+                            new Image();
+
+
+                        image.onload =
+                            () => {
+
+                                const MAX_SIZE =
+                                    1600;
+
+
+                                let width =
+                                    image.naturalWidth;
+
+                                let height =
+                                    image.naturalHeight;
+
+
+                                if (
+                                    width >
+                                        MAX_SIZE ||
+                                    height >
+                                        MAX_SIZE
+                                ) {
+
+                                    const scale =
+                                        Math.min(
+                                            MAX_SIZE /
+                                                width,
+                                            MAX_SIZE /
+                                                height
+                                        );
+
+
+                                    width =
+                                        Math.round(
+                                            width *
+                                            scale
+                                        );
+
+                                    height =
+                                        Math.round(
+                                            height *
+                                            scale
+                                        );
+                                }
+
+
+                                const canvas =
+                                    document.createElement(
+                                        "canvas"
+                                    );
+
+
+                                canvas.width =
+                                    width;
+
+                                canvas.height =
+                                    height;
+
+
+                                const context =
+                                    canvas.getContext(
+                                        "2d"
+                                    );
+
+
+                                if (!context) {
+
+                                    reject(
+                                        new Error(
+                                            "Could not prepare image."
+                                        )
+                                    );
+
+                                    return;
+                                }
+
+
+                                context.drawImage(
+                                    image,
+                                    0,
+                                    0,
+                                    width,
+                                    height
+                                );
+
+
+                                const dataURL =
+                                    canvas.toDataURL(
+                                        "image/jpeg",
+                                        0.82
+                                    );
+
+
+                                resolve({
+
+                                    data:
+                                        dataURL,
+
+                                    mimeType:
+                                        "image/jpeg"
+
+                                });
+                            };
+
+
+                        image.onerror =
+                            () => {
+
+                                reject(
+                                    new Error(
+                                        "Could not read the selected image."
+                                    )
+                                );
+                            };
+
+
+                        image.src =
+                            reader.result;
+                    };
+
+
+                reader.onerror =
+                    () => {
+
+                        reject(
+                            new Error(
+                                "Could not load image file."
+                            )
+                        );
+                    };
+
+
+                reader.readAsDataURL(
+                    file
+                );
+            }
         );
-
-
-        priorityFill.style.width =
-            "0%";
-
-
-        routeCondition.textContent =
-            "—";
-
-        routePriority.textContent =
-            "—";
-
-        routeRisk.textContent =
-            "—";
-
-        routeDestination.textContent =
-            "—";
-
-
-        priorityReason.textContent =
-            "Priority will be derived from severity.";
-
-
-        riskDescription.textContent =
-            "Potential impact will be assessed from the observed condition.";
-
-
-        routeDescription.textContent =
-            "Operational destination will be selected from the condition.";
-
-
-        responseStep1.textContent =
-            "INSPECT";
-
-        responseStep2.textContent =
-            "REPAIR";
-
-        responseStep3.textContent =
-            "VERIFY";
-
-
-        responseDescription.textContent =
-            "No response route generated.";
-
-
-        summaryTitle.textContent =
-            "AWAITING ROUTE";
-
-
-        summaryText.textContent =
-            "Forward evidence from LENS to generate an operational response.";
-
-
-        summaryPriority.textContent =
-            "—";
-
-        summaryRoute.textContent =
-            "—";
-
-        summaryStatus.textContent =
-            "PENDING";
     }
 
 
     /* =====================================================
-       SUMMARY
-       ===================================================== */
+       RENDER REAL RESULT
+    ===================================================== */
 
-    function renderSummary(
-        route
-    ) {
+    function renderResult(result) {
 
-        summaryTitle.textContent =
-            `${route.priority} RESPONSE`;
-
-
-        summaryText.textContent =
-            `PATHFINDER routed ${route.condition.toLowerCase()} through ${route.route.toLowerCase()} with a ${route.priority.toLowerCase()} operational priority.`;
+        if (!result) {
+            return;
+        }
 
 
-        summaryPriority.textContent =
-            route.priority;
+        /* ---------------------------------------------
+           DEFECT
+        --------------------------------------------- */
+
+        if (resultDefect) {
+
+            resultDefect.textContent =
+                result.defect ||
+                "NO ACTIONABLE ANOMALY";
+        }
 
 
-        summaryRoute.textContent =
-            route.route;
+        /* ---------------------------------------------
+           CONFIDENCE
+        --------------------------------------------- */
+
+        if (resultConfidence) {
+
+            const confidence =
+                result.confidence;
+
+            if (
+                typeof confidence ===
+                "number"
+            ) {
+
+                resultConfidence.textContent =
+                    `${Math.round(
+                        confidence <= 1
+                            ? confidence * 100
+                            : confidence
+                    )}%`;
+
+            } else {
+
+                resultConfidence.textContent =
+                    confidence ||
+                    "—";
+            }
+        }
 
 
-        summaryStatus.textContent =
-            "ROUTE CONFIRMED";
-    }
+        /* ---------------------------------------------
+           SEVERITY
+        --------------------------------------------- */
+
+        if (resultSeverity) {
+
+            resultSeverity.textContent =
+                result.severity ||
+                "UNASSESSED";
+        }
 
 
-    /* =====================================================
-       NEW ROUTE
-       ===================================================== */
+        /* ---------------------------------------------
+           PRIORITY
+        --------------------------------------------- */
 
-    function resetRoute() {
+        if (resultPriority) {
 
-        routeGenerated =
-            false;
-
-
-        clearRouteState();
-
-
-        generateButton.disabled =
-            !lensEvidence;
+            resultPriority.textContent =
+                result.priority ||
+                "REVIEW REQUIRED";
+        }
 
 
-        generateButton
-            .querySelector(
-                "span:first-child"
-            )
-            .textContent =
-                "GENERATE RESPONSE";
+        /* ---------------------------------------------
+           DESCRIPTION
+        --------------------------------------------- */
 
+        if (resultDescription) {
+
+            resultDescription.textContent =
+                result.description ||
+                "No additional visual description was returned.";
+        }
+
+
+        /* ---------------------------------------------
+           RECOMMENDED ACTION
+        --------------------------------------------- */
+
+        if (resultAction) {
+
+            resultAction.textContent =
+                result.recommended_action ||
+                result.action ||
+                "Inspect the identified condition.";
+        }
+
+
+        /* ---------------------------------------------
+           PROCESSING TIME
+        --------------------------------------------- */
+
+        if (resultProcessingTime) {
+
+            resultProcessingTime.textContent =
+                Number.isFinite(
+                    analysisElapsedTime
+                )
+                    ? `${analysisElapsedTime.toFixed(2)}s`
+                    : "—";
+        }
+
+
+        /* ---------------------------------------------
+           RESULT IMAGE
+        --------------------------------------------- */
+
+        if (resultImage) {
+
+            resultImage.src =
+                selectedImageURL || "";
+        }
+
+
+        /* ---------------------------------------------
+           RESULT OBJECT
+        --------------------------------------------- */
+
+        currentAnalysisResult =
+            result;
+
+
+        /* ---------------------------------------------
+           AI BOUNDING BOX
+        --------------------------------------------- */
+
+        if (resultOverlay) {
+
+            const box =
+                result.bounding_box ||
+                result.boundingBox ||
+                result.detection;
+
+
+            if (
+                box &&
+                typeof box ===
+                    "object"
+            ) {
+
+                const x =
+                    Number(
+                        box.x ??
+                        box.left ??
+                        box.x_min
+                    );
+
+                const y =
+                    Number(
+                        box.y ??
+                        box.top ??
+                        box.y_min
+                    );
+
+                const width =
+                    Number(
+                        box.width ??
+                        box.w ??
+                        (
+                            Number(box.x_max) -
+                            Number(box.x_min)
+                        )
+                    );
+
+                const height =
+                    Number(
+                        box.height ??
+                        box.h ??
+                        (
+                            Number(box.y_max) -
+                            Number(box.y_min)
+                        )
+                    );
+
+
+                if (
+                    Number.isFinite(x) &&
+                    Number.isFinite(y) &&
+                    Number.isFinite(width) &&
+                    Number.isFinite(height)
+                ) {
+
+                    resultOverlay.style.display =
+                        "block";
+
+                    resultOverlay.style.left =
+                        `${x <= 1 ? x * 100 : x}%`;
+
+                    resultOverlay.style.top =
+                        `${y <= 1 ? y * 100 : y}%`;
+
+                    resultOverlay.style.width =
+                        `${width <= 1 ? width * 100 : width}%`;
+
+                    resultOverlay.style.height =
+                        `${height <= 1 ? height * 100 : height}%`;
+
+                    resultOverlay.setAttribute(
+                        "data-ai-detection",
+                        "true"
+                    );
+                }
+            }
+        }
+
+
+        /* ---------------------------------------------
+           SYSTEM STATE
+        --------------------------------------------- */
 
         systemState.textContent =
-            lensEvidence
-                ? "EVIDENCE RECEIVED"
-                : "AWAITING EVIDENCE";
+            "FRAME ASSESSED";
+
+
+        /* ---------------------------------------------
+           LENS → PATHFINDER HANDOFF
+        --------------------------------------------- */
+
+        sessionStorage.setItem(
+            "sih_defect",
+            result.defect ||
+            "UNIFORMITY HAZARD"
+        );
+
+        sessionStorage.setItem(
+            "sih_severity",
+            result.severity ||
+            "HIGH // PRIORITY"
+        );
+
+        sessionStorage.setItem(
+            "sih_trigger",
+            "true"
+        );
+
+
+        console.log(
+            "IXVYN LENS: Evidence forwarded to PATHFINDER."
+        );
+
+
+        /* ---------------------------------------------
+           REQUEST LOCATION
+        --------------------------------------------- */
+
+        requestLocation();
     }
-
-
-    /* =====================================================
-       EVENTS
-       ===================================================== */
-
-    generateButton.addEventListener(
-        "click",
-        generateRoute
-    );
-
-
-    newRouteButton.addEventListener(
-        "click",
-        resetRoute
-    );
-
-
-    /* =====================================================
-       INITIALIZE
-       ===================================================== */
-
-    loadLensEvidence();
-
-
-    console.log(
-        "IXVYN PATHFINDER operational routing interface ready."
-    );
-
-});
