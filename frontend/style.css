@@ -1909,3 +1909,41 @@ body {
         right: 16px;
     }
 }
+/* =====================================================
+   IXVYN — DIRECTION MOBILE FIX
+   ===================================================== */
+
+@media (max-width: 800px) {
+
+    .direction {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .direction-main {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    .direction-main h2 {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+
+        font-size: clamp(2.4rem, 11vw, 4.8rem) !important;
+        line-height: 0.88;
+        letter-spacing: -0.075em;
+
+        margin-right: 0;
+        padding-right: 0;
+
+        overflow: hidden;
+        white-space: normal;
+        word-break: normal;
+        overflow-wrap: normal;
+    }
+
+}
