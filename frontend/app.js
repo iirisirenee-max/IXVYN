@@ -842,3 +842,195 @@ document
         );
 
     });
+/* =====================================================
+   IXVYN — CIVIC LOOP ACTIVATION
+   SEE → UNDERSTAND → RESPOND → ADAPT → REMEMBER
+   ===================================================== */
+
+const directionSection =
+    document.querySelector(".direction");
+
+const directionTitle =
+    directionSection?.querySelector(".direction-main h2");
+
+if (directionSection && directionTitle) {
+
+    const loopWords = [
+        "SEE.",
+        "UNDERSTAND.",
+        "RESPOND.",
+        "ADAPT.",
+        "REMEMBER."
+    ];
+
+
+    /* Build the five stages */
+
+    directionTitle.innerHTML = "";
+
+    loopWords.forEach((word, index) => {
+
+        const wordElement =
+            document.createElement("span");
+
+        wordElement.className =
+            "loop-word";
+
+        wordElement.textContent =
+            word;
+
+        wordElement.dataset.index =
+            index;
+
+        if (index === loopWords.length - 1) {
+            wordElement.classList.add("loop-outline");
+        }
+
+        directionTitle.appendChild(
+            wordElement
+        );
+
+    });
+
+
+    const loopWordsElements =
+        directionTitle.querySelectorAll(
+            ".loop-word"
+        );
+
+
+    /* -----------------------------------------------
+       Activate stages according to scroll position
+       ----------------------------------------------- */
+
+    const updateCivicLoop = () => {
+
+        const rect =
+            directionSection.getBoundingClientRect();
+
+        const viewportHeight =
+            window.innerHeight;
+
+
+        /*
+         * The loop progresses while the section
+         * moves through the viewport.
+         */
+
+        const start =
+            viewportHeight * 0.78;
+
+        const distance =
+            Math.max(
+                directionSection.offsetHeight -
+                viewportHeight * 0.35,
+                1
+            );
+
+        const progress =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    (start - rect.top) / distance
+                )
+            );
+
+
+        const activeIndex =
+            Math.min(
+                loopWords.length - 1,
+                Math.floor(
+                    progress *
+                    loopWords.length
+                )
+            );
+
+
+        loopWordsElements.forEach(
+            (wordElement, index) => {
+
+                wordElement.classList.remove(
+                    "loop-active",
+                    "loop-past"
+                );
+
+
+                if (index < activeIndex) {
+
+                    wordElement.classList.add(
+                        "loop-past"
+                    );
+
+                }
+
+
+                if (index === activeIndex) {
+
+                    wordElement.classList.add(
+                        "loop-active"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* Complete the loop */
+
+        if (activeIndex === loopWords.length - 1) {
+
+            directionSection.classList.add(
+                "loop-complete"
+            );
+
+        } else {
+
+            directionSection.classList.remove(
+                "loop-complete"
+            );
+
+        }
+
+    };
+
+
+    let loopTicking = false;
+
+
+    const requestLoopUpdate = () => {
+
+        if (loopTicking) {
+            return;
+        }
+
+        loopTicking = true;
+
+        requestAnimationFrame(() => {
+
+            updateCivicLoop();
+
+            loopTicking = false;
+
+        });
+
+    };
+
+
+    window.addEventListener(
+        "scroll",
+        requestLoopUpdate,
+        { passive: true }
+    );
+
+
+    window.addEventListener(
+        "resize",
+        requestLoopUpdate
+    );
+
+
+    updateCivicLoop();
+
+}
