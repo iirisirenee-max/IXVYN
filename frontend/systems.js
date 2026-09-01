@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        SAFETY CHECK
-    ===================================================== */
+       ===================================================== */
 
     if (
         !overlay ||
@@ -40,14 +40,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        SYSTEM DATA
-    ===================================================== */
+       ===================================================== */
 
     const systems = {
 
         lens: {
             title: "LENS",
             description:
-                "Discover the gaps between what you know and what you need.",
+                "Visual intelligence for detecting, classifying, and prioritizing visible infrastructure anomalies.",
             shape: "circle"
         },
 
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
         memory: {
             title: "MEMORY",
             description:
-                "Understand what is fading before it disappears — and bring it back.",
+                "Remember infrastructure conditions over time and preserve what has been detected.",
             shape: "circle"
         }
 
@@ -84,25 +84,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        STATE
-    ===================================================== */
+       ===================================================== */
 
     let activeSystem = null;
 
 
     /* =====================================================
        OPEN SYSTEM
-    ===================================================== */
+       ===================================================== */
 
     function openSystem(systemName) {
 
         const system =
             systems[systemName];
 
-        if (!system) return;
+        if (!system) {
+            return;
+        }
+
 
         activeSystem =
             systemName;
 
+
+        /* ---------------------------------------------
+           CONTENT
+        --------------------------------------------- */
 
         overlayTitle.textContent =
             system.title;
@@ -111,6 +118,10 @@ document.addEventListener("DOMContentLoaded", () => {
             system.description;
 
 
+        /* ---------------------------------------------
+           RESET SYSTEM CLASSES
+        --------------------------------------------- */
+
         overlay.classList.remove(
 
             "system-lens",
@@ -118,11 +129,16 @@ document.addEventListener("DOMContentLoaded", () => {
             "system-civic",
             "system-echo",
             "system-memory",
+
             "shape-circle",
             "shape-diamond"
 
         );
 
+
+        /* ---------------------------------------------
+           APPLY CURRENT SYSTEM
+        --------------------------------------------- */
 
         overlay.classList.add(
             `system-${systemName}`
@@ -133,17 +149,20 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
+        /* ---------------------------------------------
+           RESTART ANIMATION
+        --------------------------------------------- */
+
         overlay.classList.remove(
             "is-active"
         );
 
-
         void overlay.offsetWidth;
-
 
         overlay.classList.add(
             "is-active"
         );
+
 
         overlay.setAttribute(
             "aria-hidden",
@@ -154,6 +173,10 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.style.overflow =
             "hidden";
 
+
+        /* ---------------------------------------------
+           FOCUS RETURN BUTTON
+        --------------------------------------------- */
 
         setTimeout(() => {
 
@@ -174,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        CLOSE SYSTEM
-    ===================================================== */
+       ===================================================== */
 
     function closeSystem() {
 
@@ -198,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        PANEL INTERACTION
-    ===================================================== */
+       ===================================================== */
 
     panels.forEach((panel) => {
 
@@ -229,6 +252,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 /* =========================================
+                   MEMORY → REAL MEMORY EXPERIENCE
+                   ========================================= */
+
+                if (systemName === "memory") {
+
+                    window.location.href =
+                        "memory.html";
+
+                    return;
+                }
+
+
+                /* =========================================
                    PREVENT DOUBLE ACTIVATION
                    ========================================= */
 
@@ -237,6 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         "is-active"
                     )
                 ) {
+
                     return;
                 }
 
@@ -255,6 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     panel.classList.remove(
                         "is-opening"
                     );
+
 
                     openSystem(
                         systemName
@@ -279,6 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         "(prefers-reduced-motion: reduce)"
                     ).matches
                 ) {
+
                     return;
                 }
 
@@ -288,6 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         "is-active"
                     )
                 ) {
+
                     return;
                 }
 
@@ -308,6 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const rotateX =
                     ((y / rect.height) - 0.5)
                     * -1.2;
+
 
                 const rotateY =
                     ((x / rect.width) - 0.5)
@@ -343,7 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        RETURN BUTTON
-    ===================================================== */
+       ===================================================== */
 
     closeButton.addEventListener(
         "click",
@@ -357,7 +398,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        CLICK OUTSIDE
-    ===================================================== */
+       ===================================================== */
 
     overlay.addEventListener(
         "click",
@@ -377,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        ESCAPE KEY
-    ===================================================== */
+       ===================================================== */
 
     document.addEventListener(
         "keydown",
@@ -400,7 +441,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        INITIAL STATE
-    ===================================================== */
+       ===================================================== */
 
     overlay.setAttribute(
         "aria-hidden",
