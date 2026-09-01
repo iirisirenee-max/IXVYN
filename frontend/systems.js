@@ -1,62 +1,64 @@
+/* =========================================================
+   IXVYN — SYSTEMS INTERACTION
+   ========================================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
 
-    const panels = document.querySelectorAll(".module-panel");
-    const overlay = document.querySelector(".system-overlay");
-    const closeButton = document.querySelector(".overlay-close");
+    const panels =
+        document.querySelectorAll(".module-panel");
 
-    const activeSystem = document.getElementById("active-system");
-    const activeDescription = document.getElementById("active-description");
+    const overlay =
+        document.querySelector(".system-overlay");
 
-    if (!panels.length || !overlay) {
-        console.error("IXVYN: Systems interface not found.");
-        return;
-    }
+    const overlayTitle =
+        document.querySelector(".overlay-title");
+
+    const overlayDescription =
+        document.querySelector(".overlay-description");
+
+    const closeButton =
+        document.querySelector(".overlay-close");
 
 
     /* =====================================================
-       IXVYN SYSTEM DATA
+       SYSTEM DATA
     ===================================================== */
 
     const systems = {
 
         lens: {
             title: "LENS",
-            category: "DIAGNOSTIC",
             description:
                 "Discover the gaps between what you know and what you need.",
-            animation: "system-lens"
+            shape: "circle"
         },
 
         pathfinder: {
             title: "PATHFINDER",
-            category: "EXPLORATION",
             description:
                 "Explore possible futures through experience, not prediction.",
-            animation: "system-pathfinder"
+            shape: "diamond"
         },
 
         civic: {
             title: "CIVIC",
-            category: "DECODING",
             description:
                 "Transform complex public information into something people can act upon.",
-            animation: "system-civic"
+            shape: "diamond"
         },
 
         echo: {
             title: "ECHO",
-            category: "ADAPTATION",
             description:
                 "Shape information around the person, not the other way around.",
-            animation: "system-echo"
+            shape: "circle"
         },
 
         memory: {
             title: "MEMORY",
-            category: "RETENTION",
             description:
                 "Understand what is fading before it disappears — and bring it back.",
-            animation: "system-memory"
+            shape: "circle"
         }
 
     };
@@ -66,47 +68,69 @@ document.addEventListener("DOMContentLoaded", () => {
        OPEN SYSTEM
     ===================================================== */
 
-    function openSystem(key) {
+    function openSystem(systemName) {
 
-        const system = systems[key];
+        const system =
+            systems[systemName];
 
-        if (!system) {
-            console.error(`IXVYN: Unknown system "${key}".`);
-            return;
-        }
+        if (!system) return;
 
-        /* Remove any previous animation state */
-
-        Object.values(systems).forEach(item => {
-            overlay.classList.remove(item.animation);
-        });
-
-        overlay.classList.remove("is-active");
 
         /* Update content */
 
-        activeSystem.textContent = system.title;
-        activeDescription.textContent = system.description;
+        overlayTitle.textContent =
+            system.title;
 
-        overlay.setAttribute("aria-hidden", "false");
+        overlayDescription.textContent =
+            system.description;
 
-        /*
-         * Force a browser frame between removing and
-         * adding animation classes.
-         */
-        requestAnimationFrame(() => {
 
-            requestAnimationFrame(() => {
+        /* Remove old system classes */
 
-                overlay.classList.add("is-active");
-                overlay.classList.add(system.animation);
+        overlay.classList.remove(
+            "system-lens",
+            "system-pathfinder",
+            "system-civic",
+            "system-echo",
+            "system-memory",
+            "shape-circle",
+            "shape-diamond"
+        );
 
-            });
 
-        });
+        /* Add current system classes */
 
-        document.body.classList.add("system-is-open");
+        overlay.classList.add(
+            `system-${systemName}`,
+            `shape-${system.shape}`
+        );
 
+
+        /* Activate overlay */
+
+        overlay.classList.add(
+            "is-active"
+        );
+
+        overlay.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+
+        /* Lock page */
+
+        document.body.style.overflow =
+            "hidden";
+
+
+        /* Focus return button */
+
+        setTimeout(() => {
+
+            closeButton.focus();
+
+        }, 500);
     }
 
 
@@ -116,16 +140,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function closeSystem() {
 
-        overlay.classList.remove("is-active");
+        overlay.classList.remove(
+            "is-active"
+        );
 
-        Object.values(systems).forEach(item => {
-            overlay.classList.remove(item.animation);
-        });
+        overlay.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
-        overlay.setAttribute("aria-hidden", "true");
+        document.body.style.overflow =
+            "";
 
-        document.body.classList.remove("system-is-open");
 
+        /* Return focus to first panel if possible */
+
+        if (document.activeElement === closeButton) {
+
+            const activePanel =
+                document.querySelector(
+                    ".module-panel.is-opening"
+                );
+
+            if (activePanel) {
+                activePanel.focus();
+            }
+        }
     }
 
 
@@ -133,129 +173,157 @@ document.addEventListener("DOMContentLoaded", () => {
        PANEL INTERACTION
     ===================================================== */
 
-    panels.forEach(panel => {
+    panels.forEach((panel) => {
 
-        panel.addEventListener("click", () => {
+        panel.addEventListener(
+            "click",
+            () => {
 
-            const key = panel.dataset.system;
+                const systemName =
+                    panel.dataset.system;
 
-            if (!key || !systems[key]) {
-                console.error("IXVYN: Missing system data.");
-                return;
+                if (!systemName) return;
+
+
+                /* Small physical click response */
+
+                panel.classList.add(
+                    "is-opening"
+                );
+
+
+                setTimeout(() => {
+
+                    panel.classList.remove(
+                        "is-opening"
+                    );
+
+                    openSystem(
+                        systemName
+                    );
+
+                }, 180);
+
             }
+        );
 
-            /*
-             * Small response on the selected card before
-             * the full system experience opens.
-             */
 
-            panels.forEach(item => {
-                item.classList.remove("is-selected");
-            });
+        /* =================================================
+           POINTER TILT
+        ================================================= */
 
-            panel.classList.add("is-selected");
+        panel.addEventListener(
+            "pointermove",
+            (event) => {
 
-            openSystem(key);
+                if (
+                    window.matchMedia(
+                        "(prefers-reduced-motion: reduce)"
+                    ).matches
+                ) {
+                    return;
+                }
 
-        });
+
+                const rect =
+                    panel.getBoundingClientRect();
+
+
+                const x =
+                    event.clientX -
+                    rect.left;
+
+                const y =
+                    event.clientY -
+                    rect.top;
+
+
+                const rotateX =
+                    ((y / rect.height) - .5) *
+                    -1.2;
+
+                const rotateY =
+                    ((x / rect.width) - .5) *
+                    1.2;
+
+
+                panel.style.transform =
+                    `perspective(1000px)
+                     rotateX(${rotateX}deg)
+                     rotateY(${rotateY}deg)
+                     translateY(-3px)`;
+            }
+        );
+
+
+        panel.addEventListener(
+            "pointerleave",
+            () => {
+
+                panel.style.transform =
+                    "";
+            }
+        );
 
     });
 
 
     /* =====================================================
-       RETURN
+       CLOSE BUTTON
     ===================================================== */
 
-    if (closeButton) {
+    closeButton.addEventListener(
+        "click",
+        closeSystem
+    );
 
-        closeButton.addEventListener("click", () => {
 
-            closeSystem();
+    /* =====================================================
+       CLICK OUTSIDE CONTENT
+    ===================================================== */
 
-            panels.forEach(panel => {
-                panel.classList.remove("is-selected");
-            });
+    overlay.addEventListener(
+        "click",
+        (event) => {
 
-        });
+            if (
+                event.target === overlay
+            ) {
+                closeSystem();
+            }
 
-    }
+        }
+    );
 
 
     /* =====================================================
        ESCAPE KEY
     ===================================================== */
 
-    document.addEventListener("keydown", event => {
+    document.addEventListener(
+        "keydown",
+        (event) => {
 
-        if (event.key === "Escape") {
-
-            if (overlay.classList.contains("is-active")) {
+            if (
+                event.key === "Escape" &&
+                overlay.classList.contains(
+                    "is-active"
+                )
+            ) {
                 closeSystem();
-
-                panels.forEach(panel => {
-                    panel.classList.remove("is-selected");
-                });
             }
 
         }
-
-    });
-
-
-    /* =====================================================
-       POINTER GEOMETRY
-       Subtle movement only.
-    ===================================================== */
-
-    panels.forEach(panel => {
-
-        panel.addEventListener("pointermove", event => {
-
-            if (
-                window.matchMedia(
-                    "(prefers-reduced-motion: reduce)"
-                ).matches
-            ) {
-                return;
-            }
-
-            const rect = panel.getBoundingClientRect();
-
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-
-            const rotateX =
-                ((y / rect.height) - 0.5) * -1.5;
-
-            const rotateY =
-                ((x / rect.width) - 0.5) * 1.5;
-
-            panel.style.setProperty("--mx", `${x}px`);
-            panel.style.setProperty("--my", `${y}px`);
-
-            panel.style.transform =
-                `perspective(1200px)
-                 rotateX(${rotateX}deg)
-                 rotateY(${rotateY}deg)`;
-
-        });
-
-
-        panel.addEventListener("pointerleave", () => {
-
-            panel.style.transform = "";
-
-        });
-
-    });
+    );
 
 
     /* =====================================================
        INITIAL STATE
     ===================================================== */
 
-    overlay.setAttribute("aria-hidden", "true");
-
-    console.log("IXVYN systems interface online.");
+    overlay.setAttribute(
+        "aria-hidden",
+        "true"
+    );
 
 });
