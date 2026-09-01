@@ -108,7 +108,7 @@ To launch and run the entire IXVYN system node locally for inspection or staging
    ```bash
    npm start
    ```
-   Open your browser and direct it to `http://localhost:3000` to interact with the environment.
+   Open your browser and direct it to `http://localhost:3000` to interact with the environment..
 
 ---
 
