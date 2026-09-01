@@ -1,296 +1,622 @@
+/*
+=========================================================
+IXVYN — LENS / AI ANALYSIS API
+=========================================================
+
+Vercel Serverless Function
+
+Receives an image from IXVYN LENS and sends it to
+Google Gemini for visual infrastructure analysis.
+
+IMPORTANT:
+The Gemini API key stays on the server.
+It must be stored in Vercel Environment Variables as:
+
+GEMINI_API_KEY
+
+=========================================================
+*/
+
 export default async function handler(req, res) {
+
     /*
-     * IXVYN — LENS
-     * Real multimodal infrastructure analysis
-     */
+    =====================================================
+    METHOD CHECK
+    =====================================================
+    */
 
     if (req.method !== "POST") {
+
         return res.status(405).json({
-            error: "Method not allowed"
+            success: false,
+            error: "METHOD_NOT_ALLOWED"
         });
+
     }
 
+
+    /*
+    =====================================================
+    API KEY
+    =====================================================
+    */
+
+    const apiKey =
+        process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+
+        console.error(
+            "IXVYN: GEMINI_API_KEY is missing."
+        );
+
+        return res.status(500).json({
+            success: false,
+            error: "GEMINI_API_KEY_MISSING"
+        });
+
+    }
+
+
+    /*
+    =====================================================
+    READ REQUEST
+    =====================================================
+    */
+
     try {
-        const { image, mimeType } = req.body || {};
+
+        const body = req.body || {};
+
+        /*
+        Accept several possible names so the frontend
+        doesn't have to be rewritten just because the
+        image field has a different name.
+        */
+
+        let image =
+            body.image ||
+            body.imageData ||
+            body.dataUrl ||
+            body.base64;
+
+        let mimeType =
+            body.mimeType ||
+            body.mime_type ||
+            "image/jpeg";
+
+
+        /*
+        =================================================
+        IMAGE VALIDATION
+        =================================================
+        */
 
         if (!image) {
+
             return res.status(400).json({
-                error: "No image received."
+                success: false,
+                error: "NO_IMAGE_PROVIDED"
             });
+
         }
 
-        const apiKey = process.env.GEMINI_API_KEY;
 
-        if (!apiKey) {
-            return res.status(500).json({
-                error: "GEMINI_API_KEY is not configured."
-            });
+        /*
+        If the frontend sends:
+
+        data:image/jpeg;base64,AAAA...
+
+        remove the prefix because Gemini expects only
+        the base64 payload.
+        */
+
+        if (image.startsWith("data:")) {
+
+            const match =
+                image.match(
+                    /^data:([^;]+);base64,(.+)$/
+                );
+
+            if (match) {
+
+                mimeType =
+                    match[1];
+
+                image =
+                    match[2];
+
+            }
+
         }
 
-        /*
-         * Remove data:image/jpeg;base64,... if the browser
-         * sends a complete data URL.
-         */
-
-        const base64Image =
-            image.includes(",")
-                ? image.split(",")[1]
-                : image;
-
-        const detectedMimeType =
-            mimeType ||
-            (
-                image.startsWith("data:image/png")
-                    ? "image/png"
-                    : "image/jpeg"
-            );
 
         /*
-         * IXVYN inspection instructions.
-         */
+        Remove accidental whitespace.
+        */
+
+        image =
+            image.replace(/\s/g, "");
+
+
+        /*
+        =================================================
+        GEMINI PROMPT
+        =================================================
+        */
 
         const prompt = `
-You are IXVYN LENS, a visual infrastructure inspection
-system.
 
-Analyze the submitted image ONLY for visible,
-actionable infrastructure or civic anomalies.
+You are IXVYN LENS, a visual infrastructure
+inspection intelligence system.
+
+Analyze the submitted image for visible
+infrastructure or public-space anomalies.
+
+Your job is NOT to invent information.
+
+Only report an anomaly when there is visible
+evidence in the image.
 
 Possible categories include:
 
 - pothole
 - road-surface deformation
-- road crack
-- structural crack
-- exposed reinforcement
-- damaged pavement
+- pavement crack
 - drainage problem
-- standing water affecting infrastructure
-- damaged public infrastructure
-- illegal dumping / obstruction
-- other visible infrastructure anomaly
+- standing water
+- damaged sidewalk
+- exposed infrastructure
+- garbage accumulation
+- structural crack
+- damaged road edge
+- obstruction
+- other visible civic infrastructure anomaly
+- no significant anomaly
 
-IMPORTANT:
+Return ONLY valid JSON.
 
-1. Do NOT invent an anomaly.
-2. Do NOT assume that every image contains a defect.
-3. If the evidence is insufficient, return no_actionable_anomaly.
-4. Do not claim structural danger from appearance alone.
-5. Confidence must reflect visual evidence.
-6. Severity is an inspection priority, NOT a statement that
-   a structure is unsafe.
-7. Do not invent GPS coordinates.
-8. Bounding boxes must use normalized coordinates from
-   0 to 1000 in this order:
-   [ymin, xmin, ymax, xmax]
+Use exactly this structure:
 
-Return exactly the requested JSON structure.
+{
+  "anomalyDetected": true,
+  "defect": "POTHOLE",
+  "confidence": 96.8,
+  "severity": "HIGH",
+  "priority": "P1",
+  "analysis": "Short explanation of what is visibly present.",
+  "recommendedAction": "Short practical inspection or maintenance recommendation.",
+  "location": {
+    "lat": null,
+    "lon": null
+  },
+  "boundingBox": {
+    "x": 0,
+    "y": 0,
+    "width": 0,
+    "height": 0
+  }
+}
+
+IMPORTANT RULES:
+
+1. confidence must be a number from 0 to 100.
+
+2. severity must be one of:
+   LOW
+   MEDIUM
+   HIGH
+   CRITICAL
+
+3. priority must be one of:
+   P1
+   P2
+   P3
+   P4
+
+4. Do NOT fabricate GPS coordinates.
+   If the image contains no geographic metadata,
+   return null for lat and lon.
+
+5. boundingBox must describe the approximate
+   location of the main visible anomaly.
+
+6. Bounding box coordinates must be normalized
+   from 0 to 1000.
+
+   x = left position
+   y = top position
+   width = box width
+   height = box height
+
+7. If there is no clear anomaly:
+
+{
+  "anomalyDetected": false,
+  "defect": "NO_SIGNIFICANT_ANOMALY",
+  "confidence": 0,
+  "severity": "LOW",
+  "priority": "P4",
+  "analysis": "No clear infrastructure anomaly is visible.",
+  "recommendedAction": "No immediate action recommended.",
+  "location": {
+    "lat": null,
+    "lon": null
+  },
+  "boundingBox": {
+    "x": 0,
+    "y": 0,
+    "width": 0,
+    "height": 0
+  }
+}
+
+Be conservative.
+Do not claim structural danger from an image alone.
 `;
 
-        /*
-         * Gemini REST request.
-         */
 
-        const response = await fetch(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-            {
+
+        /*
+        =================================================
+        GOOGLE GEMINI REQUEST
+        =================================================
+
+        Current production Flash model:
+        gemini-3.7-flash
+        */
+
+        const endpoint =
+            "https://generativelanguage.googleapis.com/v1beta/models/" +
+            "gemini-3.7-flash:generateContent";
+
+
+        const response =
+            await fetch(endpoint, {
+
                 method: "POST",
 
                 headers: {
-                    "Content-Type": "application/json",
-                    "x-goog-api-key": apiKey
+
+                    "Content-Type":
+                        "application/json",
+
+                    "x-goog-api-key":
+                        apiKey
+
                 },
 
                 body: JSON.stringify({
+
                     contents: [
+
                         {
+
+                            role: "user",
+
                             parts: [
+
                                 {
                                     text: prompt
                                 },
+
                                 {
+
                                     inline_data: {
+
                                         mime_type:
-                                            detectedMimeType,
+                                            mimeType,
+
                                         data:
-                                            base64Image
+                                            image
+
                                     }
+
                                 }
+
                             ]
+
                         }
+
                     ],
 
                     generationConfig: {
+
                         temperature: 0.1,
 
                         responseMimeType:
-                            "application/json",
+                            "application/json"
 
-                        responseSchema: {
-                            type: "object",
-
-                            properties: {
-
-                                status: {
-                                    type: "string",
-                                    enum: [
-                                        "anomaly_detected",
-                                        "no_actionable_anomaly"
-                                    ]
-                                },
-
-                                defect: {
-                                    type: "string"
-                                },
-
-                                confidence: {
-                                    type: "number"
-                                },
-
-                                severity: {
-                                    type: "string",
-                                    enum: [
-                                        "LOW",
-                                        "MEDIUM",
-                                        "HIGH"
-                                    ]
-                                },
-
-                                priority: {
-                                    type: "string",
-                                    enum: [
-                                        "P1",
-                                        "P2",
-                                        "P3"
-                                    ]
-                                },
-
-                                description: {
-                                    type: "string"
-                                },
-
-                                recommendedAction: {
-                                    type: "string"
-                                },
-
-                                box_2d: {
-                                    type: "array",
-                                    items: {
-                                        type: "integer"
-                                    }
-                                }
-                            },
-
-                            required: [
-                                "status",
-                                "defect",
-                                "confidence",
-                                "severity",
-                                "priority",
-                                "description",
-                                "recommendedAction",
-                                "box_2d"
-                            ]
-                        }
                     }
-                })
-            }
-        );
 
-        const data = await response.json();
+                })
+
+            });
+
+
+
+        /*
+        =================================================
+        GEMINI ERROR
+        =================================================
+        */
 
         if (!response.ok) {
 
+            const errorText =
+                await response.text();
+
             console.error(
-                "Gemini API error:",
+                "IXVYN Gemini error:",
+                errorText
+            );
+
+            return res.status(
+                response.status
+            ).json({
+
+                success: false,
+
+                error:
+                    "GEMINI_REQUEST_FAILED",
+
+                details:
+                    errorText
+
+            });
+
+        }
+
+
+
+        /*
+        =================================================
+        READ GEMINI RESPONSE
+        =================================================
+        */
+
+        const data =
+            await response.json();
+
+
+        const text =
+            data
+                ?.candidates?.[0]
+                ?.content?.parts?.[0]
+                ?.text;
+
+
+        if (!text) {
+
+            console.error(
+                "IXVYN: Gemini returned no text.",
                 data
             );
 
-            return res.status(500).json({
+            return res.status(502).json({
+
+                success: false,
+
                 error:
-                    data?.error?.message ||
-                    "Gemini analysis failed."
+                    "EMPTY_GEMINI_RESPONSE"
+
             });
+
         }
+
+
 
         /*
-         * Extract Gemini text.
-         */
+        =================================================
+        PARSE JSON
+        =================================================
+        */
 
-        const text =
-            data?.candidates?.[0]?.content?.parts
-                ?.map(part => part.text || "")
-                .join("")
-                .trim();
-
-        if (!text) {
-            return res.status(500).json({
-                error:
-                    "Gemini returned no analysis."
-            });
-        }
-
-        let result;
+        let analysis;
 
         try {
 
-            result = JSON.parse(text);
+            analysis =
+                JSON.parse(text);
 
         } catch (parseError) {
 
-            console.error(
-                "Invalid Gemini JSON:",
-                text
-            );
+            /*
+            Gemini occasionally wraps JSON in
+            markdown fences.
 
-            return res.status(500).json({
-                error:
-                    "Gemini returned invalid structured data."
-            });
+            Try to recover it.
+            */
+
+            const cleaned =
+                text
+                    .replace(
+                        /```json/gi,
+                        ""
+                    )
+                    .replace(
+                        /```/g,
+                        ""
+                    )
+                    .trim();
+
+            try {
+
+                analysis =
+                    JSON.parse(cleaned);
+
+            } catch (secondError) {
+
+                console.error(
+                    "IXVYN: Could not parse Gemini JSON.",
+                    text
+                );
+
+                return res.status(502).json({
+
+                    success: false,
+
+                    error:
+                        "INVALID_GEMINI_JSON",
+
+                    raw:
+                        text
+
+                });
+
+            }
+
         }
 
+
+
         /*
-         * Normalize confidence.
-         */
+        =================================================
+        NORMALIZE RESPONSE
+        =================================================
+        */
+
+        const result = {
+
+            success: true,
+
+            anomalyDetected:
+                Boolean(
+                    analysis.anomalyDetected
+                ),
+
+            defect:
+                analysis.defect ||
+                "UNKNOWN",
+
+            confidence:
+                Number(
+                    analysis.confidence || 0
+                ),
+
+            severity:
+                analysis.severity ||
+                "LOW",
+
+            priority:
+                analysis.priority ||
+                "P4",
+
+            analysis:
+                analysis.analysis ||
+                "No analysis available.",
+
+            recommendedAction:
+                analysis.recommendedAction ||
+                "Please retry the inspection.",
+
+            location: {
+
+                lat:
+                    analysis.location?.lat ??
+                    null,
+
+                lon:
+                    analysis.location?.lon ??
+                    null
+
+            },
+
+            boundingBox: {
+
+                x:
+                    Number(
+                        analysis.boundingBox?.x || 0
+                    ),
+
+                y:
+                    Number(
+                        analysis.boundingBox?.y || 0
+                    ),
+
+                width:
+                    Number(
+                        analysis.boundingBox?.width || 0
+                    ),
+
+                height:
+                    Number(
+                        analysis.boundingBox?.height || 0
+                    )
+
+            }
+
+        };
+
+
+
+        /*
+        =================================================
+        SAFETY CLAMP
+        =================================================
+        */
 
         result.confidence =
             Math.max(
                 0,
                 Math.min(
                     100,
-                    Number(result.confidence) || 0
+                    result.confidence
                 )
             );
 
+
         /*
-         * Never allow a fake bounding box.
-         */
+        =================================================
+        LOG
+        =================================================
+        */
 
-        if (
-            !Array.isArray(result.box_2d) ||
-            result.box_2d.length !== 4
-        ) {
-            result.box_2d = [
-                0,
-                0,
-                0,
-                0
-            ];
-        }
+        console.log(
+            "IXVYN LENS analysis:",
+            result.defect,
+            result.confidence + "%",
+            result.severity,
+            result.priority
+        );
 
-        return res.status(200).json(result);
+
+        /*
+        =================================================
+        RETURN RESULT
+        =================================================
+        */
+
+        return res.status(200).json(
+            result
+        );
+
 
     } catch (error) {
 
+        /*
+        =================================================
+        UNEXPECTED ERROR
+        =================================================
+        */
+
         console.error(
-            "IXVYN analysis error:",
+            "IXVYN ANALYSIS ERROR:",
             error
         );
 
         return res.status(500).json({
+
+            success: false,
+
             error:
-                error.message ||
-                "Unexpected analysis error."
+                "INTERNAL_ANALYSIS_ERROR",
+
+            message:
+                error.message
+
         });
+
     }
+
 }
