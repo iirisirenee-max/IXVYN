@@ -21,6 +21,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
+       SAFETY CHECK
+    ===================================================== */
+
+    if (
+        !overlay ||
+        !overlayTitle ||
+        !overlayDescription ||
+        !closeButton
+    ) {
+        console.warn(
+            "IXVYN: Systems interface could not initialize."
+        );
+
+        return;
+    }
+
+
+    /* =====================================================
        SYSTEM DATA
     ===================================================== */
 
@@ -28,40 +46,61 @@ document.addEventListener("DOMContentLoaded", () => {
 
         lens: {
             title: "LENS",
+
             description:
                 "Discover the gaps between what you know and what you need.",
+
             shape: "circle"
         },
+
 
         pathfinder: {
             title: "PATHFINDER",
+
             description:
                 "Explore possible futures through experience, not prediction.",
+
             shape: "diamond"
         },
+
 
         civic: {
             title: "CIVIC",
+
             description:
                 "Transform complex public information into something people can act upon.",
+
             shape: "diamond"
         },
 
+
         echo: {
             title: "ECHO",
+
             description:
                 "Shape information around the person, not the other way around.",
+
             shape: "circle"
         },
 
+
         memory: {
             title: "MEMORY",
+
             description:
                 "Understand what is fading before it disappears — and bring it back.",
+
             shape: "circle"
         }
 
     };
+
+
+    /* =====================================================
+       STATE
+    ===================================================== */
+
+    let activeSystem = null;
 
 
     /* =====================================================
@@ -76,7 +115,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!system) return;
 
 
-        /* Update content */
+        activeSystem =
+            systemName;
+
+
+        /* ---------------------------------------------
+           UPDATE CONTENT
+        --------------------------------------------- */
 
         overlayTitle.textContent =
             system.title;
@@ -85,28 +130,65 @@ document.addEventListener("DOMContentLoaded", () => {
             system.description;
 
 
-        /* Remove old system classes */
+        /* ---------------------------------------------
+           REMOVE PREVIOUS SYSTEM CLASSES
+        --------------------------------------------- */
 
         overlay.classList.remove(
+
             "system-lens",
+
             "system-pathfinder",
+
             "system-civic",
+
             "system-echo",
+
             "system-memory",
+
             "shape-circle",
+
             "shape-diamond"
+
         );
 
 
-        /* Add current system classes */
+        /* ---------------------------------------------
+           APPLY CURRENT SYSTEM
+        --------------------------------------------- */
 
         overlay.classList.add(
-            `system-${systemName}`,
+            `system-${systemName}`
+        );
+
+        overlay.classList.add(
             `shape-${system.shape}`
         );
 
 
-        /* Activate overlay */
+        /* ---------------------------------------------
+           RESTART SYSTEM ANIMATION CLEANLY
+        --------------------------------------------- */
+
+        overlay.classList.remove(
+            "is-active"
+        );
+
+
+        /*
+        Force the browser to recognize the class removal
+        before activating it again.
+
+        This prevents animations from getting stuck when
+        switching between systems.
+        */
+
+        void overlay.offsetWidth;
+
+
+        /* ---------------------------------------------
+           ACTIVATE
+        --------------------------------------------- */
 
         overlay.classList.add(
             "is-active"
@@ -118,19 +200,32 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        /* Lock page */
+        /* ---------------------------------------------
+           LOCK BACKGROUND
+        --------------------------------------------- */
 
         document.body.style.overflow =
             "hidden";
 
 
-        /* Focus return button */
+        /* ---------------------------------------------
+           FOCUS RETURN BUTTON
+        --------------------------------------------- */
 
         setTimeout(() => {
 
-            closeButton.focus();
+            if (
+                overlay.classList.contains(
+                    "is-active"
+                )
+            ) {
+
+                closeButton.focus();
+
+            }
 
         }, 500);
+
     }
 
 
@@ -149,23 +244,14 @@ document.addEventListener("DOMContentLoaded", () => {
             "true"
         );
 
+
         document.body.style.overflow =
             "";
 
 
-        /* Return focus to first panel if possible */
+        activeSystem =
+            null;
 
-        if (document.activeElement === closeButton) {
-
-            const activePanel =
-                document.querySelector(
-                    ".module-panel.is-opening"
-                );
-
-            if (activePanel) {
-                activePanel.focus();
-            }
-        }
     }
 
 
@@ -182,10 +268,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 const systemName =
                     panel.dataset.system;
 
-                if (!systemName) return;
+                if (!systemName) {
+                    return;
+                }
 
 
-                /* Small physical click response */
+                /*
+                Prevent double activation.
+                */
+
+                if (
+                    overlay.classList.contains(
+                        "is-active"
+                    )
+                ) {
+                    return;
+                }
+
+
+                /*
+                Small physical response before
+                opening the cinematic interface.
+                */
 
                 panel.classList.add(
                     "is-opening"
@@ -225,6 +329,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
+                /*
+                Don't tilt panels while the overlay
+                is active.
+                */
+
+                if (
+                    overlay.classList.contains(
+                        "is-active"
+                    )
+                ) {
+                    return;
+                }
+
+
                 const rect =
                     panel.getBoundingClientRect();
 
@@ -239,12 +357,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 const rotateX =
-                    ((y / rect.height) - .5) *
-                    -1.2;
+                    ((y / rect.height) - 0.5)
+                    * -1.2;
 
                 const rotateY =
-                    ((x / rect.width) - .5) *
-                    1.2;
+                    ((x / rect.width) - 0.5)
+                    * 1.2;
 
 
                 panel.style.transform =
@@ -252,9 +370,14 @@ document.addEventListener("DOMContentLoaded", () => {
                      rotateX(${rotateX}deg)
                      rotateY(${rotateY}deg)
                      translateY(-3px)`;
+
             }
         );
 
+
+        /* =================================================
+           POINTER LEAVE
+        ================================================= */
 
         panel.addEventListener(
             "pointerleave",
@@ -262,6 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 panel.style.transform =
                     "";
+
             }
         );
 
@@ -269,17 +393,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       CLOSE BUTTON
+       RETURN BUTTON
     ===================================================== */
 
     closeButton.addEventListener(
         "click",
-        closeSystem
+        () => {
+
+            closeSystem();
+
+        }
     );
 
 
     /* =====================================================
-       CLICK OUTSIDE CONTENT
+       CLICK OUTSIDE
     ===================================================== */
 
     overlay.addEventListener(
@@ -289,7 +417,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (
                 event.target === overlay
             ) {
+
                 closeSystem();
+
             }
 
         }
@@ -310,7 +440,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     "is-active"
                 )
             ) {
+
                 closeSystem();
+
             }
 
         }
@@ -324,6 +456,15 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay.setAttribute(
         "aria-hidden",
         "true"
+    );
+
+
+    document.body.style.overflow =
+        "";
+
+
+    console.log(
+        "IXVYN systems interface online."
     );
 
 });
