@@ -52,8 +52,829 @@ button {
 .hero-footer,
 .module-top,
 .module-bottom,
-.footer-grid {
+.footer-grid,
+.direction-index {
     font-family: "DM Mono", monospace;
+}
+
+
+/* =====================================================
+   IXVYN CINEMATIC BOOT
+===================================================== */
+
+.ixvyn-boot {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    overflow: hidden;
+    background: #050505;
+    color: var(--white);
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity 1.2s cubic-bezier(.77, 0, .18, 1),
+        visibility 1.2s;
+}
+
+.ixvyn-boot.is-complete {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.boot-grid {
+    position: absolute;
+    inset: -20%;
+    opacity: 0.32;
+
+    background-image:
+        linear-gradient(
+            rgba(244, 244, 240, 0.045) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(244, 244, 240, 0.045) 1px,
+            transparent 1px
+        );
+
+    background-size: 48px 48px;
+
+    transform:
+        perspective(700px)
+        rotateX(62deg)
+        scale(1.35)
+        translateY(8%);
+
+    transform-origin: center bottom;
+
+    animation:
+        bootGridDrift 8s ease-in-out infinite alternate;
+}
+
+.boot-grid::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at center,
+            transparent 0 18%,
+            rgba(5, 5, 5, 0.12) 48%,
+            #050505 78%
+        ),
+        linear-gradient(
+            to bottom,
+            transparent 55%,
+            #050505 100%
+        );
+}
+
+.boot-scanline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -10%;
+
+    height: 1px;
+
+    background: var(--accent);
+
+    box-shadow:
+        0 0 22px rgba(184, 255, 61, 0.65);
+
+    opacity: 0.55;
+
+    animation:
+        bootScan 4.5s linear infinite;
+}
+
+.boot-header,
+.boot-footer {
+    position: absolute;
+
+    left: 4vw;
+    right: 4vw;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    z-index: 5;
+
+    font-family: "DM Mono", monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+
+    color: var(--dim);
+}
+
+.boot-header {
+    top: 30px;
+}
+
+.boot-footer {
+    bottom: 26px;
+}
+
+.boot-header strong {
+    color: var(--white);
+    font-weight: 400;
+}
+
+.boot-stage {
+    position: absolute;
+    inset: 0;
+
+    display: grid;
+    place-items: center;
+}
+
+
+/* =====================================================
+   BOOT CORE
+===================================================== */
+
+.boot-core {
+    position: absolute;
+
+    width: min(34vw, 420px);
+    aspect-ratio: 1;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    opacity: 0;
+
+    animation:
+        bootCoreIn
+        1.4s
+        cubic-bezier(.16, 1, .3, 1)
+        0.35s
+        forwards;
+}
+
+.boot-core-ring {
+    position: absolute;
+    inset: 0;
+
+    border: 1px solid
+        rgba(244, 244, 240, 0.16);
+
+    border-radius: 50%;
+}
+
+.boot-core-ring::before,
+.boot-core-ring::after {
+    content: "";
+
+    position: absolute;
+    inset: -1px;
+
+    border-radius: inherit;
+
+    border: 1px solid transparent;
+
+    border-top-color:
+        rgba(184, 255, 61, 0.8);
+}
+
+.ring-a {
+    animation:
+        bootSpin
+        12s
+        linear
+        infinite;
+}
+
+.ring-b {
+    inset: 14%;
+
+    animation:
+        bootSpinReverse
+        9s
+        linear
+        infinite;
+}
+
+.ring-c {
+    inset: 30%;
+
+    border-color:
+        rgba(244, 244, 240, 0.09);
+
+    animation:
+        bootSpin
+        6s
+        linear
+        infinite;
+}
+
+.boot-core-cross {
+    position: absolute;
+
+    background:
+        rgba(244, 244, 240, 0.13);
+}
+
+.boot-core-cross.horizontal {
+    left: 7%;
+    right: 7%;
+
+    top: 50%;
+
+    height: 1px;
+}
+
+.boot-core-cross.vertical {
+    top: 7%;
+    bottom: 7%;
+
+    left: 50%;
+
+    width: 1px;
+}
+
+.boot-core-point {
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    background:
+        var(--accent);
+
+    box-shadow:
+        0 0 24px var(--accent);
+}
+
+.boot-core-label {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    font-family: "DM Mono", monospace;
+
+    font-size: 10px;
+
+    letter-spacing: 0.35em;
+
+    color: var(--white);
+}
+
+
+/* =====================================================
+   CITY NETWORK
+===================================================== */
+
+.boot-city {
+    position: absolute;
+
+    width: min(78vw, 1100px);
+    height: min(54vw, 680px);
+
+    opacity: 0;
+
+    transform: scale(0.94);
+
+    animation:
+        bootCityIn
+        1.6s
+        cubic-bezier(.16, 1, .3, 1)
+        0.9s
+        forwards;
+}
+
+.boot-city::before,
+.boot-city::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            32deg,
+            transparent 49.7%,
+            rgba(244, 244, 240, 0.13) 50%,
+            transparent 50.3%
+        ),
+        linear-gradient(
+            -21deg,
+            transparent 49.7%,
+            rgba(244, 244, 240, 0.09) 50%,
+            transparent 50.3%
+        ),
+        linear-gradient(
+            90deg,
+            transparent 49.8%,
+            rgba(244, 244, 240, 0.07) 50%,
+            transparent 50.2%
+        );
+
+    mask-image:
+        radial-gradient(
+            ellipse at center,
+            black 0 45%,
+            transparent 78%
+        );
+}
+
+.boot-city::after {
+    background-image:
+        radial-gradient(
+            circle at 20% 42%,
+            var(--accent) 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 36% 61%,
+            var(--white) 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 51% 34%,
+            var(--accent) 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 67% 58%,
+            var(--white) 0 2px,
+            transparent 3px
+        ),
+        radial-gradient(
+            circle at 78% 31%,
+            var(--accent) 0 2px,
+            transparent 3px
+        );
+
+    filter:
+        drop-shadow(
+            0 0 8px rgba(184, 255, 61, 0.45)
+        );
+}
+
+
+/* =====================================================
+   BOOT MESSAGE
+===================================================== */
+
+.boot-message {
+    position: absolute;
+
+    left: 4vw;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    z-index: 6;
+
+    font-family:
+        "DM Mono",
+        monospace;
+
+    opacity: 1;
+}
+
+.boot-message-small {
+    margin-bottom: 10px;
+
+    font-size: 9px;
+
+    letter-spacing: 0.22em;
+
+    color: var(--grey);
+}
+
+.boot-message-main {
+    font-size:
+        clamp(2rem, 5vw, 5rem);
+
+    line-height: 0.9;
+
+    letter-spacing: -0.06em;
+}
+
+
+/* =====================================================
+   BOOT SYSTEMS
+===================================================== */
+
+.boot-systems {
+    position: absolute;
+
+    left: 4vw;
+    right: 4vw;
+    bottom: 13vh;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, 1fr);
+
+    border-top:
+        1px solid var(--line);
+
+    border-bottom:
+        1px solid var(--line);
+
+    opacity: 0;
+
+    transform:
+        translateY(20px);
+
+    animation:
+        bootSystemsIn
+        1s
+        cubic-bezier(.16, 1, .3, 1)
+        2.1s
+        forwards;
+}
+
+.boot-system {
+    min-height: 112px;
+
+    padding: 18px;
+
+    border-right:
+        1px solid var(--line);
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+.boot-system:last-child {
+    border-right: 0;
+}
+
+.boot-system span,
+.boot-system small {
+    font-family:
+        "DM Mono",
+        monospace;
+
+    font-size: 8px;
+
+    letter-spacing: 0.14em;
+
+    color: var(--dim);
+}
+
+.boot-system strong {
+    font-size:
+        clamp(1.15rem, 2vw, 2rem);
+
+    letter-spacing: -0.05em;
+
+    font-weight: 600;
+}
+
+.boot-system small {
+    color: var(--grey);
+}
+
+
+/* =====================================================
+   BOOT FINAL
+===================================================== */
+
+.boot-final {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    z-index: 10;
+
+    transform:
+        translate(-50%, -50%);
+
+    text-align: center;
+
+    opacity: 0;
+
+    pointer-events: none;
+}
+
+.boot-final-wordmark {
+    font-size:
+        clamp(4rem, 12vw, 11rem);
+
+    font-weight: 700;
+
+    letter-spacing: 0.12em;
+
+    line-height: 0.8;
+
+    white-space: nowrap;
+}
+
+.boot-final-sub {
+    margin-top: 28px;
+
+    font-family:
+        "DM Mono",
+        monospace;
+
+    font-size: 10px;
+
+    letter-spacing: 0.28em;
+
+    color: var(--grey);
+}
+
+.boot-final-status {
+    margin-top: 22px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 9px;
+
+    font-family:
+        "DM Mono",
+        monospace;
+
+    font-size: 8px;
+
+    letter-spacing: 0.18em;
+
+    color: var(--dim);
+}
+
+.boot-final-status span {
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background:
+        var(--accent);
+
+    box-shadow:
+        0 0 12px var(--accent);
+}
+
+.ixvyn-boot.is-final
+.boot-core,
+.ixvyn-boot.is-final
+.boot-city,
+.ixvyn-boot.is-final
+.boot-systems,
+.ixvyn-boot.is-final
+.boot-message {
+
+    opacity: 0;
+
+    transition:
+        opacity 0.6s ease;
+}
+
+.ixvyn-boot.is-final
+.boot-final {
+
+    opacity: 1;
+
+    animation:
+        bootFinalReveal
+        1.4s
+        cubic-bezier(.16, 1, .3, 1)
+        forwards;
+}
+
+
+/* =====================================================
+   BOOT CORNERS
+===================================================== */
+
+.boot-corner {
+    position: absolute;
+
+    width: 24px;
+    height: 24px;
+
+    z-index: 8;
+
+    opacity: 0.45;
+}
+
+.boot-corner::before,
+.boot-corner::after {
+    content: "";
+
+    position: absolute;
+
+    background:
+        var(--white);
+}
+
+.boot-corner::before {
+    width: 24px;
+    height: 1px;
+}
+
+.boot-corner::after {
+    width: 1px;
+    height: 24px;
+}
+
+.boot-corner-tl {
+    top: 30px;
+    left: 4vw;
+}
+
+.boot-corner-tr {
+    top: 30px;
+    right: 4vw;
+
+    transform:
+        rotate(90deg);
+}
+
+.boot-corner-bl {
+    bottom: 26px;
+    left: 4vw;
+
+    transform:
+        rotate(-90deg);
+}
+
+.boot-corner-br {
+    bottom: 26px;
+    right: 4vw;
+
+    transform:
+        rotate(180deg);
+}
+
+
+/* =====================================================
+   BOOT ANIMATIONS
+===================================================== */
+
+@keyframes bootGridDrift {
+
+    from {
+        transform:
+            perspective(700px)
+            rotateX(62deg)
+            scale(1.35)
+            translateY(8%);
+    }
+
+    to {
+        transform:
+            perspective(700px)
+            rotateX(62deg)
+            scale(1.42)
+            translateY(3%);
+    }
+}
+
+@keyframes bootScan {
+
+    from {
+        transform:
+            translateY(0);
+    }
+
+    to {
+        transform:
+            translateY(120vh);
+    }
+}
+
+@keyframes bootCoreIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translate(-50%, -50%)
+            scale(0.72);
+    }
+
+    to {
+        opacity: 0.9;
+
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+}
+
+@keyframes bootCityIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            scale(0.94);
+
+        filter:
+            blur(8px);
+    }
+
+    to {
+        opacity: 0.65;
+
+        transform:
+            scale(1);
+
+        filter:
+            blur(0);
+    }
+}
+
+@keyframes bootSystemsIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+@keyframes bootSpin {
+
+    from {
+        transform:
+            rotate(0deg);
+    }
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+}
+
+@keyframes bootSpinReverse {
+
+    from {
+        transform:
+            rotate(360deg);
+    }
+
+    to {
+        transform:
+            rotate(0deg);
+    }
+}
+
+@keyframes bootFinalReveal {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translate(-50%, -50%)
+            scale(0.92);
+
+        filter:
+            blur(8px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+
+        filter:
+            blur(0);
+    }
 }
 
 
@@ -63,30 +884,43 @@ button {
 
 .system-header {
     position: fixed;
+
     top: 0;
     left: 0;
+
     width: 100%;
     height: 76px;
 
     padding: 0 4vw;
 
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+
+    grid-template-columns:
+        1fr auto 1fr;
+
     align-items: center;
 
-    border-bottom: 1px solid var(--line-soft);
+    border-bottom:
+        1px solid var(--line-soft);
 
-    background: rgba(8, 8, 8, 0.72);
-    backdrop-filter: blur(18px);
+    background:
+        rgba(8, 8, 8, 0.72);
+
+    backdrop-filter:
+        blur(18px);
 
     z-index: 100;
 }
 
 .wordmark {
     font-size: 1.15rem;
+
     font-weight: 700;
+
     letter-spacing: 0.48em;
-    transition: opacity 0.3s ease;
+
+    transition:
+        opacity 0.3s ease;
 }
 
 .wordmark:hover {
@@ -95,17 +929,25 @@ button {
 
 .system-nav {
     display: flex;
+
     gap: 36px;
 
-    font-family: "DM Mono", monospace;
+    font-family:
+        "DM Mono",
+        monospace;
+
     font-size: 0.67rem;
+
     text-transform: uppercase;
+
     letter-spacing: 0.1em;
 }
 
 .system-nav a {
     color: var(--grey);
-    transition: color 0.3s ease;
+
+    transition:
+        color 0.3s ease;
 }
 
 .system-nav a:hover {
@@ -116,20 +958,29 @@ button {
     justify-self: end;
 
     display: flex;
+
     align-items: center;
+
     gap: 9px;
 
     font-size: 0.6rem;
+
     letter-spacing: 0.08em;
+
     color: var(--grey);
 }
 
 .status-dot {
     width: 6px;
     height: 6px;
+
     border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 14px var(--accent);
+
+    background:
+        var(--accent);
+
+    box-shadow:
+        0 0 14px var(--accent);
 }
 
 
@@ -142,10 +993,13 @@ button {
 
     min-height: 100vh;
 
-    padding: 76px 4vw 30px;
+    padding:
+        76px 4vw 30px;
 
     display: flex;
+
     flex-direction: column;
+
     justify-content: space-between;
 
     overflow: hidden;
@@ -153,17 +1007,21 @@ button {
 
 .hero-index {
     display: flex;
+
     justify-content: space-between;
 
     padding-top: 24px;
 
     color: var(--dim);
+
     font-size: 0.58rem;
+
     letter-spacing: 0.1em;
 }
 
 .hero-main {
     position: relative;
+
     z-index: 2;
 
     max-width: 1100px;
@@ -175,6 +1033,7 @@ button {
     color: var(--grey);
 
     font-size: 0.62rem;
+
     letter-spacing: 0.16em;
 
     margin-bottom: 30px;
@@ -183,10 +1042,13 @@ button {
 .hero h1 {
     max-width: 1200px;
 
-    font-size: clamp(4rem, 9.5vw, 10rem);
+    font-size:
+        clamp(4rem, 9.5vw, 10rem);
+
     line-height: 0.83;
 
     font-weight: 700;
+
     letter-spacing: -0.075em;
 
     text-transform: uppercase;
@@ -194,7 +1056,9 @@ button {
 
 .hero h1 span {
     color: transparent;
-    -webkit-text-stroke: 1px var(--white);
+
+    -webkit-text-stroke:
+        1px var(--white);
 }
 
 .hero-description {
@@ -205,27 +1069,34 @@ button {
     color: var(--grey);
 
     font-size: 0.95rem;
+
     line-height: 1.75;
 }
 
 .initiate {
     display: inline-flex;
+
     align-items: center;
+
     gap: 26px;
 
     margin-top: 42px;
 
     padding: 14px 0;
 
-    border-bottom: 1px solid var(--white);
+    border-bottom:
+        1px solid var(--white);
 
-    font-family: "DM Mono", monospace;
+    font-family:
+        "DM Mono",
+        monospace;
+
     font-size: 0.65rem;
+
     letter-spacing: 0.12em;
 
     transition:
-        gap 0.4s ease,
-        opacity 0.3s ease;
+        gap 0.4s ease;
 }
 
 .initiate:hover {
@@ -238,33 +1109,37 @@ button {
 
 
 /* =====================================================
-   HERO GEOMETRY
+   GEOMETRY
 ===================================================== */
 
 .hero-geometry {
     position: absolute;
 
-    width: min(55vw, 760px);
+    width:
+        min(55vw, 760px);
+
     aspect-ratio: 1;
 
     right: -8vw;
+
     top: 18vh;
 
     opacity: 0.65;
-
-    transition:
-        transform 1s cubic-bezier(.16, 1, .3, 1),
-        opacity .6s ease;
 }
 
 .geometry-ring {
     position: absolute;
 
-    border: 1px solid var(--line);
+    border:
+        1px solid var(--line);
 
     border-radius: 50%;
 
-    animation: rotate 28s linear infinite;
+    animation:
+        rotate
+        28s
+        linear
+        infinite;
 }
 
 .ring-one {
@@ -274,14 +1149,18 @@ button {
 .ring-two {
     inset: 20%;
 
-    animation-direction: reverse;
-    animation-duration: 22s;
+    animation-direction:
+        reverse;
+
+    animation-duration:
+        22s;
 }
 
 .ring-three {
     inset: 36%;
 
-    animation-duration: 17s;
+    animation-duration:
+        17s;
 }
 
 .geometry-line {
@@ -293,15 +1172,18 @@ button {
     top: 50%;
     left: -20%;
 
-    background: var(--line);
+    background:
+        var(--line);
 }
 
 .line-one {
-    transform: rotate(38deg);
+    transform:
+        rotate(38deg);
 }
 
 .line-two {
-    transform: rotate(-38deg);
+    transform:
+        rotate(-38deg);
 }
 
 .geometry-node {
@@ -310,13 +1192,11 @@ button {
     width: 8px;
     height: 8px;
 
-    border: 1px solid var(--white);
+    border:
+        1px solid var(--white);
 
-    background: var(--black);
-
-    transition:
-        transform .5s cubic-bezier(.16, 1, .3, 1),
-        background .3s ease;
+    background:
+        var(--black);
 }
 
 .node-one {
@@ -340,56 +1220,49 @@ button {
     inset: 43%;
 
     display: grid;
+
     place-items: center;
 
-    border: 1px solid var(--white);
+    border:
+        1px solid var(--white);
 
-    font-family: "DM Mono", monospace;
+    font-family:
+        "DM Mono",
+        monospace;
+
     font-size: 0.65rem;
+
     letter-spacing: 0.2em;
-
-    transition:
-        transform .7s cubic-bezier(.16, 1, .3, 1),
-        border-color .4s ease;
-}
-
-.hero:hover .geometry-core {
-    transform: rotate(45deg);
-}
-
-.hero:hover .node-one {
-    transform: translateY(-4px);
-}
-
-.hero:hover .node-two {
-    transform: translateX(4px);
-}
-
-.hero:hover .node-three {
-    transform: translateY(4px);
 }
 
 @keyframes rotate {
+
     from {
-        transform: rotate(0deg);
+        transform:
+            rotate(0deg);
     }
 
     to {
-        transform: rotate(360deg);
+        transform:
+            rotate(360deg);
     }
 }
 
 .hero-footer {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+
+    grid-template-columns:
+        repeat(3, 1fr);
 
     padding-top: 18px;
 
-    border-top: 1px solid var(--line-soft);
+    border-top:
+        1px solid var(--line-soft);
 
     color: var(--dim);
 
     font-size: 0.55rem;
+
     letter-spacing: 0.08em;
 }
 
@@ -407,21 +1280,28 @@ button {
 ===================================================== */
 
 .systems {
-    padding: 160px 4vw;
+    padding:
+        160px 4vw;
 
-    border-top: 1px solid var(--line);
+    border-top:
+        1px solid var(--line);
 }
 
 .section-intro {
     display: grid;
-    grid-template-columns: 1fr 0.7fr;
+
+    grid-template-columns:
+        1fr 0.7fr;
+
     gap: 8vw;
 
     margin-bottom: 100px;
 }
 
 .section-intro h2 {
-    font-size: clamp(3rem, 6vw, 6.5rem);
+    font-size:
+        clamp(3rem, 6vw, 6.5rem);
+
     line-height: 0.9;
 
     letter-spacing: -0.065em;
@@ -439,6 +1319,7 @@ button {
     color: var(--grey);
 
     font-size: 0.9rem;
+
     line-height: 1.8;
 }
 
@@ -449,10 +1330,15 @@ button {
 
 .system-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
 
-    border-top: 1px solid var(--line);
-    border-left: 1px solid var(--line);
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    border-top:
+        1px solid var(--line);
+
+    border-left:
+        1px solid var(--line);
 }
 
 .system-card {
@@ -461,20 +1347,26 @@ button {
     padding: 28px;
 
     display: flex;
+
     flex-direction: column;
+
     justify-content: space-between;
 
-    border-right: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
+    border-right:
+        1px solid var(--line);
+
+    border-bottom:
+        1px solid var(--line);
 
     position: relative;
+
     overflow: hidden;
 
     cursor: pointer;
 
     transition:
         background 0.5s ease,
-        transform 0.5s cubic-bezier(.16, 1, .3, 1);
+        transform 0.5s ease;
 }
 
 .system-card::before {
@@ -488,54 +1380,57 @@ button {
     right: -120px;
     bottom: -120px;
 
-    border: 1px solid var(--line);
+    border:
+        1px solid var(--line);
 
-    transform: rotate(45deg);
+    transform:
+        rotate(45deg);
 
     transition:
-        transform 0.8s cubic-bezier(.16, 1, .3, 1),
+        transform 0.7s ease,
         border-color 0.5s ease;
 }
 
 .system-card:hover {
-    background: #11110f;
-    transform: translateY(-4px);
+    background:
+        #11110f;
 }
 
 .system-card:hover::before {
-    transform: rotate(45deg) scale(1.5);
-    border-color: rgba(184, 255, 61, 0.35);
+    transform:
+        rotate(45deg)
+        scale(1.5);
+
+    border-color:
+        rgba(184, 255, 61, 0.35);
 }
 
 .module-top,
 .module-bottom {
     display: flex;
+
     justify-content: space-between;
 
     color: var(--dim);
 
     font-size: 0.58rem;
-    letter-spacing: 0.1em;
 
-    position: relative;
-    z-index: 2;
+    letter-spacing: 0.1em;
 }
 
 .module-content {
     position: relative;
+
     z-index: 2;
 }
 
 .module-content h3 {
-    font-size: clamp(3rem, 5vw, 6rem);
+    font-size:
+        clamp(3rem, 5vw, 6rem);
 
     line-height: 0.85;
 
     letter-spacing: -0.07em;
-
-    transition:
-        transform .6s cubic-bezier(.16, 1, .3, 1),
-        letter-spacing .6s ease;
 }
 
 .module-content p {
@@ -546,6 +1441,7 @@ button {
     color: var(--grey);
 
     font-size: 0.85rem;
+
     line-height: 1.7;
 }
 
@@ -557,220 +1453,87 @@ button {
         color 0.4s ease;
 }
 
-.system-card:hover .module-arrow {
-    transform: translate(5px, -5px);
-    color: var(--accent);
-}
+.system-card:hover
+.module-arrow {
+    transform:
+        translate(5px, -5px);
 
-.system-card:hover .module-content h3 {
-    transform: translateX(4px);
-    letter-spacing: -0.055em;
+    color:
+        var(--accent);
 }
 
 .system-card-wide {
-    grid-column: 1 / -1;
+    grid-column:
+        1 / -1;
 
-    min-height: 350px;
+    min-height:
+        350px;
 }
 
 
 /* =====================================================
-   PAGE 3 — SELECT A DIRECTION
+   DIRECTION
 ===================================================== */
 
-.direction-page {
+.direction {
     min-height: 100vh;
 
+    padding:
+        140px 4vw;
+
+    border-top:
+        1px solid var(--line);
+
     position: relative;
+
     overflow: hidden;
+}
 
-    border-top: 1px solid var(--line);
-
+.direction-index {
     display: flex;
-    align-items: center;
-    justify-content: center;
 
-    background:
-        radial-gradient(
-            circle at 50% 50%,
-            rgba(255,255,255,.025),
-            transparent 60%
-        );
-}
+    justify-content: space-between;
 
-.direction-content {
-    position: relative;
-    z-index: 5;
-
-    width: 100%;
-
-    padding: 120px 4vw 90px;
-
-    text-align: center;
-}
-
-.direction-label {
     color: var(--dim);
 
-    font-family: "DM Mono", monospace;
     font-size: 0.58rem;
-    letter-spacing: 0.22em;
 
-    margin-bottom: 45px;
+    letter-spacing: 0.1em;
 }
 
-.direction-title {
-    font-size: clamp(5rem, 11vw, 11rem);
+.direction-main {
+    max-width: 1200px;
 
-    line-height: 0.78;
-
-    letter-spacing: -0.055em;
-
-    font-weight: 700;
-
-    text-transform: uppercase;
+    margin-top:
+        18vh;
 }
 
-.direction-title .outline {
-    display: block;
+.direction-main h2 {
+    font-size:
+        clamp(4rem, 10vw, 11rem);
 
+    line-height: 0.8;
+
+    letter-spacing: -0.08em;
+}
+
+.direction-main h2 span {
     color: transparent;
 
-    -webkit-text-stroke: 1px var(--white);
+    -webkit-text-stroke:
+        1px var(--white);
 }
 
-.direction-copy {
-    max-width: 540px;
+.direction-description {
+    max-width: 500px;
 
-    margin: 52px auto 0;
+    margin-top: 70px;
 
     color: var(--grey);
 
-    font-size: 0.9rem;
+    font-size: 1rem;
+
     line-height: 1.8;
-}
-
-.direction-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 22px;
-
-    margin-top: 42px;
-
-    min-width: 135px;
-
-    padding: 15px 22px;
-
-    border: 1px solid rgba(244,244,240,.4);
-
-    background: transparent;
-
-    color: var(--white);
-
-    font-family: "DM Mono", monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.14em;
-
-    cursor: pointer;
-
-    transition:
-        background .4s ease,
-        color .4s ease,
-        transform .5s cubic-bezier(.16,1,.3,1);
-}
-
-.direction-button:hover {
-    background: var(--white);
-    color: var(--black);
-    transform: translateY(-3px);
-}
-
-.direction-button:active {
-    transform: scale(.97);
-}
-
-
-/* Direction geometry */
-
-.direction-geometry {
-    position: absolute;
-
-    width: min(80vw, 900px);
-    aspect-ratio: 1;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-
-    pointer-events: none;
-
-    opacity: .45;
-}
-
-.direction-ring {
-    position: absolute;
-
-    border: 1px solid var(--line-soft);
-
-    border-radius: 50%;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-}
-
-.direction-ring.one {
-    width: 100%;
-    height: 100%;
-}
-
-.direction-ring.two {
-    width: 72%;
-    height: 72%;
-}
-
-.direction-ring.three {
-    width: 43%;
-    height: 43%;
-}
-
-.direction-cross {
-    position: absolute;
-
-    left: 50%;
-    top: 50%;
-
-    width: 150%;
-    height: 1px;
-
-    background: var(--line-soft);
-
-    transform-origin: center;
-}
-
-.direction-cross.one {
-    transform: translate(-50%, -50%) rotate(42deg);
-}
-
-.direction-cross.two {
-    transform: translate(-50%, -50%) rotate(-42deg);
-}
-
-.direction-square {
-    position: absolute;
-
-    width: 90px;
-    height: 90px;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-
-    border: 1px solid rgba(244,244,240,.32);
 }
 
 
@@ -781,20 +1544,27 @@ button {
 .about {
     min-height: 90vh;
 
-    padding: 140px 4vw;
+    padding:
+        140px 4vw;
 
     display: grid;
-    grid-template-columns: 0.35fr 1fr;
 
-    border-top: 1px solid var(--line);
+    grid-template-columns:
+        0.35fr 1fr;
+
+    border-top:
+        1px solid var(--line);
 }
 
 .about-label {
-    font-family: "DM Mono", monospace;
+    font-family:
+        "DM Mono",
+        monospace;
 
     color: var(--dim);
 
     font-size: 0.58rem;
+
     letter-spacing: 0.1em;
 }
 
@@ -803,7 +1573,9 @@ button {
 }
 
 .about-content h2 {
-    font-size: clamp(4rem, 8vw, 9rem);
+    font-size:
+        clamp(4rem, 8vw, 9rem);
+
     line-height: 0.85;
 
     letter-spacing: -0.075em;
@@ -811,6 +1583,7 @@ button {
 
 .about-content h2 em {
     color: var(--grey);
+
     font-style: normal;
 }
 
@@ -822,6 +1595,7 @@ button {
     color: var(--grey);
 
     font-size: 1rem;
+
     line-height: 1.8;
 }
 
@@ -831,69 +1605,28 @@ button {
 ===================================================== */
 
 .system-footer {
-    padding: 25px 4vw;
+    padding:
+        25px 4vw;
 
-    border-top: 1px solid var(--line);
+    border-top:
+        1px solid var(--line);
 }
 
 .footer-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+
+    grid-template-columns:
+        repeat(4, 1fr);
 
     color: var(--dim);
 
     font-size: 0.55rem;
+
     letter-spacing: 0.1em;
 }
 
 .footer-grid span:not(:first-child) {
     text-align: right;
-}
-
-
-/* =====================================================
-   PAGE 3 → PAGE 4 TRANSITION
-===================================================== */
-
-.direction-page.transitioning .direction-content {
-    animation:
-        directionFade .75s cubic-bezier(.16,1,.3,1) forwards;
-}
-
-.direction-page.transitioning .direction-geometry {
-    animation:
-        geometryCollapse 1s cubic-bezier(.16,1,.3,1) forwards;
-}
-
-@keyframes directionFade {
-
-    0% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateY(-25px);
-    }
-}
-
-@keyframes geometryCollapse {
-
-    0% {
-        transform: translate(-50%, -50%) rotate(0deg) scale(1);
-        opacity: .45;
-    }
-
-    50% {
-        transform: translate(-50%, -50%) rotate(35deg) scale(.72);
-        opacity: .8;
-    }
-
-    100% {
-        transform: translate(-50%, -50%) rotate(90deg) scale(.05);
-        opacity: 0;
-    }
 }
 
 
@@ -904,7 +1637,8 @@ button {
 @media (max-width: 800px) {
 
     .system-header {
-        grid-template-columns: 1fr auto;
+        grid-template-columns:
+            1fr auto;
     }
 
     .system-nav {
@@ -921,13 +1655,17 @@ button {
     }
 
     .hero h1 {
-        font-size: clamp(3.5rem, 16vw, 7rem);
+        font-size:
+            clamp(3.5rem, 16vw, 7rem);
     }
 
     .hero-geometry {
         width: 90vw;
+
         right: -35vw;
+
         top: 38vh;
+
         opacity: 0.35;
     }
 
@@ -936,7 +1674,8 @@ button {
     }
 
     .hero-footer {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns:
+            1fr 1fr;
     }
 
     .hero-footer span:nth-child(2) {
@@ -948,53 +1687,134 @@ button {
     }
 
     .systems {
-        padding: 110px 24px;
+        padding:
+            110px 24px;
     }
 
     .section-intro {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
+
         gap: 45px;
+
         margin-bottom: 70px;
     }
 
     .system-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
     }
 
     .system-card,
     .system-card-wide {
-        grid-column: auto;
-        min-height: 330px;
+        grid-column:
+            auto;
+
+        min-height:
+            330px;
     }
 
-    .direction-content {
-        padding: 110px 24px 80px;
+    .direction {
+        padding:
+            110px 24px;
     }
 
-    .direction-title {
-        font-size: clamp(4rem, 16vw, 7rem);
-    }
-
-    .direction-copy {
-        max-width: 330px;
-    }
-
-    .direction-geometry {
-        width: 125vw;
+    .direction-main {
+        margin-top:
+            14vh;
     }
 
     .about {
-        padding: 110px 24px;
-        grid-template-columns: 1fr;
+        padding:
+            110px 24px;
+
+        grid-template-columns:
+            1fr;
+
         gap: 60px;
     }
 
     .footer-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns:
+            1fr 1fr;
+
         gap: 18px;
     }
 
     .footer-grid span {
-        text-align: left !important;
+        text-align:
+            left !important;
+    }
+
+    .boot-header,
+    .boot-footer {
+        left: 24px;
+        right: 24px;
+    }
+
+    .boot-systems {
+        left: 24px;
+        right: 24px;
+
+        grid-template-columns:
+            1fr 1fr;
+
+        bottom: 12vh;
+    }
+
+    .boot-system:nth-child(2n) {
+        border-right: 0;
+    }
+
+    .boot-system:nth-child(n + 3) {
+        border-top:
+            1px solid var(--line);
+    }
+
+    .boot-system:last-child {
+        grid-column:
+            1 / -1;
+    }
+
+    .boot-core {
+        width: 60vw;
+    }
+
+    .boot-city {
+        width: 130vw;
+        height: 80vw;
+    }
+
+    .boot-message {
+        left: 24px;
+        top: 38%;
+    }
+
+    .boot-final-wordmark {
+        font-size:
+            clamp(3.2rem, 16vw, 7rem);
+    }
+}
+
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            0.01ms !important;
     }
 }
