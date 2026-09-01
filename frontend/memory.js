@@ -161,10 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             return false;
         }
-    }
-
-
-    /* =====================================================
+    }/* =====================================================
        RENDER EVERYTHING
        ===================================================== */
 
@@ -322,10 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
         );
-    }
-
-
-    /* =====================================================
+    }/* =====================================================
        CREATE RECORD
        ===================================================== */
 
@@ -592,10 +586,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "memory-severity-low"
             );
         }
-    }
-
-
-    /* =====================================================
+    }/* =====================================================
        MAP
        ===================================================== */
 
@@ -999,212 +990,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       FORMAT CONFIDENCE
+       UTILITIES & DATA FORMATTERS
        ===================================================== */
 
-    function formatConfidence(
-        value
-    ) {
-
-        if (
-            value === null ||
-            value === undefined ||
-            value === ""
-        ) {
-
-            return "CONFIDENCE —";
-        }
-
-
-        const numeric =
-            Number(
-                String(value)
-                    .replace("%", "")
-                    .trim()
-            );
-
-
-        if (!Number.isFinite(numeric)) {
-
-            return `CONFIDENCE ${cleanText(value)}`;
-        }
-
-
-        return `CONFIDENCE ${numeric.toFixed(1)}%`;
+    function clamp(value, minimum, maximum) {
+        return Math.min(Math.max(value, minimum), maximum);
     }
 
+    function cleanText(text) {
+        if (typeof text !== "string") return "";
+        return text.replace(/[<>]/g, "").trim();
+    }
 
-    /* =====================================================
-       FORMAT DATE
-       ===================================================== */
-
-    function formatDate(
-        value
-    ) {
-
-        if (!value) {
-            return "UNKNOWN DATE";
+    function formatConfidence(value) {
+        if (value === null || value === undefined || value === "—") return "—";
+        const num = parseFloat(value);
+        if (Number.isFinite(num)) {
+            return num <= 1 ? `${(num * 100).toFixed(1)}%` : `${num.toFixed(1)}%`;
         }
+        return String(value);
+    }
 
-
-        const date =
-            new Date(value);
-
-
-        if (
-            Number.isNaN(
-                date.getTime()
-            )
-        ) {
-
-            return "UNKNOWN DATE";
-        }
-
-
-        return date.toLocaleString(
-            undefined,
-            {
+    function formatDate(isoString) {
+        if (!isoString) return "—";
+        try {
+            const date = new Date(isoString);
+            if (isNaN(date.getTime())) return "—";
+            return date.toLocaleString("en-US", {
                 year: "numeric",
                 month: "short",
                 day: "2-digit",
                 hour: "2-digit",
-                minute: "2-digit"
-            }
-        ).toUpperCase();
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false
+            }).toUpperCase();
+        } catch (e) {
+            return "—";
+        }
     }
 
-
-    /* =====================================================
-       SHORT DATE
-       ===================================================== */
-
-    function formatShortDate(
-        value
-    ) {
-
-        if (!value) {
-            return "—";
-        }
-
-
-        const date =
-            new Date(value);
-
-
-        if (
-            Number.isNaN(
-                date.getTime()
-            )
-        ) {
-
-            return "—";
-        }
-
-
-        return date.toLocaleDateString(
-            undefined,
-            {
+    function formatShortDate(isoString) {
+        if (!isoString) return "—";
+        try {
+            const date = new Date(isoString);
+            if (isNaN(date.getTime())) return "—";
+            return date.toLocaleDateString("en-US", {
                 month: "short",
                 day: "2-digit"
-            }
-        ).toUpperCase();
-    }
-
-
-    /* =====================================================
-       CLEAN TEXT
-       ===================================================== */
-
-    function cleanText(
-        value
-    ) {
-
-        return String(
-            value ?? ""
-        ).trim();
-    }
-
-
-    /* =====================================================
-       CLAMP
-       ===================================================== */
-
-    function clamp(
-        value,
-        minimum,
-        maximum
-    ) {
-
-        return Math.min(
-            Math.max(
-                value,
-                minimum
-            ),
-            maximum
-        );
-    }
-
-
-    /* =====================================================
-       CROSS-TAB SYNC
-       ===================================================== */
-
-    window.addEventListener(
-        "storage",
-        (event) => {
-
-            if (
-                event.key !== STORAGE_KEY
-            ) {
-
-                return;
-            }
-
-
-            records =
-                loadMemory();
-
-
-            renderMemory();
-
+            }).toUpperCase();
+        } catch (e) {
+            return "—";
         }
-    );
-
-
-    /* =====================================================
-       DEBUG ACCESS
-       ===================================================== */
-
-    window.IXVYNMemory = {
-
-        getRecords: () =>
-            [...records],
-
-        refresh: () => {
-
-            records =
-                loadMemory();
-
-            renderMemory();
-
-        },
-
-        clear: () => {
-
-            records =
-                [];
-
-            saveMemory();
-
-            renderMemory();
-
-        }
-
-    };
-
-
-    console.log(
-        `IXVYN MEMORY: ${records.length} record(s) loaded.`
-    );
-
+    }
 });
