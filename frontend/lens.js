@@ -369,351 +369,359 @@ document.addEventListener("DOMContentLoaded", () => {
        BEGIN REAL ANALYSIS
     ===================================================== */
 
-    async function beginAnalysis() {
+   async function beginAnalysis() {
 
-        if (
-            !selectedFile ||
-            analysisRunning
-        ) {
-            return;
+    if (
+        !selectedFile ||
+        analysisRunning
+    ) {
+        return;
+    }
+
+
+    analysisRunning = true;
+
+    analyzeButton.disabled = true;
+
+    systemState.textContent =
+        "ANALYZING";
+
+
+    /* =================================================
+       SHOW ANALYSIS SCREEN
+    ================================================== */
+
+    analysisState.hidden = false;
+
+    inspectionInput.hidden = true;
+
+    inspectionPreview.hidden = true;
+
+    inspectionResults.hidden = true;
+
+
+    analysisState.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+
+    /* =================================================
+       RESET PROGRESS
+    ================================================== */
+
+    setProgress(
+        progressVision,
+        barVision,
+        0
+    );
+
+    setProgress(
+        progressClassification,
+        barClassification,
+        0
+    );
+
+    setProgress(
+        progressSeverity,
+        barSeverity,
+        0
+    );
+
+
+    analysisStatus.textContent =
+        "FRAME ACQUIRED";
+
+
+    try {
+
+        /* =================================================
+           START REAL PROCESSING TIMER
+           
+           This timer measures the REAL analysis request.
+        ================================================== */
+
+        analysisStartTime =
+            performance.now();
+
+        analysisElapsedTime =
+            null;
+
+
+        if (analysisTimerInterval) {
+
+            clearInterval(
+                analysisTimerInterval
+            );
+
         }
 
 
-        analysisRunning =
-            true;
+        if (analysisTimer) {
 
-        analyzeButton.disabled =
-            true;
+            analysisTimer.textContent =
+                "0.00s";
 
-        systemState.textContent =
-            "ANALYZING";
+        }
+
+
+        analysisTimerInterval =
+            setInterval(
+                () => {
+
+                    if (
+                        !Number.isFinite(
+                            analysisStartTime
+                        )
+                    ) {
+                        return;
+                    }
+
+
+                    const elapsed =
+                        (
+                            performance.now() -
+                            analysisStartTime
+                        ) / 1000;
+
+
+                    if (analysisTimer) {
+
+                        analysisTimer.textContent =
+                            `${elapsed.toFixed(2)}s`;
+
+                    }
+
+                },
+                50
+            );
 
 
         /* =================================================
-           SHOW ANALYSIS SCREEN
+           REAL AI REQUEST
+           
+           Gemini starts immediately.
         ================================================== */
 
-        analysisState.hidden =
-            false;
-
-        inspectionInput.hidden =
-            true;
-
-        inspectionPreview.hidden =
-            true;
-
-        inspectionResults.hidden =
-            true;
-
-
-        analysisState.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
+        const aiRequest =
+            analyzeImageWithGemini();
 
 
         /* =================================================
-           RESET PROGRESS
+           CINEMATIC PROGRESS
+           
+           Visual progress runs independently.
         ================================================== */
 
-        setProgress(
-            progressVision,
-            barVision,
-            0
+        const progressSequence =
+            (async () => {
+
+                await animateProgress(
+                    progressVision,
+                    barVision,
+                    100,
+                    1200,
+                    "SCANNING VISUAL FIELD"
+                );
+
+
+                await animateProgress(
+                    progressClassification,
+                    barClassification,
+                    100,
+                    1100,
+                    "EXTRACTING VISUAL EVIDENCE"
+                );
+
+
+                await animateProgress(
+                    progressSeverity,
+                    barSeverity,
+                    100,
+                    900,
+                    "ASSESSING ANOMALY SEVERITY"
+                );
+
+            })();
+
+
+        /* =================================================
+           WAIT FOR REAL GEMINI RESULT
+        ================================================== */
+
+        const result =
+            await aiRequest;
+
+
+        /* =================================================
+           STOP REAL TIMER IMMEDIATELY
+           
+           IMPORTANT:
+           The timer ends when the real AI request ends.
+           It does NOT wait for the visual animation.
+        ================================================== */
+
+        if (
+            Number.isFinite(
+                analysisStartTime
+            )
+        ) {
+
+            analysisElapsedTime =
+                (
+                    performance.now() -
+                    analysisStartTime
+                ) / 1000;
+
+        }
+
+
+        if (analysisTimerInterval) {
+
+            clearInterval(
+                analysisTimerInterval
+            );
+
+            analysisTimerInterval =
+                null;
+
+        }
+
+
+        if (
+            analysisTimer &&
+            Number.isFinite(
+                analysisElapsedTime
+            )
+        ) {
+
+            analysisTimer.textContent =
+                `${analysisElapsedTime.toFixed(2)}s`;
+
+        }
+
+
+        console.log(
+            "IXVYN LENS: REAL AI RESULT:",
+            result
         );
 
-        setProgress(
-            progressClassification,
-            barClassification,
-            0
+
+        console.log(
+            "IXVYN LENS: REAL PROCESSING TIME:",
+            `${analysisElapsedTime?.toFixed(2)}s`
         );
 
-        setProgress(
-            progressSeverity,
-            barSeverity,
-            0
+
+        /* =================================================
+           COMPLETE THE VISUAL PIPELINE
+           
+           This is presentation only.
+           It does NOT affect the real timer.
+        ================================================== */
+
+        await progressSequence;
+
+
+        analysisStatus.textContent =
+            "ANALYSIS COMPLETE";
+
+
+        /* =================================================
+           RENDER REAL RESULT
+        ================================================== */
+
+        renderResult(
+            result
+        );
+
+
+        await sleep(500);
+
+
+        showResults();
+
+
+    } catch (error) {
+
+        /* =================================================
+           STOP TIMER IMMEDIATELY ON ERROR
+        ================================================== */
+
+        if (analysisTimerInterval) {
+
+            clearInterval(
+                analysisTimerInterval
+            );
+
+            analysisTimerInterval =
+                null;
+
+        }
+
+
+        if (
+            Number.isFinite(
+                analysisStartTime
+            )
+        ) {
+
+            analysisElapsedTime =
+                (
+                    performance.now() -
+                    analysisStartTime
+                ) / 1000;
+
+        }
+
+
+        if (
+            analysisTimer &&
+            Number.isFinite(
+                analysisElapsedTime
+            )
+        ) {
+
+            analysisTimer.textContent =
+                `${analysisElapsedTime.toFixed(2)}s`;
+
+        }
+
+
+        console.error(
+            "IXVYN LENS: Analysis failed:",
+            error
         );
 
 
         analysisStatus.textContent =
-            "INITIALIZING";
+            "ANALYSIS FAILED";
 
 
-        try {
-
-            /* ---------------------------------------------
-               START REAL PROCESSING TIMER
-            --------------------------------------------- */
-
-            analysisStartTime =
-                performance.now();
-
-            analysisElapsedTime =
-                null;
-
-
-            if (analysisTimerInterval) {
-
-                clearInterval(
-                    analysisTimerInterval
-                );
-
-            }
-
-
-            if (analysisTimer) {
-
-                analysisTimer.textContent =
-                    "0.00s";
-
-            }
-
-
-            analysisTimerInterval =
-                setInterval(
-                    () => {
-
-                        if (
-                            !Number.isFinite(
-                                analysisStartTime
-                            )
-                        ) {
-                            return;
-                        }
-
-
-                        const elapsed =
-                            (
-                                performance.now() -
-                                analysisStartTime
-                            ) / 1000;
-
-
-                        if (analysisTimer) {
-
-                            analysisTimer.textContent =
-                                `${elapsed.toFixed(2)}s`;
-
-                        }
-
-                    },
-                    50
-                );
-
-
-            /* ---------------------------------------------
-               START REAL AI REQUEST
-
-               The AI request starts immediately.
-               The visual progress animation runs separately.
-            --------------------------------------------- */
-
-            const aiRequest =
-                analyzeImageWithGemini();
-
-
-            /* ---------------------------------------------
-               RUN VISUAL PROGRESS IN PARALLEL
-            --------------------------------------------- */
-
-            const progressSequence =
-                (async () => {
-
-                    await animateProgress(
-                        progressVision,
-                        barVision,
-                        100,
-                        1100,
-                        "VISUAL ANALYSIS"
-                    );
-
-
-                    await animateProgress(
-                        progressClassification,
-                        barClassification,
-                        100,
-                        900,
-                        "DEFECT CLASSIFICATION"
-                    );
-
-
-                    await animateProgress(
-                        progressSeverity,
-                        barSeverity,
-                        100,
-                        700,
-                        "SEVERITY ASSESSMENT"
-                    );
-
-                })();
-
-
-            /* ---------------------------------------------
-               WAIT FOR REAL GEMINI RESULT
-
-               If the API fails, this throws immediately.
-            --------------------------------------------- */
-
-            const result =
-                await aiRequest;
-
-
-            /* ---------------------------------------------
-               LET THE VISUAL PIPELINE FINISH
-            --------------------------------------------- */
-
-            await progressSequence;
-
-
-            /* ---------------------------------------------
-               STOP REAL PROCESSING TIMER
-            --------------------------------------------- */
-
-            if (
-                Number.isFinite(
-                    analysisStartTime
-                )
-            ) {
-
-                analysisElapsedTime =
-                    (
-                        performance.now() -
-                        analysisStartTime
-                    ) / 1000;
-
-            }
-
-
-            if (analysisTimerInterval) {
-
-                clearInterval(
-                    analysisTimerInterval
-                );
-
-                analysisTimerInterval =
-                    null;
-
-            }
-
-
-            if (
-                analysisTimer &&
-                Number.isFinite(
-                    analysisElapsedTime
-                )
-            ) {
-
-                analysisTimer.textContent =
-                    `${analysisElapsedTime.toFixed(2)}s`;
-
-            }
-
-
-            analysisStatus.textContent =
-                "ANALYSIS COMPLETE";
-
-
-            console.log(
-                "IXVYN LENS: REAL AI RESULT:",
-                result
-            );
-
-
-            console.log(
-                "IXVYN LENS: PROCESSING TIME:",
-                `${analysisElapsedTime?.toFixed(2)}s`
-            );
-
-
-            renderResult(
-                result
-            );
-
-
-            await sleep(500);
-
-            showResults();
-
-
-        } catch (error) {
-
-            /* ---------------------------------------------
-               STOP TIMER IMMEDIATELY ON ERROR
-            --------------------------------------------- */
-
-            if (analysisTimerInterval) {
-
-                clearInterval(
-                    analysisTimerInterval
-                );
-
-                analysisTimerInterval =
-                    null;
-
-            }
-
-
-            if (
-                Number.isFinite(
-                    analysisStartTime
-                )
-            ) {
-
-                analysisElapsedTime =
-                    (
-                        performance.now() -
-                        analysisStartTime
-                    ) / 1000;
-
-            }
-
-
-            if (
-                analysisTimer &&
-                Number.isFinite(
-                    analysisElapsedTime
-                )
-            ) {
-
-                analysisTimer.textContent =
-                    `${analysisElapsedTime.toFixed(2)}s`;
-
-            }
-
-
-            console.error(
-                "IXVYN LENS: Analysis failed:",
-                error
-            );
-
-
-            analysisStatus.textContent =
-                "ANALYSIS FAILED";
-
-
-            showAnalysisError(
-                error
-            );
-
-
-            analysisRunning =
-                false;
-
-            analyzeButton.disabled =
-                false;
-
-            systemState.textContent =
-                "ANALYSIS ERROR";
-
-            return;
-        }
+        showAnalysisError(
+            error
+        );
 
 
         analysisRunning =
             false;
+
+        analyzeButton.disabled =
+            false;
+
+        systemState.textContent =
+            "ANALYSIS ERROR";
+
+
+        return;
     }
 
 
+    analysisRunning =
+        false;
+}
+
+   
     /* =====================================================
        REAL GEMINI REQUEST
     ===================================================== */
