@@ -1,1 +1,377 @@
+/* =========================================================
+   IXVYN — SYSTEMS
+   ========================================================= */
 
+:root {
+    --bg: #08090b;
+    --text: #f1f0eb;
+    --muted: #777a7d;
+    --line: rgba(255,255,255,.14);
+    --accent: #b8ff38;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body.systems-page {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.systems-page .system-header {
+    height: 74px;
+    padding: 0 4vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    z-index: 20;
+}
+
+.systems-page .wordmark {
+    color: var(--text);
+    text-decoration: none;
+    font-family: monospace;
+    font-weight: 700;
+    letter-spacing: .65em;
+    font-size: 15px;
+}
+
+.systems-page .system-nav {
+    display: flex;
+    gap: 42px;
+}
+
+.systems-page .system-nav a {
+    color: #777;
+    text-decoration: none;
+    font: 10px monospace;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    transition: color .3s ease;
+}
+
+.systems-page .system-nav a:hover {
+    color: var(--text);
+}
+
+.systems-page .system-status {
+    color: #666;
+    font: 9px monospace;
+    letter-spacing: .16em;
+}
+
+.systems-page .status-dot {
+    width: 6px;
+    height: 6px;
+    display: inline-block;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-right: 8px;
+    box-shadow: 0 0 12px rgba(184,255,56,.55);
+}
+
+/* =========================================================
+   SYSTEMS PAGE
+   ========================================================= */
+
+.systems-page {
+    min-height: 100vh;
+}
+
+.systems-page .systems-hero {
+    min-height: 58vh;
+    padding: 9vh 4vw 7vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.systems-page .systems-hero::before {
+    content: "";
+    position: absolute;
+    width: 65vw;
+    height: 65vw;
+    max-width: 900px;
+    max-height: 900px;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 50%;
+    right: -18vw;
+    top: -30vw;
+    pointer-events: none;
+}
+
+.systems-page .systems-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(115deg,
+            transparent 0 58%,
+            rgba(255,255,255,.035) 58.1%,
+            transparent 58.2%);
+}
+
+/* =========================================================
+   INTRO
+   ========================================================= */
+
+.systems-page .section-intro {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1.35fr .65fr;
+    gap: 8vw;
+    align-items: end;
+    margin-bottom: 90px;
+}
+
+.systems-page .eyebrow {
+    margin: 0 0 25px;
+    color: #626568;
+    font: 10px monospace;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+}
+
+.systems-page .section-intro h1,
+.systems-page .section-intro h2 {
+    margin: 0;
+    font-size: clamp(55px, 8vw, 125px);
+    line-height: .84;
+    letter-spacing: -.075em;
+    font-weight: 800;
+}
+
+.systems-page .section-intro h1 span,
+.systems-page .section-intro h2 span {
+    color: #66686a;
+}
+
+.systems-page .section-copy {
+    max-width: 430px;
+    color: #777a7d;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* =========================================================
+   GRID
+   ========================================================= */
+
+.systems-page .system-grid {
+    position: relative;
+    z-index: 3;
+    margin: 0 4vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+}
+
+.systems-page .system-card {
+    min-height: 390px;
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    isolation: isolate;
+    transition:
+        background .5s ease,
+        transform .5s cubic-bezier(.16,1,.3,1);
+}
+
+.systems-page .system-card-wide {
+    grid-column: 1 / -1;
+    min-height: 350px;
+}
+
+/* =========================================================
+   CARD GEOMETRY
+   ========================================================= */
+
+.systems-page .system-card::before {
+    content: "";
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 50%;
+    right: -210px;
+    bottom: -260px;
+    transition:
+        transform 1s cubic-bezier(.16,1,.3,1),
+        border-color .5s ease;
+    z-index: -1;
+}
+
+.systems-page .system-card::after {
+    content: "";
+    position: absolute;
+    width: 280px;
+    height: 1px;
+    background: rgba(184,255,56,.45);
+    right: -70px;
+    bottom: 55px;
+    transform: rotate(-45deg) scaleX(0);
+    transform-origin: right center;
+    transition:
+        transform .8s cubic-bezier(.16,1,.3,1);
+    z-index: -1;
+}
+
+/* =========================================================
+   CARD TEXT
+   ========================================================= */
+
+.systems-page .module-top,
+.systems-page .module-bottom {
+    display: flex;
+    justify-content: space-between;
+    color: #55585b;
+    font: 9px monospace;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+}
+
+.systems-page .module-content {
+    position: absolute;
+    left: 30px;
+    bottom: 85px;
+    max-width: 600px;
+}
+
+.systems-page .module-content h3 {
+    margin: 0 0 20px;
+    font-size: clamp(44px, 5vw, 76px);
+    line-height: .9;
+    letter-spacing: -.055em;
+}
+
+.systems-page .module-content p {
+    margin: 0;
+    max-width: 410px;
+    color: #777;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.systems-page .module-bottom {
+    position: absolute;
+    left: 30px;
+    right: 30px;
+    bottom: 28px;
+}
+
+.systems-page .module-arrow {
+    font-size: 16px;
+    color: #666;
+    transition:
+        transform .5s cubic-bezier(.16,1,.3,1),
+        color .3s ease;
+}
+
+/* =========================================================
+   HOVER — SUBTLE, NOT EYE-SHOCKING
+   ========================================================= */
+
+.systems-page .system-card:hover {
+    background: rgba(255,255,255,.025);
+}
+
+.systems-page .system-card:hover::before {
+    transform: scale(1.35);
+    border-color: rgba(184,255,56,.22);
+}
+
+.systems-page .system-card:hover::after {
+    transform: rotate(-45deg) scaleX(1);
+}
+
+.systems-page .system-card:hover .module-arrow {
+    color: var(--accent);
+    transform: translate(5px,-5px);
+}
+
+.systems-page .system-card:hover .module-content h3 {
+    transform: translateX(5px);
+}
+
+.systems-page .module-content h3 {
+    transition: transform .5s cubic-bezier(.16,1,.3,1);
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .systems-page .system-header {
+        padding: 0 20px;
+    }
+
+    .systems-page .system-nav {
+        display: none;
+    }
+
+    .systems-page .systems-hero {
+        padding: 70px 20px 50px;
+    }
+
+    .systems-page .section-intro {
+        grid-template-columns: 1fr;
+        gap: 35px;
+        margin-bottom: 55px;
+    }
+
+    .systems-page .section-intro h1,
+    .systems-page .section-intro h2 {
+        font-size: clamp(48px, 14vw, 85px);
+    }
+
+    .systems-page .system-grid {
+        margin: 0 20px;
+        grid-template-columns: 1fr;
+    }
+
+    .systems-page .system-card,
+    .systems-page .system-card-wide {
+        grid-column: auto;
+        min-height: 340px;
+    }
+
+    .systems-page .module-content {
+        left: 22px;
+        bottom: 75px;
+    }
+
+    .systems-page .module-bottom {
+        left: 22px;
+        right: 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .systems-page *,
+    .systems-page *::before,
+    .systems-page *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+}
