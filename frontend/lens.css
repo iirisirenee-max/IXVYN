@@ -1,0 +1,1223 @@
+/* =========================================================
+   IXVYN — LENS
+   DIAGNOSTIC INTERFACE
+   ========================================================= */
+
+:root {
+    --lens-bg: #08090b;
+    --lens-text: #f1f0eb;
+    --lens-muted: #777a7d;
+    --lens-dim: #55585b;
+    --lens-line: rgba(255,255,255,.14);
+    --lens-soft-line: rgba(255,255,255,.06);
+    --lens-accent: #b8ff38;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body.lens-page {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--lens-bg);
+    color: var(--lens-text);
+    font-family: Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.lens-page .system-header {
+    height: 74px;
+    padding: 0 4vw;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid var(--lens-line);
+
+    position: relative;
+    z-index: 50;
+
+    background: rgba(8,9,11,.82);
+    backdrop-filter: blur(16px);
+}
+
+.lens-page .wordmark {
+    color: var(--lens-text);
+    text-decoration: none;
+
+    font-family: monospace;
+    font-weight: 700;
+    font-size: 15px;
+
+    letter-spacing: .65em;
+
+    transition:
+        color .3s ease,
+        opacity .3s ease;
+}
+
+.lens-page .wordmark:hover {
+    color: var(--lens-accent);
+}
+
+.lens-page .system-nav {
+    display: flex;
+    gap: 42px;
+}
+
+.lens-page .system-nav a {
+    color: #777;
+
+    text-decoration: none;
+
+    font: 10px monospace;
+    letter-spacing: .18em;
+
+    text-transform: uppercase;
+
+    transition: color .3s ease;
+}
+
+.lens-page .system-nav a:hover {
+    color: var(--lens-text);
+}
+
+.lens-page .system-status {
+    color: #666;
+
+    font: 9px monospace;
+    letter-spacing: .16em;
+
+    text-transform: uppercase;
+}
+
+.lens-page .status-dot {
+    width: 6px;
+    height: 6px;
+
+    display: inline-block;
+
+    border-radius: 50%;
+
+    background: var(--lens-accent);
+
+    margin-right: 8px;
+
+    box-shadow:
+        0 0 12px rgba(184,255,56,.55);
+}
+
+
+/* =========================================================
+   EXPERIENCE
+   ========================================================= */
+
+.lens-experience {
+    position: relative;
+
+    min-height: calc(100vh - 74px);
+
+    padding:
+        55px 4vw 40px;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   BACKGROUND GEOMETRY
+   ========================================================= */
+
+.lens-geometry {
+    position: absolute;
+
+    width: min(75vw, 900px);
+    height: min(75vw, 900px);
+
+    right: -25vw;
+    top: -20vw;
+
+    pointer-events: none;
+
+    opacity: .5;
+}
+
+.lens-ring,
+.lens-axis,
+.lens-focus {
+    position: absolute;
+}
+
+.lens-ring {
+    left: 50%;
+    top: 50%;
+
+    border:
+        1px solid
+        rgba(255,255,255,.055);
+
+    border-radius: 50%;
+
+    transform:
+        translate(-50%,-50%);
+}
+
+.lens-ring-a {
+    width: 90%;
+    height: 90%;
+}
+
+.lens-ring-b {
+    width: 58%;
+    height: 58%;
+}
+
+.lens-ring-c {
+    width: 28%;
+    height: 28%;
+}
+
+.lens-axis {
+    background:
+        rgba(255,255,255,.045);
+}
+
+.lens-axis-x {
+    width: 100%;
+    height: 1px;
+
+    top: 50%;
+    left: 0;
+}
+
+.lens-axis-y {
+    width: 1px;
+    height: 100%;
+
+    left: 50%;
+    top: 0;
+}
+
+.lens-focus {
+    left: 50%;
+    top: 50%;
+
+    width: 9px;
+    height: 9px;
+
+    border:
+        1px solid
+        var(--lens-accent);
+
+    border-radius: 50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    box-shadow:
+        0 0 22px
+        rgba(184,255,56,.35);
+
+    animation:
+        focusPulse
+        3.5s
+        ease-in-out
+        infinite;
+}
+
+@keyframes focusPulse {
+
+    0%,
+    100% {
+        opacity: .35;
+        transform:
+            translate(-50%,-50%)
+            scale(.8);
+    }
+
+    50% {
+        opacity: .9;
+        transform:
+            translate(-50%,-50%)
+            scale(1.35);
+    }
+}
+
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+.lens-progress {
+    position: relative;
+
+    z-index: 5;
+
+    max-width: 1200px;
+
+    margin: 0 auto 75px;
+
+    padding-bottom: 15px;
+
+    border-bottom:
+        1px solid
+        var(--lens-line);
+
+    display: flex;
+
+    justify-content: space-between;
+
+    color:
+        var(--lens-dim);
+
+    font:
+        9px monospace;
+
+    letter-spacing:
+        .18em;
+
+    text-transform:
+        uppercase;
+}
+
+
+/* =========================================================
+   STEPS
+   ========================================================= */
+
+.lens-step {
+    position: relative;
+
+    z-index: 5;
+
+    max-width: 1200px;
+
+    margin: 0 auto;
+
+    display: none;
+
+    animation:
+        stepIn
+        .65s
+        cubic-bezier(.16,1,.3,1);
+}
+
+.lens-step.is-active {
+    display: block;
+}
+
+@keyframes stepIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+
+.lens-step .eyebrow {
+    margin: 0 0 25px;
+
+    color: #626568;
+
+    font:
+        10px monospace;
+
+    letter-spacing:
+        .24em;
+
+    text-transform:
+        uppercase;
+}
+
+.lens-step h1 {
+    margin: 0;
+
+    max-width: 1000px;
+
+    font-size:
+        clamp(55px, 8vw, 120px);
+
+    line-height: .84;
+
+    letter-spacing:
+        -.075em;
+
+    font-weight:
+        800;
+}
+
+.lens-step h1 span {
+    display: block;
+
+    color:
+        #66686a;
+}
+
+.lens-lead {
+    margin:
+        35px 0 0;
+
+    max-width:
+        520px;
+
+    color:
+        var(--lens-muted);
+
+    font-size:
+        15px;
+
+    line-height:
+        1.7;
+}
+
+
+/* =========================================================
+   INPUT BLOCK
+   ========================================================= */
+
+.input-block {
+    margin-top:
+        55px;
+
+    max-width:
+        850px;
+}
+
+.input-block label {
+    display:
+        block;
+
+    margin-bottom:
+        13px;
+
+    color:
+        var(--lens-dim);
+
+    font:
+        9px monospace;
+
+    letter-spacing:
+        .2em;
+
+    text-transform:
+        uppercase;
+}
+
+.input-block textarea {
+    width:
+        100%;
+
+    min-height:
+        160px;
+
+    padding:
+        22px 20px;
+
+    resize:
+        vertical;
+
+    border:
+        1px solid
+        rgba(255,255,255,.16);
+
+    outline:
+        none;
+
+    background:
+        rgba(255,255,255,.018);
+
+    color:
+        var(--lens-text);
+
+    font:
+        16px Arial,
+        Helvetica,
+        sans-serif;
+
+    line-height:
+        1.65;
+
+    transition:
+        border-color .35s ease,
+        background .35s ease,
+        box-shadow .35s ease;
+}
+
+.input-block textarea::placeholder {
+    color:
+        #4f5255;
+}
+
+.input-block textarea:focus {
+    border-color:
+        rgba(184,255,56,.5);
+
+    background:
+        rgba(184,255,56,.018);
+
+    box-shadow:
+        0 0 0 1px
+        rgba(184,255,56,.08);
+}
+
+.input-meta {
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    margin-top:
+        9px;
+
+    color:
+        #4f5255;
+
+    font:
+        9px monospace;
+
+    letter-spacing:
+        .08em;
+}
+
+
+/* =========================================================
+   MULTI INPUT GRID
+   ========================================================= */
+
+.input-grid {
+    margin-top:
+        50px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:
+        35px;
+}
+
+.input-grid .input-block {
+    margin-top:
+        0;
+
+    max-width:
+        none;
+}
+
+.input-grid .input-block-wide {
+    grid-column:
+        1 / -1;
+}
+
+.input-grid textarea {
+    min-height:
+        145px;
+}
+
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+.lens-button {
+    margin-top:
+        40px;
+
+    min-width:
+        165px;
+
+    padding:
+        14px 0;
+
+    border:
+        0;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.35);
+
+    background:
+        transparent;
+
+    color:
+        var(--lens-text);
+
+    display:
+        inline-flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    gap:
+        25px;
+
+    cursor:
+        pointer;
+
+    font:
+        10px monospace;
+
+    letter-spacing:
+        .18em;
+
+    text-transform:
+        uppercase;
+
+    transition:
+        color .3s ease,
+        border-color .3s ease,
+        transform .45s cubic-bezier(.16,1,.3,1);
+}
+
+.lens-button span {
+    font-size:
+        15px;
+
+    transition:
+        transform .45s cubic-bezier(.16,1,.3,1);
+}
+
+.lens-button:hover {
+    color:
+        var(--lens-accent);
+
+    border-color:
+        var(--lens-accent);
+
+    transform:
+        translateX(4px);
+}
+
+.lens-button:hover span {
+    transform:
+        translate(4px,-4px);
+}
+
+.lens-button-secondary {
+    color:
+        #777;
+}
+
+.lens-button-secondary:hover span {
+    transform:
+        translate(-4px,-4px);
+}
+
+
+/* =========================================================
+   STEP ACTIONS
+   ========================================================= */
+
+.step-actions {
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    margin-top:
+        35px;
+}
+
+.step-actions .lens-button {
+    margin-top:
+        0;
+}
+
+
+/* =========================================================
+   DIAGNOSIS
+   ========================================================= */
+
+.diagnosis-header {
+    display:
+        flex;
+
+    align-items:
+        flex-end;
+
+    justify-content:
+        space-between;
+
+    gap:
+        40px;
+}
+
+.diagnosis-marker {
+    color:
+        #55585b;
+
+    font:
+        9px monospace;
+
+    letter-spacing:
+        .18em;
+
+    text-transform:
+        uppercase;
+
+    padding-bottom:
+        10px;
+}
+
+
+/* =========================================================
+   METRICS
+   ========================================================= */
+
+.metrics-grid {
+    margin-top:
+        70px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    border-top:
+        1px solid
+        var(--lens-line);
+
+    border-left:
+        1px solid
+        var(--lens-line);
+}
+
+.metric {
+    min-height:
+        180px;
+
+    padding:
+        24px;
+
+    border-right:
+        1px solid
+        var(--lens-line);
+
+    border-bottom:
+        1px solid
+        var(--lens-line);
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    justify-content:
+        space-between;
+}
+
+.metric-label {
+    color:
+        var(--lens-dim);
+
+    font:
+        9px monospace;
+
+    letter-spacing:
+        .18em;
+
+    text-transform:
+        uppercase;
+}
+
+.metric strong {
+    font-size:
+        55px;
+
+    line-height:
+        .8;
+
+    letter-spacing:
+        -.06em;
+
+    font-weight:
+        700;
+}
+
+.metric-line {
+    width:
+        100%;
+
+    height:
+        2px;
+
+    background:
+        rgba(255,255,255,.08);
+
+    overflow:
+        hidden;
+}
+
+.metric-line span {
+    display:
+        block;
+
+    width:
+        0%;
+
+    height:
+        100%;
+
+    background:
+        var(--lens-accent);
+
+    box-shadow:
+        0 0 10px
+        rgba(184,255,56,.35);
+
+    transition:
+        width 1.2s
+        cubic-bezier(.16,1,.3,1);
+}
+
+
+/* =========================================================
+   DIAGNOSIS SECTIONS
+   ========================================================= */
+
+.diagnosis-section {
+    margin-top:
+        75px;
+
+    border-top:
+        1px solid
+        var(--lens-line);
+}
+
+.diagnosis-section-heading {
+    padding:
+        22px 0;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        25px;
+}
+
+.diagnosis-section-heading span {
+    color:
+        var(--lens-accent);
+
+    font:
+        9px monospace;
+
+    letter-spacing:
+        .18em;
+}
+
+.diagnosis-section-heading h2 {
+    margin:
+        0;
+
+    font:
+        10px monospace;
+
+    letter-spacing:
+        .2em;
+
+    color:
+        #777a7d;
+
+    text-transform:
+        uppercase;
+}
+
+
+/* =========================================================
+   GAP LIST
+   ========================================================= */
+
+.gap-list {
+    border-top:
+        1px solid
+        var(--lens-soft-line);
+}
+
+.gap-item {
+    padding:
+        28px 0;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        70px 230px 1fr;
+
+    gap:
+        25px;
+
+    border-bottom:
+        1px solid
+        var(--lens-soft-line);
+
+    animation:
+        itemIn
+        .6s
+        cubic-bezier(.16,1,.3,1)
+        both;
+}
+
+.gap-number {
+    color:
+        #55585b;
+
+    font:
+        9px monospace;
+
+    letter-spacing:
+        .15em;
+}
+
+.gap-title {
+    color:
+        var(--lens-text);
+
+    font:
+        12px monospace;
+
+    letter-spacing:
+        .08em;
+
+    text-transform:
+        uppercase;
+}
+
+.gap-description {
+    max-width:
+        560px;
+
+    color:
+        #777a7d;
+
+    font-size:
+        13px;
+
+    line-height:
+        1.65;
+}
+
+@keyframes itemIn {
+
+    from {
+        opacity:
+            0;
+
+        transform:
+            translateY(15px);
+    }
+
+    to {
+        opacity:
+            1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+/* =========================================================
+   NEXT EVIDENCE
+   ========================================================= */
+
+.next-list {
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    border-top:
+        1px solid
+        var(--lens-soft-line);
+
+    border-left:
+        1px solid
+        var(--lens-soft-line);
+}
+
+.next-item {
+    min-height:
+        150px;
+
+    padding:
+        24px;
+
+    border-right:
+        1px solid
+        var(--lens-soft-line);
+
+    border-bottom:
+        1px solid
+        var(--lens-soft-line);
+
+    transition:
+        background .35s ease,
+        transform .4s cubic-bezier(.16,1,.3,1);
+}
+
+.next-item:hover {
+    background:
+        rgba(255,255,255,.025);
+
+    transform:
+        translateY(-3px);
+}
+
+.next-number {
+    color:
+        var(--lens-accent);
+
+    font:
+        9px monospace;
+
+    letter-spacing:
+        .15em;
+}
+
+.next-item p {
+    margin:
+        28px 0 0;
+
+    color:
+        #b8b8b4;
+
+    font-size:
+        13px;
+
+    line-height:
+        1.55;
+}
+
+
+/* =========================================================
+   DIAGNOSIS ACTIONS
+   ========================================================= */
+
+.diagnosis-actions {
+    margin-top:
+        65px;
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+}
+
+.diagnosis-actions .lens-button {
+    margin-top:
+        0;
+}
+
+.lens-link {
+    text-decoration:
+        none;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.lens-footer {
+    position:
+        relative;
+
+    z-index:
+        5;
+
+    max-width:
+        1200px;
+
+    margin:
+        80px auto 0;
+
+    padding-top:
+        18px;
+
+    border-top:
+        1px solid
+        var(--lens-line);
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    color:
+        #4f5255;
+
+    font:
+        8px monospace;
+
+    letter-spacing:
+        .18em;
+
+    text-transform:
+        uppercase;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .lens-page .system-header {
+        padding:
+            0 20px;
+    }
+
+    .lens-page .system-nav {
+        display:
+            none;
+    }
+
+    .lens-experience {
+        padding:
+            45px 20px 35px;
+    }
+
+    .lens-progress {
+        margin-bottom:
+            55px;
+    }
+
+    .lens-step h1 {
+        font-size:
+            clamp(46px, 13vw, 80px);
+    }
+
+    .input-grid {
+        grid-template-columns:
+            1fr;
+
+        gap:
+            25px;
+    }
+
+    .input-grid .input-block-wide {
+        grid-column:
+            auto;
+    }
+
+    .metrics-grid {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+    .gap-item {
+        grid-template-columns:
+            45px 1fr;
+    }
+
+    .gap-description {
+        grid-column:
+            2;
+    }
+
+    .next-list {
+        grid-template-columns:
+            1fr;
+    }
+
+    .diagnosis-header {
+        flex-direction:
+            column;
+
+        align-items:
+            flex-start;
+    }
+
+    .step-actions,
+    .diagnosis-actions {
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
+        gap:
+            20px;
+    }
+
+    .step-actions .lens-button,
+    .diagnosis-actions .lens-button {
+        width:
+            100%;
+    }
+
+    .lens-footer {
+        flex-direction:
+            column;
+
+        gap:
+            10px;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .lens-page *,
+    .lens-page *::before,
+    .lens-page *::after {
+
+        animation:
+            none !important;
+
+        transition:
+            none !important;
+    }
+}
