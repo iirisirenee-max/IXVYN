@@ -64,11 +64,43 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        document.body.classList.add("page-exit");
+       const handoff =
+    document.createElement("div");
 
-        setTimeout(() => {
-            window.location.href = destination;
-        }, 420);
+handoff.className =
+    "ixvyn-handoff";
+
+handoff.innerHTML = `
+    <div class="handoff-grid"></div>
+
+    <div class="handoff-core">
+        <span class="handoff-ring ring-a"></span>
+        <span class="handoff-ring ring-b"></span>
+        <span class="handoff-point"></span>
+
+        <div class="handoff-wordmark">
+            IXVYN
+        </div>
+    </div>
+
+    <div class="handoff-info">
+        <span>IXVYN / SYSTEM TRANSFER</span>
+        <strong>HANDING OFF</strong>
+        <small>${module.toUpperCase()} / SYSTEM</small>
+    </div>
+
+    <div class="handoff-line"></div>
+`;
+
+document.body.appendChild(handoff);
+
+requestAnimationFrame(() => {
+    handoff.classList.add("active");
+});
+
+setTimeout(() => {
+    window.location.href = destination;
+}, 950);
     }
 
 
