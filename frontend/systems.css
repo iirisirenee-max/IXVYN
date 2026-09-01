@@ -6,14 +6,11 @@
     --bg: #08090b;
     --text: #f1f0eb;
     --muted: #777a7d;
+    --dim: #55585b;
     --line: rgba(255,255,255,.14);
+    --soft-line: rgba(255,255,255,.055);
     --accent: #b8ff38;
 }
-
-
-/* =========================================================
-   BASE
-   ========================================================= */
 
 * {
     box-sizing: border-box;
@@ -54,6 +51,9 @@ a {
 
     position: relative;
     z-index: 50;
+
+    background: rgba(8,9,11,.82);
+    backdrop-filter: blur(16px);
 }
 
 .wordmark {
@@ -124,14 +124,15 @@ a {
 
 
 /* =========================================================
-   MAIN EXPERIENCE
+   MAIN
    ========================================================= */
 
 .system-experience {
     position: relative;
+
     min-height: calc(100vh - 74px);
 
-    padding: 9vh 4vw 50px;
+    padding: 9vh 4vw 55px;
 
     overflow: hidden;
 }
@@ -147,12 +148,15 @@ a {
     width: min(75vw, 900px);
     height: min(75vw, 900px);
 
-    right: -20vw;
-    top: -20vw;
+    right: -19vw;
+    top: -18vw;
 
     pointer-events: none;
 
     opacity: .55;
+
+    animation:
+        backgroundDrift 14s ease-in-out infinite;
 }
 
 .geometry-ring,
@@ -193,7 +197,9 @@ a {
 }
 
 .diamond-b {
-    transform: rotate(45deg) scale(.65);
+    transform:
+        rotate(45deg)
+        scale(.65);
 }
 
 .geometry-axis {
@@ -252,7 +258,24 @@ a {
     color: rgba(255,255,255,.18);
 
     font: 11px monospace;
+
     letter-spacing: .3em;
+}
+
+@keyframes backgroundDrift {
+
+    0%,
+    100% {
+        transform:
+            translate3d(0,0,0)
+            rotate(0deg);
+    }
+
+    50% {
+        transform:
+            translate3d(-8px,10px,0)
+            rotate(1deg);
+    }
 }
 
 
@@ -262,11 +285,12 @@ a {
 
 .system-intro {
     position: relative;
+
     z-index: 5;
 
     max-width: 1050px;
 
-    margin: 0 auto 80px;
+    margin: 0 auto 42px;
 }
 
 .eyebrow {
@@ -275,6 +299,7 @@ a {
     color: #626568;
 
     font: 10px monospace;
+
     letter-spacing: .24em;
 
     text-transform: uppercase;
@@ -285,7 +310,8 @@ a {
 
     max-width: 1000px;
 
-    font-size: clamp(55px, 8vw, 125px);
+    font-size:
+        clamp(55px, 8vw, 125px);
 
     line-height: .84;
 
@@ -296,6 +322,7 @@ a {
 
 .system-intro h1 span {
     display: block;
+
     color: #66686a;
 }
 
@@ -307,7 +334,58 @@ a {
     color: #777a7d;
 
     font-size: 14px;
+
     line-height: 1.7;
+}
+
+
+/* =========================================================
+   EXIT CONTROL
+   ========================================================= */
+
+.direction-exit {
+    position: relative;
+
+    z-index: 15;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    width: max-content;
+
+    margin: 0 auto 30px;
+
+    padding-bottom: 9px;
+
+    color: #666;
+
+    text-decoration: none;
+
+    border-bottom: 1px solid rgba(255,255,255,.2);
+
+    font: 9px monospace;
+
+    letter-spacing: .18em;
+
+    text-transform: uppercase;
+
+    transition:
+        color .3s ease,
+        border-color .3s ease,
+        transform .45s cubic-bezier(.16,1,.3,1);
+}
+
+.direction-exit span:last-child {
+    font-size: 15px;
+}
+
+.direction-exit:hover {
+    color: var(--accent);
+
+    border-color: var(--accent);
+
+    transform: translate(-4px,-2px);
 }
 
 
@@ -317,6 +395,7 @@ a {
 
 .module-selector {
     position: relative;
+
     z-index: 10;
 
     max-width: 1200px;
@@ -344,6 +423,7 @@ a {
     padding: 30px;
 
     border: 0;
+
     border-right: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
 
@@ -363,9 +443,6 @@ a {
         background .45s ease,
         transform .6s cubic-bezier(.16,1,.3,1);
 }
-
-
-/* PANEL GRID */
 
 .module-panel-wide {
     grid-column: 1 / -1;
@@ -436,7 +513,7 @@ a {
 
     top: 30px;
 
-    color: #55585b;
+    color: var(--dim);
 
     font: 9px monospace;
 
@@ -466,7 +543,8 @@ a {
 
     display: block;
 
-    font-size: clamp(44px, 5vw, 76px);
+    font-size:
+        clamp(44px, 5vw, 76px);
 
     line-height: .88;
 
@@ -483,7 +561,7 @@ a {
 
 
 /* =========================================================
-   PANEL DESCRIPTION
+   DESCRIPTION
    ========================================================= */
 
 .panel-description {
@@ -501,12 +579,13 @@ a {
     line-height: 1.55;
 
     transition:
-        color .4s ease;
+        color .4s ease,
+        transform .5s ease;
 }
 
 
 /* =========================================================
-   PANEL ACTION
+   ACTION
    ========================================================= */
 
 .panel-action {
@@ -516,7 +595,9 @@ a {
     bottom: 30px;
 
     display: flex;
+
     align-items: center;
+
     gap: 8px;
 
     color: #666;
@@ -536,17 +617,20 @@ a {
 
 
 /* =========================================================
-   PANEL HOVER
+   HOVER
    ========================================================= */
 
 .module-panel:hover {
-    background: rgba(255,255,255,.025);
+    background:
+        rgba(255,255,255,.025);
 
-    transform: translateY(-3px);
+    transform:
+        translateY(-3px);
 }
 
 .module-panel:hover::before {
-    transform: scale(1.3);
+    transform:
+        scale(1.3);
 
     border-color:
         rgba(184,255,56,.22);
@@ -559,7 +643,8 @@ a {
 }
 
 .module-panel:hover .panel-title {
-    transform: translateX(7px);
+    transform:
+        translateX(7px);
 }
 
 .module-panel:hover .panel-description {
@@ -575,55 +660,69 @@ a {
 
 
 /* =========================================================
-   CLICK STATE
-   ========================================================= */
-
-.module-panel.is-opening {
-    pointer-events: none;
-
-    background:
-        rgba(184,255,56,.035);
-
-    transform: scale(.985);
-}
-
-.module-panel.is-opening .panel-title {
-    letter-spacing: -.02em;
-}
-
-.module-panel.is-opening .panel-action {
-    color: var(--accent);
-}
-
-
-/* =========================================================
-   SYSTEM-SPECIFIC PANEL ACCENTS
+   SYSTEM FAMILY SHAPES
    ========================================================= */
 
 .module-panel[data-system="lens"]::before,
 .module-panel[data-system="echo"]::before,
 .module-panel[data-system="memory"]::before {
+
     border-radius: 50%;
 }
 
+
 .module-panel[data-system="pathfinder"]::before,
 .module-panel[data-system="civic"]::before {
+
     border-radius: 0;
 
-    transform: rotate(45deg)
-               scale(.72);
+    transform:
+        rotate(45deg)
+        scale(.72);
 }
 
+
 .module-panel[data-system="pathfinder"]:hover::before {
+
     transform:
         rotate(135deg)
         scale(.9);
 }
 
+
 .module-panel[data-system="civic"]:hover::before {
+
     transform:
         rotate(45deg)
         scale(1.05);
+}
+
+
+/* =========================================================
+   CLICK RESPONSE
+   ========================================================= */
+
+.module-panel.is-opening {
+
+    pointer-events: none;
+
+    background:
+        rgba(184,255,56,.035);
+
+    transform:
+        scale(.985);
+}
+
+.module-panel.is-opening .panel-title {
+
+    letter-spacing:
+        -.02em;
+}
+
+.module-panel.is-opening .panel-action {
+
+    color:
+        var(--accent);
 }
 
 
@@ -632,6 +731,7 @@ a {
    ========================================================= */
 
 .system-overlay {
+
     position: fixed;
 
     inset: 0;
@@ -639,6 +739,7 @@ a {
     z-index: 100;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -646,7 +747,7 @@ a {
         radial-gradient(
             circle at center,
             rgba(35,40,48,.92),
-            rgba(8,9,11,.98) 70%
+            rgba(8,9,11,.985) 72%
         );
 
     opacity: 0;
@@ -661,6 +762,7 @@ a {
 }
 
 .system-overlay.is-active {
+
     opacity: 1;
 
     visibility: visible;
@@ -674,13 +776,17 @@ a {
    ========================================================= */
 
 .overlay-geometry {
+
     position: absolute;
 
     left: 50%;
     top: 50%;
 
-    width: min(90vw, 900px);
-    height: min(90vw, 900px);
+    width:
+        min(90vw, 900px);
+
+    height:
+        min(90vw, 900px);
 
     transform:
         translate(-50%,-50%)
@@ -691,6 +797,7 @@ a {
 }
 
 .system-overlay.is-active .overlay-geometry {
+
     transform:
         translate(-50%,-50%)
         scale(1);
@@ -701,49 +808,64 @@ a {
 .overlay-diamond,
 .overlay-core,
 .overlay-scan {
+
     position: absolute;
 }
 
 
-/* CIRCLES */
+/* =========================================================
+   RINGS
+   ========================================================= */
 
 .overlay-ring {
+
     left: 50%;
     top: 50%;
 
-    border: 1px solid rgba(255,255,255,.14);
+    border:
+        1px solid
+        rgba(255,255,255,.14);
 
     border-radius: 50%;
 
-    transform: translate(-50%,-50%);
+    transform:
+        translate(-50%,-50%);
 }
 
 .overlay-ring-a {
+
     width: 92%;
     height: 92%;
 }
 
 .overlay-ring-b {
+
     width: 62%;
     height: 62%;
 }
 
 .overlay-ring-c {
+
     width: 25%;
     height: 25%;
 }
 
 
-/* DIAMONDS */
+/* =========================================================
+   DIAMONDS
+   ========================================================= */
 
 .overlay-diamond {
+
     left: 50%;
     top: 50%;
 
     width: 60%;
     height: 60%;
 
-    border: 1px solid rgba(255,255,255,.12);
+    border:
+        1px solid
+        rgba(255,255,255,.12);
 
     transform:
         translate(-50%,-50%)
@@ -758,27 +880,28 @@ a {
 }
 
 .overlay-diamond-b {
+
     width: 38%;
     height: 38%;
 }
 
 
 /* =========================================================
-   SYSTEM SHAPE MODES
+   SHAPE MODES
    ========================================================= */
 
-.system-overlay.shape-circle
-.overlay-diamond {
+.system-overlay.shape-circle .overlay-diamond {
+
     opacity: 0;
 }
 
-.system-overlay.shape-diamond
-.overlay-ring {
-    opacity: .25;
+.system-overlay.shape-diamond .overlay-ring {
+
+    opacity: .22;
 }
 
-.system-overlay.shape-diamond
-.overlay-diamond {
+.system-overlay.shape-diamond .overlay-diamond {
+
     opacity: 1;
 }
 
@@ -788,14 +911,18 @@ a {
    ========================================================= */
 
 .overlay-core {
+
     left: 50%;
     top: 50%;
 
-    transform: translate(-50%,-50%);
+    transform:
+        translate(-50%,-50%);
 
-    color: rgba(255,255,255,.15);
+    color:
+        rgba(255,255,255,.15);
 
-    font: 12px monospace;
+    font:
+        12px monospace;
 
     letter-spacing: .35em;
 }
@@ -806,17 +933,18 @@ a {
    ========================================================= */
 
 .overlay-scan {
+
     left: 50%;
     top: 50%;
 
-    width: 50%;
+    width: 52%;
     height: 1px;
 
     background:
         linear-gradient(
             90deg,
             transparent,
-            rgba(184,255,56,.6),
+            rgba(184,255,56,.65),
             transparent
         );
 
@@ -833,11 +961,13 @@ a {
    ========================================================= */
 
 .overlay-content {
+
     position: relative;
 
     z-index: 5;
 
-    width: min(90vw, 1100px);
+    width:
+        min(90vw, 1100px);
 
     display: flex;
 
@@ -847,7 +977,8 @@ a {
 
     text-align: center;
 
-    transform: translateY(25px);
+    transform:
+        translateY(25px);
 
     opacity: 0;
 
@@ -857,29 +988,36 @@ a {
 }
 
 .system-overlay.is-active .overlay-content {
-    transform: translateY(0);
+
+    transform:
+        translateY(0);
 
     opacity: 1;
 
-    transition-delay: .15s;
+    transition-delay:
+        .15s;
 }
 
 .overlay-index {
-    margin-bottom: 25px;
+
+    margin-bottom: 24px;
 
     color: #888;
 
-    font: 10px monospace;
+    font:
+        10px monospace;
 
     letter-spacing: .24em;
 }
 
 .overlay-kicker {
+
     margin-bottom: 10px;
 
     color: #777;
 
-    font: 10px monospace;
+    font:
+        10px monospace;
 
     letter-spacing: .3em;
 
@@ -887,9 +1025,11 @@ a {
 }
 
 .overlay-title {
+
     margin: 0;
 
-    font-size: clamp(70px, 12vw, 170px);
+    font-size:
+        clamp(70px, 12vw, 170px);
 
     line-height: .8;
 
@@ -901,34 +1041,56 @@ a {
 }
 
 .overlay-description {
-    margin: 38px auto 0;
 
-    max-width: 650px;
+    margin:
+        38px auto 0;
 
-    color: #d0d0cc;
+    max-width:
+        650px;
 
-    font-size: 15px;
+    color:
+        #d0d0cc;
 
-    line-height: 1.6;
+    font-size:
+        15px;
+
+    line-height:
+        1.6;
 }
 
-.overlay-close {
-    margin-top: 55px;
 
-    padding: 0 0 10px;
+/* =========================================================
+   RETURN BUTTON
+   ========================================================= */
+
+.overlay-close {
+
+    margin-top:
+        55px;
+
+    padding:
+        0 0 10px;
 
     border: 0;
-    border-bottom: 1px solid rgba(255,255,255,.35);
 
-    background: transparent;
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.35);
 
-    color: var(--text);
+    background:
+        transparent;
 
-    font: 10px monospace;
+    color:
+        var(--text);
 
-    letter-spacing: .18em;
+    font:
+        10px monospace;
 
-    cursor: pointer;
+    letter-spacing:
+        .18em;
+
+    cursor:
+        pointer;
 
     transition:
         color .3s ease,
@@ -937,97 +1099,232 @@ a {
 }
 
 .overlay-close span {
-    margin-left: 8px;
+
+    margin-left:
+        8px;
 }
 
 .overlay-close:hover {
-    color: var(--accent);
 
-    border-color: var(--accent);
+    color:
+        var(--accent);
 
-    transform: translateX(-4px);
+    border-color:
+        var(--accent);
+
+    transform:
+        translateX(-4px);
 }
 
 
 /* =========================================================
-   SYSTEM-SPECIFIC OVERLAY ANIMATIONS
+   LENS — PRECISION SCAN
    ========================================================= */
 
+.system-overlay.system-lens .overlay-ring-a {
 
-/* LENS — scanning */
-
-.system-overlay.system-lens .overlay-ring {
     animation:
-        lensPulse 3.5s ease-in-out infinite;
+        lensFocus 3.6s
+        ease-in-out
+        infinite;
+}
+
+.system-overlay.system-lens .overlay-ring-b {
+
+    animation:
+        lensFocus 3.6s
+        ease-in-out
+        infinite .45s;
+}
+
+.system-overlay.system-lens .overlay-ring-c {
+
+    animation:
+        lensFocus 3.6s
+        ease-in-out
+        infinite .9s;
 }
 
 .system-overlay.system-lens .overlay-scan {
+
     opacity: 1;
 
     animation:
-        lensScan 3s ease-in-out infinite;
+        lensSweep 4.5s
+        linear
+        infinite;
 }
 
 
-/* ECHO — ripple */
+/* =========================================================
+   PATHFINDER — TRAJECTORY
+   ========================================================= */
 
-.system-overlay.system-echo .overlay-ring {
-    animation:
-        echoRipple 3s ease-out infinite;
-}
+.system-overlay.system-pathfinder
+.overlay-diamond-a {
 
-.system-overlay.system-echo .overlay-ring-b {
-    animation-delay: .8s;
-}
-
-.system-overlay.system-echo .overlay-ring-c {
-    animation-delay: 1.6s;
-}
-
-
-/* MEMORY — slow fading rings */
-
-.system-overlay.system-memory .overlay-ring-a {
-    animation:
-        memoryFade 4s ease-in-out infinite;
-}
-
-.system-overlay.system-memory .overlay-ring-b {
-    animation:
-        memoryFade 4s ease-in-out infinite .8s;
-}
-
-.system-overlay.system-memory .overlay-ring-c {
-    animation:
-        memoryFade 4s ease-in-out infinite 1.6s;
-}
-
-
-/* PATHFINDER — rotating diamond */
-
-.system-overlay.system-pathfinder .overlay-diamond-a {
     opacity: 1;
 
     animation:
-        pathRotate 7s linear infinite;
+        pathfinderOrbit
+        8s
+        linear
+        infinite;
 }
 
-.system-overlay.system-pathfinder .overlay-diamond-b {
-    opacity: .6;
+.system-overlay.system-pathfinder
+.overlay-diamond-b {
+
+    opacity: .55;
 
     animation:
-        pathRotateReverse 5s linear infinite;
+        pathfinderOrbitReverse
+        5.5s
+        linear
+        infinite;
+}
+
+.system-overlay.system-pathfinder
+.overlay-ring-a {
+
+    animation:
+        pathfinderPulse
+        4s
+        ease-in-out
+        infinite;
 }
 
 
-/* CIVIC — structured decoding */
+/* =========================================================
+   CIVIC — DECODING GRID
+   ========================================================= */
 
-.system-overlay.system-civic .overlay-diamond-a,
-.system-overlay.system-civic .overlay-diamond-b {
+.system-overlay.system-civic
+.overlay-diamond-a {
+
     opacity: 1;
 
     animation:
-        civicDecode 2.8s steps(4,end) infinite;
+        civicDecode
+        3.2s
+        steps(5,end)
+        infinite;
+}
+
+.system-overlay.system-civic
+.overlay-diamond-b {
+
+    opacity: .7;
+
+    animation:
+        civicDecodeSmall
+        2.2s
+        steps(4,end)
+        infinite;
+}
+
+.system-overlay.system-civic
+.overlay-ring-b {
+
+    animation:
+        civicGridPulse
+        3s
+        ease-in-out
+        infinite;
+}
+
+
+/* =========================================================
+   ECHO — PROPAGATING SIGNAL
+   ========================================================= */
+
+.system-overlay.system-echo
+.overlay-ring-a {
+
+    animation:
+        echoWave
+        3.4s
+        cubic-bezier(.2,.7,.3,1)
+        infinite;
+}
+
+.system-overlay.system-echo
+.overlay-ring-b {
+
+    animation:
+        echoWave
+        3.4s
+        cubic-bezier(.2,.7,.3,1)
+        infinite
+        1.1s;
+}
+
+.system-overlay.system-echo
+.overlay-ring-c {
+
+    animation:
+        echoWave
+        3.4s
+        cubic-bezier(.2,.7,.3,1)
+        infinite
+        2.2s;
+}
+
+.system-overlay.system-echo
+.overlay-core {
+
+    animation:
+        echoCore
+        3.4s
+        ease-in-out
+        infinite;
+}
+
+
+/* =========================================================
+   MEMORY — RECALL / DISAPPEAR / RETURN
+   ========================================================= */
+
+.system-overlay.system-memory
+.overlay-ring-a {
+
+    animation:
+        memoryRecall
+        5.5s
+        cubic-bezier(.4,0,.2,1)
+        infinite;
+}
+
+.system-overlay.system-memory
+.overlay-ring-b {
+
+    animation:
+        memoryRecall
+        5.5s
+        cubic-bezier(.4,0,.2,1)
+        infinite
+        1.15s;
+}
+
+.system-overlay.system-memory
+.overlay-ring-c {
+
+    animation:
+        memoryRecall
+        5.5s
+        cubic-bezier(.4,0,.2,1)
+        infinite
+        2.3s;
+}
+
+.system-overlay.system-memory
+.overlay-core {
+
+    animation:
+        memoryCore
+        5.5s
+        ease-in-out
+        infinite;
 }
 
 
@@ -1035,77 +1332,48 @@ a {
    KEYFRAMES
    ========================================================= */
 
-@keyframes lensPulse {
+
+/* LENS */
+
+@keyframes lensFocus {
 
     0%,
     100% {
-        transform: translate(-50%,-50%) scale(1);
-        opacity: .7;
+        opacity: .28;
+
+        transform:
+            translate(-50%,-50%)
+            scale(.96);
     }
 
     50% {
-        transform: translate(-50%,-50%) scale(1.035);
-        opacity: 1;
+        opacity: .95;
+
+        transform:
+            translate(-50%,-50%)
+            scale(1.025);
     }
 }
 
-@keyframes lensScan {
+@keyframes lensSweep {
 
-    0% {
+    from {
         transform:
             translate(-50%,-50%)
             rotate(0deg);
     }
 
-    50% {
-        transform:
-            translate(-50%,-50%)
-            rotate(180deg);
-    }
-
-    100% {
+    to {
         transform:
             translate(-50%,-50%)
             rotate(360deg);
     }
 }
 
-@keyframes echoRipple {
 
-    0% {
-        transform:
-            translate(-50%,-50%)
-            scale(.8);
+/* PATHFINDER */
 
-        opacity: .05;
-    }
-
-    50% {
-        opacity: .45;
-    }
-
-    100% {
-        transform:
-            translate(-50%,-50%)
-            scale(1.08);
-
-        opacity: .02;
-    }
-}
-
-@keyframes memoryFade {
-
-    0%,
-    100% {
-        opacity: .08;
-    }
-
-    50% {
-        opacity: .5;
-    }
-}
-
-@keyframes pathRotate {
+@keyframes pathfinderOrbit {
 
     from {
         transform:
@@ -1120,20 +1388,37 @@ a {
     }
 }
 
-@keyframes pathRotateReverse {
+@keyframes pathfinderOrbitReverse {
 
     from {
         transform:
             translate(-50%,-50%)
-            rotate(45deg);
+            rotate(45deg)
+            scale(.7);
     }
 
     to {
         transform:
             translate(-50%,-50%)
-            rotate(-315deg);
+            rotate(-315deg)
+            scale(.7);
     }
 }
+
+@keyframes pathfinderPulse {
+
+    0%,
+    100% {
+        opacity: .12;
+    }
+
+    50% {
+        opacity: .42;
+    }
+}
+
+
+/* CIVIC */
 
 @keyframes civicDecode {
 
@@ -1141,7 +1426,13 @@ a {
         transform:
             translate(-50%,-50%)
             rotate(45deg)
-            scale(.75);
+            scale(.72);
+
+        opacity: .15;
+    }
+
+    25% {
+        opacity: .85;
     }
 
     50% {
@@ -1149,13 +1440,183 @@ a {
             translate(-50%,-50%)
             rotate(45deg)
             scale(1);
+
+        opacity: 1;
+    }
+
+    75% {
+        opacity: .45;
     }
 
     100% {
         transform:
             translate(-50%,-50%)
             rotate(45deg)
-            scale(.75);
+            scale(.72);
+
+        opacity: .15;
+    }
+}
+
+@keyframes civicDecodeSmall {
+
+    0% {
+        transform:
+            translate(-50%,-50%)
+            rotate(45deg)
+            scale(.55);
+
+        opacity: .08;
+    }
+
+    50% {
+        transform:
+            translate(-50%,-50%)
+            rotate(225deg)
+            scale(1);
+
+        opacity: .75;
+    }
+
+    100% {
+        transform:
+            translate(-50%,-50%)
+            rotate(405deg)
+            scale(.55);
+
+        opacity: .08;
+    }
+}
+
+@keyframes civicGridPulse {
+
+    0%,
+    100% {
+        opacity: .12;
+    }
+
+    50% {
+        opacity: .5;
+    }
+}
+
+
+/* ECHO */
+
+@keyframes echoWave {
+
+    0% {
+        transform:
+            translate(-50%,-50%)
+            scale(.35);
+
+        opacity: 0;
+    }
+
+    12% {
+        opacity: .7;
+    }
+
+    55% {
+        opacity: .35;
+    }
+
+    100% {
+        transform:
+            translate(-50%,-50%)
+            scale(1.25);
+
+        opacity: 0;
+    }
+}
+
+@keyframes echoCore {
+
+    0%,
+    100% {
+        transform:
+            translate(-50%,-50%)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translate(-50%,-50%)
+            scale(1.12);
+    }
+}
+
+
+/* MEMORY */
+
+@keyframes memoryRecall {
+
+    0% {
+        transform:
+            translate(-50%,-50%)
+            scale(.72);
+
+        opacity: 0;
+    }
+
+    18% {
+        opacity: .48;
+    }
+
+    38% {
+        transform:
+            translate(-50%,-50%)
+            scale(1);
+
+        opacity: .78;
+    }
+
+    62% {
+        transform:
+            translate(-50%,-50%)
+            scale(.94);
+
+        opacity: .25;
+    }
+
+    78% {
+        transform:
+            translate(-50%,-50%)
+            scale(1.015);
+
+        opacity: .55;
+    }
+
+    100% {
+        transform:
+            translate(-50%,-50%)
+            scale(.72);
+
+        opacity: 0;
+    }
+}
+
+@keyframes memoryCore {
+
+    0%,
+    100% {
+        opacity: .08;
+
+        transform:
+            translate(-50%,-50%)
+            scale(.9);
+    }
+
+    45% {
+        opacity: .5;
+
+        transform:
+            translate(-50%,-50%)
+            scale(1);
+    }
+
+    65% {
+        opacity: .15;
     }
 }
 
@@ -1165,29 +1626,38 @@ a {
    ========================================================= */
 
 .experience-footer {
+
     position: relative;
 
     z-index: 10;
 
     max-width: 1200px;
 
-    margin: 45px auto 0;
+    margin:
+        45px auto 0;
 
-    padding-top: 18px;
+    padding-top:
+        18px;
 
-    border-top: 1px solid var(--line);
+    border-top:
+        1px solid var(--line);
 
     display: flex;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
 
-    color: #4f5255;
+    color:
+        #4f5255;
 
-    font: 8px monospace;
+    font:
+        8px monospace;
 
-    letter-spacing: .18em;
+    letter-spacing:
+        .18em;
 
-    text-transform: uppercase;
+    text-transform:
+        uppercase;
 }
 
 
@@ -1215,7 +1685,8 @@ a {
     }
 
     .system-intro {
-        margin-bottom: 55px;
+        margin-bottom:
+            35px;
     }
 
     .system-intro h1 {
@@ -1223,19 +1694,28 @@ a {
             clamp(48px, 14vw, 85px);
     }
 
+    .direction-exit {
+        margin-bottom:
+            25px;
+    }
+
     .module-selector {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
     }
 
     .module-panel,
     .module-panel-wide {
-        grid-column: auto;
+        grid-column:
+            auto;
 
-        min-height: 330px;
+        min-height:
+            330px;
     }
 
     .panel-title {
         left: 22px;
+
         bottom: 105px;
 
         font-size:
@@ -1269,18 +1749,24 @@ a {
     .overlay-description {
         padding: 0 25px;
 
-        font-size: 13px;
+        font-size:
+            13px;
     }
 
     .overlay-geometry {
-        width: 130vw;
-        height: 130vw;
+        width:
+            130vw;
+
+        height:
+            130vw;
     }
 
     .experience-footer {
-        flex-direction: column;
+        flex-direction:
+            column;
 
-        gap: 10px;
+        gap:
+            10px;
     }
 }
 
@@ -1291,10 +1777,12 @@ a {
 
 @media (prefers-reduced-motion: reduce) {
 
-    *,
-    *::before,
-    *::after {
-        animation: none !important;
+    .systems-page *,
+    .systems-page *::before,
+    .systems-page *::after {
+
+        animation:
+            none !important;
 
         transition:
             none !important;
