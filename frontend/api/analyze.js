@@ -360,7 +360,9 @@ Do not claim structural danger from an image alone.
 
                 details:
                     errorText
-
+                status: 
+                    response.status
+            
             });
 
         }
