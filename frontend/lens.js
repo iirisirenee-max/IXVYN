@@ -41,6 +41,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const analysisStatus =
         document.getElementById("analysis-status");
 
+    const analysisTimer =
+        document.getElementById("analysis-timer");
+
     const inspectionResults =
         document.getElementById("inspection-results");
 
@@ -93,6 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let analysisStartTime = null;
     let analysisElapsedTime = null;
+    let analysisTimerInterval = null;
 
 
     /* =====================================================
@@ -437,12 +441,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
 
-            /*
-             * PROCESSING TIMER
-             *
-             * Start the real performance timer immediately
-             * before the actual AI request begins.
-             */
+            /* ---------------------------------------------
+               START REAL PROCESSING TIMER
+            --------------------------------------------- */
 
             analysisStartTime =
                 performance.now();
@@ -451,11 +452,58 @@ document.addEventListener("DOMContentLoaded", () => {
                 null;
 
 
-            /*
-             * Start the REAL AI request immediately.
-             * While Gemini is processing, IXVYN runs the
-             * visual telemetry animation.
-             */
+            if (analysisTimerInterval) {
+
+                clearInterval(
+                    analysisTimerInterval
+                );
+
+            }
+
+
+            if (analysisTimer) {
+
+                analysisTimer.textContent =
+                    "0.00s";
+
+            }
+
+
+            analysisTimerInterval =
+                setInterval(
+                    () => {
+
+                        if (
+                            !Number.isFinite(
+                                analysisStartTime
+                            )
+                        ) {
+                            return;
+                        }
+
+
+                        const elapsed =
+                            (
+                                performance.now() -
+                                analysisStartTime
+                            ) / 1000;
+
+
+                        if (analysisTimer) {
+
+                            analysisTimer.textContent =
+                                `${elapsed.toFixed(2)}s`;
+
+                        }
+
+                    },
+                    50
+                );
+
+
+            /* ---------------------------------------------
+               START REAL AI REQUEST
+            --------------------------------------------- */
 
             const aiRequest =
                 analyzeImageWithGemini();
@@ -500,25 +548,54 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
 
-            /*
-             * Wait for the REAL Gemini result.
-             */
+            /* ---------------------------------------------
+               WAIT FOR REAL GEMINI RESULT
+            --------------------------------------------- */
 
             const result =
                 await aiRequest;
 
 
-            /*
-             * PROCESSING TIMER
-             *
-             * Stop the timer at the exact moment the real
-             * AI request has returned successfully.
-             */
+            /* ---------------------------------------------
+               STOP REAL PROCESSING TIMER
+            --------------------------------------------- */
 
-            if (Number.isFinite(analysisStartTime)) {
+            if (
+                Number.isFinite(
+                    analysisStartTime
+                )
+            ) {
 
                 analysisElapsedTime =
-                    (performance.now() - analysisStartTime) / 1000;
+                    (
+                        performance.now() -
+                        analysisStartTime
+                    ) / 1000;
+
+            }
+
+
+            if (analysisTimerInterval) {
+
+                clearInterval(
+                    analysisTimerInterval
+                );
+
+                analysisTimerInterval =
+                    null;
+
+            }
+
+
+            if (
+                analysisTimer &&
+                Number.isFinite(
+                    analysisElapsedTime
+                )
+            ) {
+
+                analysisTimer.textContent =
+                    `${analysisElapsedTime.toFixed(2)}s`;
 
             }
 
@@ -550,6 +627,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         } catch (error) {
+
+            /* ---------------------------------------------
+               STOP TIMER ON ERROR
+            --------------------------------------------- */
+
+            if (analysisTimerInterval) {
+
+                clearInterval(
+                    analysisTimerInterval
+                );
+
+                analysisTimerInterval =
+                    null;
+
+            }
+
 
             console.error(
                 "IXVYN LENS: Analysis failed:",
@@ -600,7 +693,9 @@ document.addEventListener("DOMContentLoaded", () => {
          */
 
         const preparedImage =
-            await prepareImageForAI(selectedFile);
+            await prepareImageForAI(
+                selectedFile
+            );
 
 
         console.log(
@@ -898,7 +993,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (resultProcessingTime) {
 
             resultProcessingTime.textContent =
-                Number.isFinite(analysisElapsedTime)
+                Number.isFinite(
+                    analysisElapsedTime
+                )
                     ? `${analysisElapsedTime.toFixed(2)}s`
                     : "—";
 
@@ -1744,6 +1841,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
         analysisElapsedTime =
             null;
+
+
+        if (analysisTimerInterval) {
+
+            clearInterval(
+                analysisTimerInterval
+            );
+
+            analysisTimerInterval =
+                null;
+
+        }
+
+
+        if (analysisTimer) {
+
+            analysisTimer.textContent =
+                "0.00s";
+
+        }
 
 
         resetMemoryButton();
