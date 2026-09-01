@@ -1021,3 +1021,216 @@
     }
 
 }
+/* =========================================================
+   IXVYN — MOBILE POLISH
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+    .lens-experience {
+        padding: 105px 14px 50px;
+    }
+
+    .lens-progress {
+        padding-bottom: 16px;
+        font-size: 8px;
+        letter-spacing: 0.12em;
+    }
+
+    .lens-inspection {
+        margin-top: 48px;
+    }
+
+    .eyebrow {
+        font-size: 8px;
+        letter-spacing: 0.16em;
+        margin-bottom: 20px;
+    }
+
+    .lens-inspection h1 {
+        font-size: clamp(42px, 12vw, 62px);
+        line-height: 0.91;
+        letter-spacing: -0.06em;
+    }
+
+    .lens-lead {
+        font-size: 14px;
+        line-height: 1.55;
+        margin: 24px 0 35px;
+        max-width: 360px;
+    }
+
+    .inspection-input {
+        width: 100%;
+    }
+
+    .inspection-input-header {
+        padding: 13px 14px;
+        font-size: 8px;
+    }
+
+    .upload-zone {
+        min-height: 190px;
+        margin: 10px;
+        padding: 25px 14px;
+    }
+
+    .upload-cross {
+        width: 42px;
+        height: 42px;
+        margin-bottom: 18px;
+        font-size: 20px;
+    }
+
+    .upload-zone strong {
+        font-size: 15px;
+    }
+
+    .upload-zone > span {
+        font-size: 8px;
+        line-height: 1.5;
+    }
+
+    .inspection-controls {
+        padding: 0 14px 18px;
+    }
+
+    .lens-button {
+        font-size: 9px;
+        letter-spacing: 0.14em;
+    }
+
+    /* ANALYSIS */
+
+    .inspection-analysis,
+    .inspection-results {
+        margin-top: 75px;
+        padding-top: 50px;
+    }
+
+    .analysis-header,
+    .results-header {
+        margin-bottom: 32px;
+        gap: 16px;
+    }
+
+    .analysis-header h2,
+    .results-header h2 {
+        font-size: clamp(36px, 11vw, 55px);
+        line-height: 0.94;
+    }
+
+    .analysis-status,
+    .results-marker {
+        font-size: 8px;
+        letter-spacing: 0.12em;
+    }
+
+    .analysis-console {
+        padding: 20px 14px;
+    }
+
+    .analysis-line {
+        grid-template-columns: 30px 1fr 50px;
+        gap: 10px;
+        font-size: 8px;
+        letter-spacing: 0.04em;
+    }
+
+    .analysis-bar {
+        margin-bottom: 22px;
+    }
+
+    /* RESULT IMAGE */
+
+    .result-visual {
+        width: 100%;
+    }
+
+    .result-label {
+        padding: 12px 14px;
+        font-size: 8px;
+    }
+
+    .result-image-stage {
+        min-height: 0;
+        aspect-ratio: 4 / 3;
+    }
+
+    .result-image-stage img {
+        width: 100%;
+        height: 100%;
+        max-height: none;
+        object-fit: contain;
+    }
+
+    .result-overlay {
+        top: 20%;
+        left: 20%;
+        width: 45%;
+        height: 35%;
+    }
+
+    .result-overlay span {
+        top: -18px;
+        padding: 4px 6px;
+        font-size: 7px;
+    }
+
+    /* INTELLIGENCE */
+
+    .intelligence-block {
+        padding: 18px 0;
+    }
+
+    .metric-label {
+        font-size: 8px;
+        margin-bottom: 7px;
+    }
+
+    .intelligence-block strong {
+        font-size: 23px;
+    }
+
+    .intelligence-description,
+    .intelligence-action {
+        padding: 18px 0;
+    }
+
+    .intelligence-description p,
+    .intelligence-action p {
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    /* LOCATION */
+
+    .location-panel {
+        margin-top: 24px;
+        padding: 18px;
+        gap: 18px;
+    }
+
+    .location-panel > div:first-child strong {
+        font-size: 16px;
+    }
+
+    .coordinates {
+        gap: 9px;
+        font-size: 8px;
+    }
+
+    /* ACTIONS */
+
+    .diagnosis-actions {
+        margin-top: 35px;
+        gap: 18px;
+    }
+
+    .lens-footer {
+        margin-top: 75px;
+        padding-top: 22px;
+        font-size: 8px;
+    }
+
+}
