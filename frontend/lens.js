@@ -73,14 +73,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const newInspection =
         document.getElementById("new-inspection");
-        
+
     const saveMemoryButton =
         document.getElementById("save-memory");
+
+    const resultProcessingTime =
+        document.getElementById("result-processing-time");
+
 
     let currentAnalysisResult = null;
     let currentLatitude = null;
     let currentLongitude = null;
     let memorySaved = false;
+
+
+    /* =====================================================
+       PROCESSING TIMER
+    ===================================================== */
+
+    let analysisStartTime = null;
+    let analysisElapsedTime = null;
 
 
     /* =====================================================
@@ -183,7 +195,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
         }
-    );/* =====================================================
+    );
+
+
+    /* =====================================================
        PROCESS FILE
     ===================================================== */
 
@@ -333,7 +348,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             processFile(file);
         }
-    );/* =====================================================
+    );
+
+
+    /* =====================================================
        ANALYSIS BUTTON
     ===================================================== */
 
@@ -420,8 +438,23 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
 
             /*
+             * PROCESSING TIMER
+             *
+             * Start the real performance timer immediately
+             * before the actual AI request begins.
+             */
+
+            analysisStartTime =
+                performance.now();
+
+            analysisElapsedTime =
+                null;
+
+
+            /*
              * Start the REAL AI request immediately.
-             * While Gemini is processing, IXVYN runs the visual telemetry animation.
+             * While Gemini is processing, IXVYN runs the
+             * visual telemetry animation.
              */
 
             const aiRequest =
@@ -475,6 +508,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 await aiRequest;
 
 
+            /*
+             * PROCESSING TIMER
+             *
+             * Stop the timer at the exact moment the real
+             * AI request has returned successfully.
+             */
+
+            if (Number.isFinite(analysisStartTime)) {
+
+                analysisElapsedTime =
+                    (performance.now() - analysisStartTime) / 1000;
+
+            }
+
+
             analysisStatus.textContent =
                 "ANALYSIS COMPLETE";
 
@@ -482,6 +530,12 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(
                 "IXVYN LENS: REAL AI RESULT:",
                 result
+            );
+
+
+            console.log(
+                "IXVYN LENS: PROCESSING TIME:",
+                `${analysisElapsedTime?.toFixed(2)}s`
             );
 
 
@@ -655,7 +709,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         return data;
-    }/* =====================================================
+    }
+
+
+    /* =====================================================
        PREPARE IMAGE
     ===================================================== */
 
@@ -679,8 +736,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             () => {
 
                                 const MAX_SIZE =
-                                    800; // Constrained to 800 to accelerate execution
-
+                                    800;
 
                                 let width =
                                     image.naturalWidth;
@@ -754,7 +810,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                                 /*
-                                 * JPEG keeps requests reasonably small while retaining enough detail.
+                                 * JPEG keeps requests reasonably small
+                                 * while retaining enough detail.
                                  */
 
                                 const dataURL =
@@ -823,9 +880,29 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!result) {
             return;
         }
-        currentAnalysisResult = result;
-        memorySaved = false;
+
+
+        currentAnalysisResult =
+            result;
+
+        memorySaved =
+            false;
+
         resetMemoryButton();
+
+
+        /* ---------------------------------------------
+           PROCESSING TIME
+        --------------------------------------------- */
+
+        if (resultProcessingTime) {
+
+            resultProcessingTime.textContent =
+                Number.isFinite(analysisElapsedTime)
+                    ? `${analysisElapsedTime.toFixed(2)}s`
+                    : "—";
+
+        }
 
 
         /* ---------------------------------------------
@@ -854,7 +931,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             resultConfidence.textContent =
                 Number.isFinite(confidence)
-                    ? (confidence <= 1 ? `${(confidence * 100).toFixed(1)}%` : `${confidence.toFixed(1)}%`)
+                    ? (
+                        confidence <= 1
+                            ? `${(confidence * 100).toFixed(1)}%`
+                            : `${confidence.toFixed(1)}%`
+                    )
                     : "—";
         }
 
@@ -908,6 +989,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "No immediate action recommended.";
         }
 
+
         /* ---------------------------------------------
            RESULT IMAGE
         --------------------------------------------- */
@@ -960,18 +1042,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
         /* ---------------------------------------------
            LOCATION & DATA MATRICES FORWARDING
-         --------------------------------------------- */
+        --------------------------------------------- */
 
-        sessionStorage.setItem("sih_defect", result.defect || "UNIFORMITY HAZARD");
-        sessionStorage.setItem("sih_severity", result.severity || "HIGH // PRIORITY");
-        sessionStorage.setItem("sih_trigger", "true");
+        sessionStorage.setItem(
+            "sih_defect",
+            result.defect ||
+            "UNIFORMITY HAZARD"
+        );
+
+        sessionStorage.setItem(
+            "sih_severity",
+            result.severity ||
+            "HIGH // PRIORITY"
+        );
+
+        sessionStorage.setItem(
+            "sih_trigger",
+            "true"
+        );
+
 
         requestLocation();
-    }/* =====================================================
-       REAL BOUNDING BOX
-       ===================================================== */
+    }
 
-    function renderBoundingBox(boundingBox) {
+
+    /* =====================================================
+       REAL BOUNDING BOX
+    ===================================================== */
+
+    function renderBoundingBox(
+        boundingBox
+    ) {
 
         if (!resultOverlay) {
 
@@ -1010,7 +1111,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-         * FORMAT 1: { xmin, ymin, xmax, ymax }
+         * FORMAT 1:
+         * { xmin, ymin, xmax, ymax }
          */
 
         if (
@@ -1072,7 +1174,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         /*
-         * FORMAT 2: { x, y, width, height }
+         * FORMAT 2:
+         * { x, y, width, height }
          */
 
         else if (
@@ -1129,6 +1232,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 y /= 10;
                 width /= 10;
                 height /= 10;
+
             }
         }
 
@@ -1172,6 +1276,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (width < 0) {
 
             x += width;
+
             width =
                 Math.abs(width);
         }
@@ -1180,26 +1285,72 @@ document.addEventListener("DOMContentLoaded", () => {
         if (height < 0) {
 
             y += height;
+
             height =
                 Math.abs(height);
         }
 
-        x = clamp(x, 0, 100);
-        y = clamp(y, 0, 100);
-        width = clamp(width, 0, 100 - x);
-        height = clamp(height, 0, 100 - y);
 
-        if (width < 1 || height < 1) {
-            resultOverlay.style.display = "none";
+        x =
+            clamp(
+                x,
+                0,
+                100
+            );
+
+        y =
+            clamp(
+                y,
+                0,
+                100
+            );
+
+        width =
+            clamp(
+                width,
+                0,
+                100 - x
+            );
+
+        height =
+            clamp(
+                height,
+                0,
+                100 - y
+            );
+
+
+        if (
+            width < 1 ||
+            height < 1
+        ) {
+
+            resultOverlay.style.display =
+                "none";
+
             return;
         }
 
-        resultOverlay.style.display = "block";
-        resultOverlay.style.left = `${x}%`;
-        resultOverlay.style.top = `${y}%`;
-        resultOverlay.style.width = `${width}%`;
-        resultOverlay.style.height = `${height}%`;
-        resultOverlay.setAttribute("data-ai-detection", "true");
+
+        resultOverlay.style.display =
+            "block";
+
+        resultOverlay.style.left =
+            `${x}%`;
+
+        resultOverlay.style.top =
+            `${y}%`;
+
+        resultOverlay.style.width =
+            `${width}%`;
+
+        resultOverlay.style.height =
+            `${height}%`;
+
+        resultOverlay.setAttribute(
+            "data-ai-detection",
+            "true"
+        );
     }
 
 
@@ -1243,6 +1394,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ) {
 
             setFallbackLocation();
+
             return;
         }
 
@@ -1263,8 +1415,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const longitude =
                     position.coords.longitude;
-                currentLatitude = latitude;
-                currentLongitude = longitude;
+
+
+                currentLatitude =
+                    latitude;
+
+                currentLongitude =
+                    longitude;
 
 
                 resultLat.textContent =
@@ -1273,8 +1430,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 resultLon.textContent =
                     longitude.toFixed(5);
 
-                sessionStorage.setItem("sih_lat", latitude.toFixed(5));
-                sessionStorage.setItem("sih_lon", longitude.toFixed(5));
+
+                sessionStorage.setItem(
+                    "sih_lat",
+                    latitude.toFixed(5)
+                );
+
+                sessionStorage.setItem(
+                    "sih_lon",
+                    longitude.toFixed(5)
+                );
+
 
                 console.log(
                     "IXVYN LENS: Location captured.",
@@ -1303,18 +1469,44 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     }
 
+
     function setFallbackLocation() {
-        const fLat = "28.61390";
-        const fLon = "77.20900";
-        resultLat.textContent = fLat;
-        resultLon.textContent = fLon;
-        currentLatitude = fLat;
-        currentLongitude = fLon;
-        sessionStorage.setItem("sih_lat", fLat);
-        sessionStorage.setItem("sih_lon", fLon);
-    }/* =====================================================
-       MEMORY — SAVE INSPECTION (CORRECTED FLAT MAPPING)
-       ===================================================== */
+
+        const fLat =
+            "28.61390";
+
+        const fLon =
+            "77.20900";
+
+
+        resultLat.textContent =
+            fLat;
+
+        resultLon.textContent =
+            fLon;
+
+        currentLatitude =
+            fLat;
+
+        currentLongitude =
+            fLon;
+
+
+        sessionStorage.setItem(
+            "sih_lat",
+            fLat
+        );
+
+        sessionStorage.setItem(
+            "sih_lon",
+            fLon
+        );
+    }
+
+
+    /* =====================================================
+       MEMORY — SAVE INSPECTION
+    ===================================================== */
 
     function saveCurrentInspection() {
 
@@ -1327,12 +1519,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+
         if (memorySaved) {
             return;
         }
 
 
-        // Map directly from root object since your live server schema returns flat parameters
         const record = {
 
             id:
@@ -1365,10 +1557,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 "",
 
             latitude:
-                Number(currentLatitude) || null,
+                Number(currentLatitude) ||
+                null,
 
             longitude:
-                Number(currentLongitude) || null,
+                Number(currentLongitude) ||
+                null,
 
             timestamp:
                 new Date().toISOString(),
@@ -1393,10 +1587,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     STORAGE_KEY
                 );
 
+
             if (stored) {
 
                 const parsed =
                     JSON.parse(stored);
+
 
                 if (Array.isArray(parsed)) {
 
@@ -1426,8 +1622,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 JSON.stringify(records)
             );
 
+
             memorySaved =
                 true;
+
 
             setMemorySavedState();
 
@@ -1451,7 +1649,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        MEMORY — BUTTON STATES
-       ===================================================== */
+    ===================================================== */
 
     function setMemorySavedState() {
 
@@ -1459,8 +1657,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+
         saveMemoryButton.disabled =
             true;
+
 
         saveMemoryButton.innerHTML =
             `
@@ -1476,8 +1676,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+
         saveMemoryButton.disabled =
             false;
+
 
         saveMemoryButton.innerHTML =
             `
@@ -1489,7 +1691,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================
        MEMORY — BUTTON EVENT BINDINGS
-       ===================================================== */
+    ===================================================== */
 
     if (saveMemoryButton) {
 
@@ -1518,10 +1720,31 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(
             "IXVYN LENS: Resetting inspection."
         );
-        currentAnalysisResult = null;
-        currentLatitude = null;
-        currentLongitude = null;
-        memorySaved = false;
+
+
+        currentAnalysisResult =
+            null;
+
+        currentLatitude =
+            null;
+
+        currentLongitude =
+            null;
+
+        memorySaved =
+            false;
+
+
+        /* ---------------------------------------------
+           RESET PROCESSING TIMER
+        --------------------------------------------- */
+
+        analysisStartTime =
+            null;
+
+        analysisElapsedTime =
+            null;
+
 
         resetMemoryButton();
 
@@ -1597,6 +1820,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "";
         }
 
+
         /* ---------------------------------------------
            RESET DATA FIELD CONTENT WRAPPERS
         --------------------------------------------- */
@@ -1632,6 +1856,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (resultPriority) {
 
             resultPriority.textContent =
+                "—";
+        }
+
+
+        if (resultProcessingTime) {
+
+            resultProcessingTime.textContent =
                 "—";
         }
 
@@ -1737,7 +1968,10 @@ document.addEventListener("DOMContentLoaded", () => {
             behavior: "smooth",
             block: "start"
         });
-    }/* =====================================================
+    }
+
+
+    /* =====================================================
        PROGRESS LOADER METRIC CALCULATIONS
     ===================================================== */
 
@@ -1799,6 +2033,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                     /* Smooth ease-out cubic computation */
+
                     const eased =
                         1 -
                         Math.pow(
@@ -1854,6 +2089,50 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
 
             }
+        );
+    }
+
+
+    /* =====================================================
+       SHOW RESULTS
+    ===================================================== */
+
+    function showResults() {
+
+        analysisState.hidden =
+            true;
+
+        inspectionResults.hidden =
+            false;
+
+        inspectionResults.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+
+
+    /* =====================================================
+       ANALYSIS ERROR
+    ===================================================== */
+
+    function showAnalysisError(
+        error
+    ) {
+
+        analysisState.hidden =
+            false;
+
+        inspectionResults.hidden =
+            true;
+
+        analysisStatus.textContent =
+            "ANALYSIS FAILED";
+
+
+        console.error(
+            "IXVYN LENS: Analysis error:",
+            error
         );
     }
 
