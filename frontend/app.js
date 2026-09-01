@@ -32,8 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         card.addEventListener("click", () => {
 
-            const module = card.dataset.module;
-
+           const module =
+    card.dataset.module ||
+    card.dataset.system;
             if (!module) {
                 return;
             }
