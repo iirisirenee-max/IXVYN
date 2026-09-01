@@ -2105,9 +2105,6 @@
         opacity: 0.28;
     }
 
-    .progressSignal {
-        display: none;
-    }
 
     .lens-inspection h1 {
         animation-duration: 700ms;
