@@ -320,10 +320,16 @@ Do not claim structural danger from an image alone.
 
                     ],
 
-                    generationConfig: {
-                        
-                        responseMimeType:
-                            "application/json"
+                   generationConfig: {
+
+    responseMimeType:
+        "application/json",
+
+    thinkingConfig: {
+        thinkingLevel: "minimal"
+    }
+
+}
 
                     }
 
