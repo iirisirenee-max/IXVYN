@@ -359,7 +359,7 @@ Do not claim structural danger from an image alone.
                     "GEMINI_REQUEST_FAILED",
 
                 details:
-                    errorText
+                    errorText,
                 status: 
                     response.status
             
