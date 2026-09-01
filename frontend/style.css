@@ -2302,3 +2302,61 @@ body {
     }
 
 }
+/* =====================================================
+   IXVYN — SYSTEM FLOW MOBILE CLEANUP
+   ===================================================== */
+
+@media (max-width: 800px) {
+
+    .system-card {
+        min-height: 350px;
+    }
+
+    .system-flow {
+        left: 22px;
+        right: 22px;
+        bottom: 82px;
+
+        display: flex;
+        flex-wrap: nowrap;
+
+        gap: 4px;
+
+        width: calc(100% - 44px);
+
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        padding-bottom: 3px;
+
+        opacity: 0.85;
+
+        scrollbar-width: none;
+
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .system-flow::-webkit-scrollbar {
+        display: none;
+    }
+
+    .system-flow-step {
+        flex: 0 0 auto;
+
+        padding: 6px 6px;
+
+        font-size: 6px;
+
+        white-space: nowrap;
+    }
+
+    .system-flow-arrow {
+        flex: 0 0 auto;
+        font-size: 7px;
+    }
+
+    .system-card:hover .system-flow {
+        opacity: 0.85;
+    }
+
+}
