@@ -1,4 +1,3 @@
-
 /* =========================================================
    IXVYN — SYSTEMS INTERACTION
    ========================================================= */
@@ -47,50 +46,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
         lens: {
             title: "LENS",
-
             description:
                 "Discover the gaps between what you know and what you need.",
-
             shape: "circle"
         },
-
 
         pathfinder: {
             title: "PATHFINDER",
-
             description:
                 "Explore possible futures through experience, not prediction.",
-
             shape: "diamond"
         },
-
 
         civic: {
             title: "CIVIC",
-
             description:
                 "Transform complex public information into something people can act upon.",
-
             shape: "diamond"
         },
 
-
         echo: {
             title: "ECHO",
-
             description:
                 "Shape information around the person, not the other way around.",
-
             shape: "circle"
         },
 
-
         memory: {
             title: "MEMORY",
-
             description:
                 "Understand what is fading before it disappears — and bring it back.",
-
             shape: "circle"
         }
 
@@ -115,14 +100,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!system) return;
 
-
         activeSystem =
             systemName;
 
-
-        /* ---------------------------------------------
-           UPDATE CONTENT
-        --------------------------------------------- */
 
         overlayTitle.textContent =
             system.title;
@@ -131,32 +111,18 @@ document.addEventListener("DOMContentLoaded", () => {
             system.description;
 
 
-        /* ---------------------------------------------
-           REMOVE PREVIOUS SYSTEM CLASSES
-        --------------------------------------------- */
-
         overlay.classList.remove(
 
             "system-lens",
-
             "system-pathfinder",
-
             "system-civic",
-
             "system-echo",
-
             "system-memory",
-
             "shape-circle",
-
             "shape-diamond"
 
         );
 
-
-        /* ---------------------------------------------
-           APPLY CURRENT SYSTEM
-        --------------------------------------------- */
 
         overlay.classList.add(
             `system-${systemName}`
@@ -167,29 +133,13 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        /* ---------------------------------------------
-           RESTART SYSTEM ANIMATION CLEANLY
-        --------------------------------------------- */
-
         overlay.classList.remove(
             "is-active"
         );
 
 
-        /*
-        Force the browser to recognize the class removal
-        before activating it again.
-
-        This prevents animations from getting stuck when
-        switching between systems.
-        */
-
         void overlay.offsetWidth;
 
-
-        /* ---------------------------------------------
-           ACTIVATE
-        --------------------------------------------- */
 
         overlay.classList.add(
             "is-active"
@@ -201,17 +151,9 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
 
-        /* ---------------------------------------------
-           LOCK BACKGROUND
-        --------------------------------------------- */
-
         document.body.style.overflow =
             "hidden";
 
-
-        /* ---------------------------------------------
-           FOCUS RETURN BUTTON
-        --------------------------------------------- */
 
         setTimeout(() => {
 
@@ -245,10 +187,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "true"
         );
 
-
         document.body.style.overflow =
             "";
-
 
         activeSystem =
             null;
@@ -269,14 +209,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 const systemName =
                     panel.dataset.system;
 
+
                 if (!systemName) {
                     return;
                 }
 
 
-                /*
-                Prevent double activation.
-                */
+                /* =========================================
+                   LENS → REAL LENS EXPERIENCE
+                   ========================================= */
+
+                if (systemName === "lens") {
+
+                    window.location.href =
+                        "lens.html";
+
+                    return;
+                }
+
+
+                /* =========================================
+                   PREVENT DOUBLE ACTIVATION
+                   ========================================= */
 
                 if (
                     overlay.classList.contains(
@@ -287,10 +241,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
 
-                /*
-                Small physical response before
-                opening the cinematic interface.
-                */
+                /* =========================================
+                   SMALL CLICK RESPONSE
+                   ========================================= */
 
                 panel.classList.add(
                     "is-opening"
@@ -329,11 +282,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-
-                /*
-                Don't tilt panels while the overlay
-                is active.
-                */
 
                 if (
                     overlay.classList.contains(
@@ -458,7 +406,6 @@ document.addEventListener("DOMContentLoaded", () => {
         "aria-hidden",
         "true"
     );
-
 
     document.body.style.overflow =
         "";
