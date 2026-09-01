@@ -1,1294 +1,836 @@
+```javascript
 /* =========================================================
-   IXVYN — LENS
-   DIAGNOSTIC ENGINE / V2
-   ---------------------------------------------------------
-   Local diagnostic engine:
-   - evaluates the user's actual written evidence
-   - rewards specificity, examples, actions and reflection
-   - detects uncertainty / vague intent
-   - produces prioritized gaps and next evidence
-   - keeps the interface/API-free for now
+   IXVYN — LENS / VISUAL INFRASTRUCTURE INTELLIGENCE
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("IXVYN LENS online.");
+
+    console.log("IXVYN LENS visual intelligence online.");
+
 
     /* =====================================================
        ELEMENTS
     ===================================================== */
 
-    const steps = document.querySelectorAll(".lens-step");
+    const imageInput =
+        document.getElementById("image-input");
 
-    const progressLabel = document.getElementById("progress-label");
-    const progressCount = document.getElementById("progress-count");
+    const uploadZone =
+        document.getElementById("upload-zone");
 
-    const intentInput = document.getElementById("intent");
-    const intentCount = document.getElementById("intent-count");
-    const intentNext = document.getElementById("intent-next");
+    const analyzeButton =
+        document.getElementById("analyze-button");
 
-    const knowledgeInput = document.getElementById("knowledge");
-    const experienceInput = document.getElementById("experience");
-    const interestInput = document.getElementById("interest");
+    const inspectionInput =
+        document.getElementById("inspection-input");
 
-    const analyzeButton = document.getElementById("analyze-button");
+    const inspectionPreview =
+        document.getElementById("inspection-preview");
 
-    const stateBack = document.getElementById("state-back");
-    const diagnosisBack = document.getElementById("diagnosis-back");
+    const previewImage =
+        document.getElementById("preview-image");
 
-    const metricKnowledge = document.getElementById("metric-knowledge");
-    const metricExperience = document.getElementById("metric-experience");
-    const metricExposure = document.getElementById("metric-exposure");
-    const metricClarity = document.getElementById("metric-clarity");
+    const fileName =
+        document.getElementById("file-name");
 
-    const barKnowledge = document.getElementById("bar-knowledge");
-    const barExperience = document.getElementById("bar-experience");
-    const barExposure = document.getElementById("bar-exposure");
-    const barClarity = document.getElementById("bar-clarity");
+    const systemState =
+        document.getElementById("system-state");
 
-    const gapList = document.getElementById("gap-list");
-    const nextList = document.getElementById("next-list");
+    const analysisState =
+        document.getElementById("analysis-state");
+
+    const analysisStatus =
+        document.getElementById("analysis-status");
+
+    const inspectionResults =
+        document.getElementById("inspection-results");
+
+    const resultImage =
+        document.getElementById("result-image");
+
+    const resultDefect =
+        document.getElementById("result-defect");
+
+    const resultConfidence =
+        document.getElementById("result-confidence");
+
+    const resultSeverity =
+        document.getElementById("result-severity");
+
+    const resultPriority =
+        document.getElementById("result-priority");
+
+    const resultDescription =
+        document.getElementById("result-description");
+
+    const resultAction =
+        document.getElementById("result-action");
+
+    const resultLat =
+        document.getElementById("result-lat");
+
+    const resultLon =
+        document.getElementById("result-lon");
+
+    const newInspection =
+        document.getElementById("new-inspection");
+
+
+    /* =====================================================
+       PROGRESS ELEMENTS
+    ===================================================== */
+
+    const progressVision =
+        document.getElementById("progress-vision");
+
+    const progressClassification =
+        document.getElementById("progress-classification");
+
+    const progressSeverity =
+        document.getElementById("progress-severity");
+
+    const barVision =
+        document.getElementById("bar-vision");
+
+    const barClassification =
+        document.getElementById("bar-classification");
+
+    const barSeverity =
+        document.getElementById("bar-severity");
+
 
     /* =====================================================
        STATE
     ===================================================== */
 
-    const state = {
-        currentStep: 1,
-        intent: "",
-        knowledge: "",
-        experience: "",
-        interest: "",
-        diagnosis: null
-    };
+    let selectedFile = null;
+
+    let selectedImageURL = null;
+
+    let analysisRunning = false;
+
 
     /* =====================================================
-       STEP LABELS
+       SAFETY CHECK
     ===================================================== */
 
-    const stepInformation = {
-        1: {
-            label: "LENS / 01 — INTENT",
-            count: "01 / 03"
-        },
-
-        2: {
-            label: "LENS / 02 — CURRENT STATE",
-            count: "02 / 03"
-        },
-
-        3: {
-            label: "LENS / 03 — DIAGNOSIS",
-            count: "03 / 03"
-        }
-    };
-
-    /* =====================================================
-       SHOW STEP
-    ===================================================== */
-
-    function showStep(stepNumber) {
-
-        state.currentStep = stepNumber;
-
-        steps.forEach((step) => {
-
-            step.classList.toggle(
-                "is-active",
-                Number(step.dataset.step) === stepNumber
-            );
-
-        });
-
-        const information =
-            stepInformation[stepNumber];
-
-        if (information) {
-
-            if (progressLabel) {
-                progressLabel.textContent =
-                    information.label;
-            }
-
-            if (progressCount) {
-                progressCount.textContent =
-                    information.count;
-            }
-
-        }
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
-    }
-
-    /* =====================================================
-       CHARACTER COUNTER
-    ===================================================== */
-
-    if (intentInput && intentCount) {
-
-        const updateIntentCount = () => {
-
-            intentCount.textContent =
-                `${intentInput.value.length} / 1000`;
-
-        };
-
-        intentInput.addEventListener(
-            "input",
-            updateIntentCount
-        );
-
-        updateIntentCount();
-
-    }
-
-    /* =====================================================
-       VALIDATION
-    ===================================================== */
-
-    function hasText(value) {
-
-        return (
-            typeof value === "string" &&
-            value.trim().length >= 8
-        );
-
-    }
-
-    function markInvalid(element) {
-
-        if (!element) return;
-
-        element.classList.add(
-            "input-invalid"
-        );
-
-        setTimeout(() => {
-
-            element.classList.remove(
-                "input-invalid"
-            );
-
-        }, 700);
-
-    }
-
-    /* =====================================================
-       TEXT NORMALIZATION
-    ===================================================== */
-
-    function normalize(text) {
-
-        return String(text || "")
-            .toLowerCase()
-            .replace(
-                /[^\p{L}\p{N}\s'-]/gu,
-                " "
-            )
-            .replace(
-                /\s+/g,
-                " "
-            )
-            .trim();
-
-    }
-
-    function words(text) {
-
-        const value =
-            normalize(text);
-
-        return value
-            ? value.split(" ")
-            : [];
-
-    }
-
-    function wordCount(text) {
-
-        return words(text).length;
-
-    }
-
-    function sentenceCount(text) {
-
-        const matches =
-            String(text || "")
-                .match(/[.!?]+/g);
-
-        return Math.max(
-            1,
-            matches
-                ? matches.length
-                : 1
-        );
-
-    }
-
-    function uniqueWordRatio(text) {
-
-        const list =
-            words(text);
-
-        if (!list.length) {
-            return 0;
-        }
-
-        return (
-            new Set(list).size /
-            list.length
-        );
-
-    }
-
-    function clamp(
-        value,
-        min = 0,
-        max = 100
+    if (
+        !imageInput ||
+        !uploadZone ||
+        !analyzeButton ||
+        !inspectionInput ||
+        !inspectionPreview ||
+        !previewImage ||
+        !analysisState ||
+        !inspectionResults
     ) {
 
-        return Math.max(
-            min,
-            Math.min(
-                max,
-                Math.round(value)
-            )
+        console.warn(
+            "IXVYN LENS: Required interface elements missing."
+        );
+
+        return;
+    }
+
+
+    /* =====================================================
+       IMAGE SELECTION
+    ===================================================== */
+
+    imageInput.addEventListener(
+        "change",
+        handleFileSelection
+    );
+
+
+    function handleFileSelection(event) {
+
+        const file =
+            event.target.files?.[0];
+
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+
+            console.warn(
+                "IXVYN LENS: Selected file is not an image."
+            );
+
+            return;
+        }
+
+
+        selectedFile =
+            file;
+
+
+        /* ---------------------------------------------
+           CLEAN PREVIOUS OBJECT URL
+        --------------------------------------------- */
+
+        if (selectedImageURL) {
+
+            URL.revokeObjectURL(
+                selectedImageURL
+            );
+
+        }
+
+
+        selectedImageURL =
+            URL.createObjectURL(file);
+
+
+        /* ---------------------------------------------
+           PREVIEW
+        --------------------------------------------- */
+
+        previewImage.src =
+            selectedImageURL;
+
+        resultImage.src =
+            selectedImageURL;
+
+
+        fileName.textContent =
+            file.name;
+
+
+        inspectionPreview.hidden =
+            false;
+
+
+        analyzeButton.disabled =
+            false;
+
+
+        systemState.textContent =
+            "FRAME READY";
+
+
+        uploadZone.classList.add(
+            "has-file"
+        );
+
+
+        console.log(
+            "IXVYN LENS: Frame loaded:",
+            file.name
         );
 
     }
 
-    function countMatches(
-        text,
-        patterns
-    ) {
 
-        const value =
-            normalize(text);
+    /* =====================================================
+       DRAG + DROP
+    ===================================================== */
 
-        return patterns.reduce(
-            (count, pattern) => {
+    uploadZone.addEventListener(
+        "dragover",
+        (event) => {
 
-                const regex =
-                    pattern instanceof RegExp
-                        ? pattern
-                        : new RegExp(
-                            `\\b${pattern}\\b`,
-                            "i"
-                        );
+            event.preventDefault();
 
-                return count +
-                    (
-                        regex.test(value)
-                            ? 1
-                            : 0
-                    );
+            uploadZone.classList.add(
+                "is-dragging"
+            );
 
-            },
+        }
+    );
+
+
+    uploadZone.addEventListener(
+        "dragleave",
+        () => {
+
+            uploadZone.classList.remove(
+                "is-dragging"
+            );
+
+        }
+    );
+
+
+    uploadZone.addEventListener(
+        "drop",
+        (event) => {
+
+            event.preventDefault();
+
+            uploadZone.classList.remove(
+                "is-dragging"
+            );
+
+
+            const file =
+                event.dataTransfer.files?.[0];
+
+            if (!file) return;
+
+
+            if (!file.type.startsWith("image/")) {
+
+                console.warn(
+                    "IXVYN LENS: Dropped file is not an image."
+                );
+
+                return;
+            }
+
+
+            selectedFile =
+                file;
+
+
+            if (selectedImageURL) {
+
+                URL.revokeObjectURL(
+                    selectedImageURL
+                );
+
+            }
+
+
+            selectedImageURL =
+                URL.createObjectURL(file);
+
+
+            previewImage.src =
+                selectedImageURL;
+
+            resultImage.src =
+                selectedImageURL;
+
+
+            fileName.textContent =
+                file.name;
+
+
+            inspectionPreview.hidden =
+                false;
+
+
+            analyzeButton.disabled =
+                false;
+
+
+            systemState.textContent =
+                "FRAME READY";
+
+
+            uploadZone.classList.add(
+                "has-file"
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       ANALYSIS
+    ===================================================== */
+
+    analyzeButton.addEventListener(
+        "click",
+        beginAnalysis
+    );
+
+
+    async function beginAnalysis() {
+
+        if (
+            !selectedFile ||
+            analysisRunning
+        ) {
+            return;
+        }
+
+
+        analysisRunning =
+            true;
+
+
+        analyzeButton.disabled =
+            true;
+
+
+        systemState.textContent =
+            "ANALYZING";
+
+
+        /* ---------------------------------------------
+           SHOW ANALYSIS STATE
+        --------------------------------------------- */
+
+        analysisState.hidden =
+            false;
+
+
+        inspectionInput.hidden =
+            true;
+
+
+        inspectionPreview.hidden =
+            true;
+
+
+        inspectionResults.hidden =
+            true;
+
+
+        analysisState.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+
+        /* ---------------------------------------------
+           RESET PROGRESS
+        --------------------------------------------- */
+
+        setProgress(
+            progressVision,
+            barVision,
             0
         );
 
-    }
-
-    /* =====================================================
-       EVIDENCE SIGNALS
-    ===================================================== */
-
-    const knowledgeSignals = [
-
-        "know",
-        "understand",
-        "learned",
-        "studied",
-        "concept",
-        "theory",
-        "principle",
-        "method",
-        "research",
-        "course",
-        "class",
-        "book",
-        "paper",
-        "algorithm",
-        "framework",
-        "fundamental",
-        "basics",
-        "foundation"
-
-    ];
-
-    const actionSignals = [
-
-        "built",
-        "made",
-        "created",
-        "worked",
-        "tried",
-        "tested",
-        "designed",
-        "developed",
-        "implemented",
-        "project",
-        "prototype",
-        "experiment",
-        "practiced",
-        "practice",
-        "solved",
-        "used",
-        "applied",
-        "deployed",
-        "volunteered",
-        "interned",
-        "participated"
-
-    ];
-
-    const exposureSignals = [
-
-        "internship",
-        "interned",
-        "mentor",
-        "mentored",
-        "professional",
-        "industry",
-        "company",
-        "workplace",
-        "team",
-        "client",
-        "community",
-        "competition",
-        "conference",
-        "workshop",
-        "volunteer",
-        "job",
-        "role",
-        "field",
-        "research",
-        "real world",
-        "real-world"
-
-    ];
-
-    const reflectionSignals = [
-
-        "learned",
-        "realized",
-        "noticed",
-        "discovered",
-        "enjoyed",
-        "liked",
-        "disliked",
-        "struggled",
-        "difficult",
-        "easy",
-        "changed",
-        "improved",
-        "mistake",
-        "feedback",
-        "because",
-        "therefore",
-        "however",
-        "although"
-
-    ];
-
-    const uncertaintySignals = [
-
-        "maybe",
-        "perhaps",
-        "not sure",
-        "unsure",
-        "confused",
-        "unclear",
-        "don't know",
-        "do not know",
-        "i think",
-        "possibly",
-        "whatever",
-        "anything",
-        "something"
-
-    ];
-
-    const concreteSignals = [
-
-        /\b\d+\b/,
-        /\b20\d{2}\b/,
-        /\bfirst\b/,
-        /\bsecond\b/,
-        /\bthird\b/,
-        /\bfor example\b/,
-        /\bspecifically\b/,
-        /\bsuch as\b/,
-        /\bbecause\b/,
-        /\bwhen\b/,
-        /\bafter\b/,
-        /\bbefore\b/
-
-    ];
-
-    /* =====================================================
-       SIGNAL SCORING
-    ===================================================== */
-
-    function evidenceQuality(text) {
-
-        const length =
-            String(text || "").trim().length;
-
-        const wc =
-            wordCount(text);
-
-        const sentences =
-            sentenceCount(text);
-
-        const diversity =
-            uniqueWordRatio(text);
-
-        const lengthScore =
-            Math.min(
-                25,
-                length / 14
-            );
-
-        const structureScore =
-            Math.min(
-                15,
-                sentences * 4
-            );
-
-        const diversityScore =
-            Math.min(
-                10,
-                diversity * 14
-            );
-
-        const concreteScore =
-            Math.min(
-                15,
-                countMatches(
-                    text,
-                    concreteSignals
-                ) * 5
-            );
-
-        return (
-            lengthScore +
-            structureScore +
-            diversityScore +
-            concreteScore +
-            Math.min(
-                10,
-                wc / 12
-            )
+        setProgress(
+            progressClassification,
+            barClassification,
+            0
         );
 
-    }
-
-    /* =====================================================
-       KNOWLEDGE SCORE
-    ===================================================== */
-
-    function calculateKnowledgeScore(text) {
-
-        const value =
-            normalize(text);
-
-        if (!value) {
-            return 0;
-        }
-
-        const signalScore =
-            Math.min(
-                30,
-                countMatches(
-                    value,
-                    knowledgeSignals
-                ) * 4
-            );
-
-        const evidence =
-            evidenceQuality(text) *
-            0.52;
-
-        const specificity =
-            Math.min(
-                18,
-                countMatches(
-                    value,
-                    concreteSignals
-                ) * 3
-            );
-
-        const uncertaintyPenalty =
-            Math.min(
-                18,
-                countMatches(
-                    value,
-                    uncertaintySignals
-                ) * 4
-            );
-
-        return clamp(
-            25 +
-            signalScore +
-            evidence +
-            specificity -
-            uncertaintyPenalty
+        setProgress(
+            progressSeverity,
+            barSeverity,
+            0
         );
 
-    }
 
-    /* =====================================================
-       EXPERIENCE SCORE
-    ===================================================== */
+        analysisStatus.textContent =
+            "INITIALIZING";
 
-    function calculateExperienceScore(text) {
 
-        const value =
-            normalize(text);
+        /* ---------------------------------------------
+           PROCESSING SEQUENCE
+        --------------------------------------------- */
 
-        if (!value) {
-            return 0;
-        }
-
-        const actionScore =
-            Math.min(
-                42,
-                countMatches(
-                    value,
-                    actionSignals
-                ) * 7
-            );
-
-        const concreteScore =
-            Math.min(
-                18,
-                countMatches(
-                    value,
-                    concreteSignals
-                ) * 3
-            );
-
-        const evidence =
-            Math.min(
-                22,
-                evidenceQuality(text) *
-                0.7
-            );
-
-        const uncertaintyPenalty =
-            Math.min(
-                12,
-                countMatches(
-                    value,
-                    uncertaintySignals
-                ) * 3
-            );
-
-        return clamp(
-            10 +
-            actionScore +
-            concreteScore +
-            evidence -
-            uncertaintyPenalty
+        await animateProgress(
+            progressVision,
+            barVision,
+            100,
+            1400,
+            "VISUAL ANALYSIS"
         );
 
-    }
 
-    /* =====================================================
-       EXPOSURE SCORE
-    ===================================================== */
-
-    function calculateExposureScore(
-        experienceText,
-        interestText
-    ) {
-
-        const experience =
-            normalize(experienceText);
-
-        const interest =
-            normalize(interestText);
-
-        const exposureSignalsFound =
-            countMatches(
-                experience,
-                exposureSignals
-            );
-
-        const realWorldActions =
-            countMatches(
-                experience,
-                [
-                    "internship",
-                    "interned",
-                    "professional",
-                    "company",
-                    "client",
-                    "competition",
-                    "volunteer",
-                    "workplace",
-                    "real world",
-                    "real-world"
-                ]
-            );
-
-        const reflection =
-            countMatches(
-                interest,
-                reflectionSignals
-            );
-
-        const evidence =
-            Math.min(
-                20,
-                evidenceQuality(
-                    experienceText
-                ) * 0.55
-            );
-
-        return clamp(
-            18 +
-            Math.min(
-                32,
-                exposureSignalsFound * 6
-            ) +
-            Math.min(
-                20,
-                realWorldActions * 7
-            ) +
-            Math.min(
-                12,
-                reflection * 3
-            ) +
-            evidence
+        await animateProgress(
+            progressClassification,
+            barClassification,
+            100,
+            1100,
+            "DEFECT CLASSIFICATION"
         );
 
-    }
 
-    /* =====================================================
-       CLARITY SCORE
-    ===================================================== */
-
-    function calculateClarityScore(
-        intentText,
-        interestText
-    ) {
-
-        const intent =
-            normalize(intentText);
-
-        const interest =
-            normalize(interestText);
-
-        if (!intent) {
-            return 0;
-        }
-
-        const intentWords =
-            wordCount(intent);
-
-        const intentSpecificity =
-            Math.min(
-                24,
-                intentWords * 1.5
-            );
-
-        const uncertainty =
-            Math.min(
-                30,
-                countMatches(
-                    `${intent} ${interest}`,
-                    uncertaintySignals
-                ) * 6
-            );
-
-        const directionSignals =
-            countMatches(
-                `${intent} ${interest}`,
-                [
-                    "want",
-                    "goal",
-                    "aim",
-                    "learn",
-                    "build",
-                    "explore",
-                    "become",
-                    "improve",
-                    "understand",
-                    "work",
-                    "study",
-                    "create"
-                ]
-            );
-
-        const concrete =
-            Math.min(
-                20,
-                countMatches(
-                    `${intent} ${interest}`,
-                    concreteSignals
-                ) * 4
-            );
-
-        const structure =
-            Math.min(
-                15,
-                sentenceCount(intentText) * 4
-            );
-
-        return clamp(
-            30 +
-            intentSpecificity +
-            Math.min(
-                24,
-                directionSignals * 4
-            ) +
-            concrete +
-            structure -
-            uncertainty
+        await animateProgress(
+            progressSeverity,
+            barSeverity,
+            100,
+            900,
+            "SEVERITY ASSESSMENT"
         );
 
-    }
 
-    /* =====================================================
-       STEP 01 → STEP 02
-    ===================================================== */
+        analysisStatus.textContent =
+            "ANALYSIS COMPLETE";
 
-    if (intentNext) {
 
-        intentNext.addEventListener(
-            "click",
-            () => {
+        /*
+        =================================================
+        TEMPORARY DEMO RESULT
 
-                const value =
-                    intentInput
-                        ? intentInput.value.trim()
-                        : "";
+        IMPORTANT:
+        This is NOT the final AI result.
 
-                if (!hasText(value)) {
+        We will replace this section with the real
+        multimodal vision request next.
+        =================================================
+        */
 
-                    markInvalid(
-                        intentInput
-                    );
+        const result =
+            createTemporaryResult();
 
-                    if (intentInput) {
-                        intentInput.focus();
-                    }
 
-                    return;
-                }
-
-                state.intent =
-                    value;
-
-                showStep(2);
-
-            }
+        renderResult(
+            result
         );
 
-    }
 
-    /* =====================================================
-       STEP 02 → STEP 01
-    ===================================================== */
+        await sleep(500);
 
-    if (stateBack) {
 
-        stateBack.addEventListener(
-            "click",
-            () => {
+        showResults();
 
-                showStep(1);
 
-            }
-        );
+        analysisRunning =
+            false;
 
     }
 
-    /* =====================================================
-       STEP 02 → ANALYSIS
-    ===================================================== */
-
-    if (analyzeButton) {
-
-        analyzeButton.addEventListener(
-            "click",
-            () => {
-
-                const knowledge =
-                    knowledgeInput
-                        ? knowledgeInput.value.trim()
-                        : "";
-
-                const experience =
-                    experienceInput
-                        ? experienceInput.value.trim()
-                        : "";
-
-                const interest =
-                    interestInput
-                        ? interestInput.value.trim()
-                        : "";
-
-                if (!hasText(knowledge)) {
-
-                    markInvalid(
-                        knowledgeInput
-                    );
-
-                    if (knowledgeInput) {
-                        knowledgeInput.focus();
-                    }
-
-                    return;
-                }
-
-                if (!hasText(experience)) {
-
-                    markInvalid(
-                        experienceInput
-                    );
-
-                    if (experienceInput) {
-                        experienceInput.focus();
-                    }
-
-                    return;
-                }
-
-                if (!hasText(interest)) {
-
-                    markInvalid(
-                        interestInput
-                    );
-
-                    if (interestInput) {
-                        interestInput.focus();
-                    }
-
-                    return;
-                }
-
-                state.knowledge =
-                    knowledge;
-
-                state.experience =
-                    experience;
-
-                state.interest =
-                    interest;
-
-                analyze();
-
-                showStep(3);
-
-            }
-        );
-
-    }
 
     /* =====================================================
-       DIAGNOSTIC ENGINE
-    ===================================================== */
+       TEMPORARY RESULT
+       ===================================================== */
 
-    function analyze() {
+    function createTemporaryResult() {
 
-        const scores = {
+        return {
 
-            knowledge:
-                calculateKnowledgeScore(
-                    state.knowledge
-                ),
+            defect:
+                "POTHOLE",
 
-            experience:
-                calculateExperienceScore(
-                    state.experience
-                ),
+            confidence:
+                96.8,
 
-            exposure:
-                calculateExposureScore(
-                    state.experience,
-                    state.interest
-                ),
+            severity:
+                "HIGH",
 
-            clarity:
-                calculateClarityScore(
-                    state.intent,
-                    state.interest
-                )
+            priority:
+                "P1",
+
+            description:
+                "Visible road-surface deformation detected within the submitted frame.",
+
+            action:
+                "Prioritize field verification and repair assessment."
 
         };
 
-        state.diagnosis =
-            scores;
+    }
 
-        renderMetric(
-            metricKnowledge,
-            barKnowledge,
-            scores.knowledge
-        );
 
-        renderMetric(
-            metricExperience,
-            barExperience,
-            scores.experience
-        );
+    /* =====================================================
+       RENDER RESULT
+       ===================================================== */
 
-        renderMetric(
-            metricExposure,
-            barExposure,
-            scores.exposure
-        );
+    function renderResult(result) {
 
-        renderMetric(
-            metricClarity,
-            barClarity,
-            scores.clarity
-        );
+        resultDefect.textContent =
+            result.defect;
 
-        generateGaps(
-            scores
-        );
+        resultConfidence.textContent =
+            result.confidence;
 
-        generateNextSteps(
-            scores
+        resultSeverity.textContent =
+            result.severity;
+
+        resultPriority.textContent =
+            result.priority;
+
+        resultDescription.textContent =
+            result.description;
+
+        resultAction.textContent =
+            result.action;
+
+
+        resultImage.src =
+            selectedImageURL;
+
+
+        requestLocation();
+
+    }
+
+
+    /* =====================================================
+       GEOLOCATION
+       ===================================================== */
+
+    function requestLocation() {
+
+        if (!navigator.geolocation) {
+
+            resultLat.textContent =
+                "UNAVAILABLE";
+
+            resultLon.textContent =
+                "UNAVAILABLE";
+
+            return;
+        }
+
+
+        navigator.geolocation.getCurrentPosition(
+
+            (position) => {
+
+                const latitude =
+                    position.coords.latitude;
+
+                const longitude =
+                    position.coords.longitude;
+
+
+                resultLat.textContent =
+                    latitude.toFixed(5);
+
+                resultLon.textContent =
+                    longitude.toFixed(5);
+
+            },
+
+            () => {
+
+                resultLat.textContent =
+                    "PERMISSION DENIED";
+
+                resultLon.textContent =
+                    "PERMISSION DENIED";
+
+            },
+
+            {
+                enableHighAccuracy: true,
+                timeout: 8000,
+                maximumAge: 0
+            }
+
         );
 
     }
 
+
     /* =====================================================
-       RENDER METRIC
+       SHOW RESULTS
     ===================================================== */
 
-    function renderMetric(
-        numberElement,
-        barElement,
-        score
-    ) {
+    function showResults() {
 
-        if (
-            !numberElement ||
-            !barElement
-        ) {
-            return;
-        }
+        analysisState.hidden =
+            true;
 
-        numberElement.textContent =
-            score;
 
-        barElement.style.width =
-            "0%";
+        inspectionResults.hidden =
+            false;
 
-        requestAnimationFrame(() => {
 
-            setTimeout(() => {
+        systemState.textContent =
+            "ANOMALY DETECTED";
 
-                barElement.style.width =
-                    `${score}%`;
 
-            }, 120);
-
+        inspectionResults.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
         });
 
     }
 
+
     /* =====================================================
-       GAP GENERATION
-       -----------------------------------------------------
-       Gaps are ranked by severity instead of always
-       appearing in a fixed order.
-       ===================================================== */
+       NEW INSPECTION
+    ===================================================== */
 
-    function generateGaps(scores) {
+    if (newInspection) {
 
-        if (!gapList) {
-            return;
+        newInspection.addEventListener(
+            "click",
+            resetInspection
+        );
+
+    }
+
+
+    function resetInspection() {
+
+        selectedFile =
+            null;
+
+
+        if (selectedImageURL) {
+
+            URL.revokeObjectURL(
+                selectedImageURL
+            );
+
+            selectedImageURL =
+                null;
+
         }
 
-        gapList.innerHTML =
+
+        imageInput.value =
             "";
 
-        const gapDefinitions = [
 
-            {
-                key: "knowledge",
+        previewImage.src =
+            "";
 
-                threshold: 58,
+        resultImage.src =
+            "";
 
-                title:
-                    "KNOWLEDGE DEPTH",
 
-                description:
-                    "Your written evidence shows an area of interest, but the foundations are not yet deep enough to support confident decisions.",
+        fileName.textContent =
+            "—";
 
-                severity:
-                    58 - scores.knowledge
-            },
 
-            {
-                key: "experience",
+        resultDefect.textContent =
+            "—";
 
-                threshold: 58,
+        resultConfidence.textContent =
+            "—";
 
-                title:
-                    "PRACTICAL EXPERIENCE",
+        resultSeverity.textContent =
+            "—";
 
-                description:
-                    "You have interest or understanding, but not enough evidence from actually attempting the work.",
+        resultPriority.textContent =
+            "—";
 
-                severity:
-                    58 - scores.experience
-            },
+        resultDescription.textContent =
+            "—";
 
-            {
-                key: "exposure",
+        resultAction.textContent =
+            "—";
 
-                threshold: 58,
+        resultLat.textContent =
+            "—";
 
-                title:
-                    "FIELD EXPOSURE",
+        resultLon.textContent =
+            "—";
 
-                description:
-                    "You have information about the area, but limited evidence of what the field feels like in real situations.",
 
-                severity:
-                    58 - scores.exposure
-            },
+        inspectionResults.hidden =
+            true;
 
-            {
-                key: "clarity",
+        analysisState.hidden =
+            true;
 
-                threshold: 62,
+        inspectionInput.hidden =
+            false;
 
-                title:
-                    "INTENT CLARITY",
+        inspectionPreview.hidden =
+            true;
 
-                description:
-                    "Your direction contains uncertainty. More exploration may be more useful than committing to a single answer.",
 
-                severity:
-                    62 - scores.clarity
-            }
+        analyzeButton.disabled =
+            true;
 
-        ];
 
-        const gaps =
-            gapDefinitions
-                .filter(
-                    (gap) =>
-                        scores[gap.key] <
-                        gap.threshold
-                )
-                .sort(
-                    (a, b) =>
-                        b.severity -
-                        a.severity
-                );
+        uploadZone.classList.remove(
+            "has-file",
+            "is-dragging"
+        );
 
-        if (gaps.length === 0) {
 
-            gaps.push({
+        systemState.textContent =
+            "READY";
 
-                title:
-                    "EVIDENCE DEPTH",
 
-                description:
-                    "Your current picture is relatively strong. The remaining uncertainty is best resolved through real-world evidence rather than more speculation."
+        analysisRunning =
+            false;
 
-            });
+
+        inspectionInput.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    }
+
+
+    /* =====================================================
+       PROGRESS HELPERS
+    ===================================================== */
+
+    function setProgress(
+        numberElement,
+        barElement,
+        value
+    ) {
+
+        if (numberElement) {
+
+            numberElement.textContent =
+                Math.round(value);
 
         }
 
-        gaps
-            .slice(0, 4)
-            .forEach(
-                (gap, index) => {
 
-                    const item =
-                        document.createElement(
-                            "div"
+        if (barElement) {
+
+            barElement.style.width =
+                `${value}%`;
+
+        }
+
+    }
+
+
+    async function animateProgress(
+        numberElement,
+        barElement,
+        target,
+        duration,
+        label
+    ) {
+
+        analysisStatus.textContent =
+            label;
+
+
+        const start =
+            performance.now();
+
+
+        return new Promise(
+            (resolve) => {
+
+                function frame(now) {
+
+                    const elapsed =
+                        now - start;
+
+
+                    const progress =
+                        Math.min(
+                            elapsed / duration,
+                            1
                         );
 
-                    item.className =
-                        "gap-item";
 
-                    item.style.animationDelay =
-                        `${index * 100}ms`;
+                    const eased =
+                        1 -
+                        Math.pow(
+                            1 - progress,
+                            3
+                        );
 
-                    item.innerHTML = `
 
-                        <span class="gap-number">
-                            ${String(index + 1).padStart(2, "0")}
-                        </span>
-
-                        <span class="gap-title">
-                            ${escapeHTML(gap.title)}
-                        </span>
-
-                        <span class="gap-description">
-                            ${escapeHTML(gap.description)}
-                        </span>
-
-                    `;
-
-                    gapList.appendChild(
-                        item
+                    setProgress(
+                        numberElement,
+                        barElement,
+                        eased * target
                     );
 
-                }
-            );
 
-    }
+                    if (progress < 1) {
 
-    /* =====================================================
-       NEXT EVIDENCE
-       -----------------------------------------------------
-       Recommendations are tied directly to the weakest
-       evidence dimension.
-       ===================================================== */
+                        requestAnimationFrame(
+                            frame
+                        );
 
-    function generateNextSteps(scores) {
+                    } else {
 
-        if (!nextList) {
-            return;
-        }
+                        resolve();
 
-        nextList.innerHTML =
-            "";
+                    }
 
-        const candidates = [
-
-            {
-                key: "experience",
-
-                score:
-                    scores.experience,
-
-                text:
-                    "Try one small practical task related to your goal and record what happened."
-            },
-
-            {
-                key: "exposure",
-
-                score:
-                    scores.exposure,
-
-                text:
-                    "Speak with someone who works or studies in this area and compare their reality with your expectations."
-            },
-
-            {
-                key: "knowledge",
-
-                score:
-                    scores.knowledge,
-
-                text:
-                    "Identify the three foundational concepts you need to understand next."
-            },
-
-            {
-                key: "clarity",
-
-                score:
-                    scores.clarity,
-
-                text:
-                    "Explore one adjacent direction before committing to a single path."
-            }
-
-        ];
-
-        candidates.sort(
-            (a, b) =>
-                a.score -
-                b.score
-        );
-
-        const selected =
-            candidates.slice(
-                0,
-                3
-            );
-
-        if (
-            selected.every(
-                (item) =>
-                    item.score >= 65
-            )
-        ) {
-
-            selected.splice(
-                0,
-                selected.length,
-
-                {
-                    key:
-                        "experiment",
-
-                    score:
-                        0,
-
-                    text:
-                        "Test your current understanding through one real-world experiment."
-                },
-
-                {
-                    key:
-                        "reflection",
-
-                    score:
-                        0,
-
-                    text:
-                        "Record what you enjoyed, disliked, and want to investigate further."
-                },
-
-                {
-                    key:
-                        "return",
-
-                    score:
-                        0,
-
-                    text:
-                        "Return to LENS with the new evidence and reassess your state."
                 }
 
-            );
 
-        }
-
-        selected.forEach(
-            (step, index) => {
-
-                const item =
-                    document.createElement(
-                        "div"
-                    );
-
-                item.className =
-                    "next-item";
-
-                item.innerHTML = `
-
-                    <span class="next-number">
-                        ${String(index + 1).padStart(2, "0")}
-                    </span>
-
-                    <p>
-                        ${escapeHTML(step.text)}
-                    </p>
-
-                `;
-
-                nextList.appendChild(
-                    item
+                requestAnimationFrame(
+                    frame
                 );
 
             }
@@ -1296,105 +838,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    /* =====================================================
-       SAFE HTML
-    ===================================================== */
-
-    function escapeHTML(value) {
-
-        return String(value)
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
-            );
-
-    }
 
     /* =====================================================
-       REASSESS
+       UTILITY
     ===================================================== */
 
-    if (diagnosisBack) {
+    function sleep(milliseconds) {
 
-        diagnosisBack.addEventListener(
-            "click",
-            () => {
+        return new Promise(
+            (resolve) => {
 
-                showStep(2);
+                setTimeout(
+                    resolve,
+                    milliseconds
+                );
 
             }
         );
 
     }
 
-    /* =====================================================
-       INPUT INVALID ANIMATION
-    ===================================================== */
-
-    const inputStyle =
-        document.createElement(
-            "style"
-        );
-
-    inputStyle.textContent = `
-
-        .input-invalid {
-
-            animation:
-                inputShake .35s ease;
-
-            border-color:
-                rgba(255,80,80,.65)
-                !important;
-
-        }
-
-        @keyframes inputShake {
-
-            0%,
-            100% {
-                transform:
-                    translateX(0);
-            }
-
-            25% {
-                transform:
-                    translateX(-4px);
-            }
-
-            75% {
-                transform:
-                    translateX(4px);
-            }
-
-        }
-
-    `;
-
-    document.head.appendChild(
-        inputStyle
-    );
 
     /* =====================================================
        INITIAL STATE
     ===================================================== */
 
-    showStep(1);
+    inspectionPreview.hidden =
+        true;
+
+    analysisState.hidden =
+        true;
+
+    inspectionResults.hidden =
+        true;
+
+    analyzeButton.disabled =
+        true;
+
+
+    console.log(
+        "IXVYN LENS: Visual inspection interface ready."
+    );
 
 });
+```
