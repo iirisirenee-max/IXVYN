@@ -1947,3 +1947,242 @@ body {
     }
 
 }
+/* =====================================================
+   IXVYN — LIVING HERO NETWORK
+   ===================================================== */
+
+.hero-geometry {
+    --network-x: 0px;
+    --network-y: 0px;
+}
+
+/* ---------- SIGNAL ---------- */
+
+.hero-signal {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+    background: var(--accent);
+
+    box-shadow:
+        0 0 8px var(--accent),
+        0 0 22px rgba(184, 255, 61, 0.7);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transform:
+        translate3d(-280px, 120px, 0)
+        scale(0.5);
+}
+
+.hero-signal.traveling {
+    animation:
+        heroSignalTravel 4s
+        cubic-bezier(.22,.61,.36,1)
+        forwards;
+}
+
+@keyframes heroSignalTravel {
+
+    0% {
+        opacity: 0;
+        transform:
+            translate3d(-280px, 120px, 0)
+            scale(0.35);
+    }
+
+    8% {
+        opacity: 1;
+    }
+
+    45% {
+        opacity: 1;
+    }
+
+    92% {
+        opacity: 0.9;
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translate3d(260px, -150px, 0)
+            scale(0.8);
+    }
+
+}
+
+
+/* ---------- ACTIVE NODES ---------- */
+
+.geometry-node.network-pulse {
+    background: var(--accent);
+
+    border-color: var(--accent);
+
+    box-shadow:
+        0 0 8px var(--accent),
+        0 0 24px rgba(184, 255, 61, 0.55);
+
+    transform: scale(1.8);
+}
+
+
+/* ---------- CORE ---------- */
+
+.geometry-core {
+    box-shadow:
+        0 0 0 1px rgba(244, 244, 240, 0.03),
+        0 0 40px rgba(184, 255, 61, 0.035);
+
+    transition:
+        box-shadow 0.8s ease,
+        border-color 0.8s ease;
+}
+
+.geometry-core::before {
+    content: "";
+
+    position: absolute;
+
+    inset: -9px;
+
+    border: 1px solid
+        rgba(184, 255, 61, 0.12);
+
+    border-radius: 50%;
+
+    opacity: 0;
+
+    animation:
+        coreBreath 3.8s
+        ease-in-out
+        infinite;
+}
+
+@keyframes coreBreath {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(0.88);
+    }
+
+    45% {
+        opacity: 0.8;
+    }
+
+    70% {
+        opacity: 0;
+        transform: scale(1.18);
+    }
+
+}
+
+
+/* ---------- GEOMETRY LINES ---------- */
+
+.geometry-line {
+    position: absolute;
+    overflow: hidden;
+}
+
+.geometry-line::after {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: -25%;
+
+    width: 25%;
+    height: 1px;
+
+    background: var(--accent);
+
+    box-shadow:
+        0 0 8px var(--accent);
+
+    opacity: 0.55;
+
+    animation:
+        lineSignal 5.5s
+        linear
+        infinite;
+}
+
+.line-two::after {
+    animation-delay: 2.4s;
+}
+
+@keyframes lineSignal {
+
+    0% {
+        left: -25%;
+        opacity: 0;
+    }
+
+    12% {
+        opacity: 0.55;
+    }
+
+    48% {
+        opacity: 0.55;
+    }
+
+    65% {
+        opacity: 0;
+    }
+
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
+
+}
+
+
+/* ---------- RINGS ---------- */
+
+.geometry-ring {
+    transition:
+        opacity 0.8s ease,
+        border-color 0.8s ease;
+}
+
+.ring-one {
+    border-color:
+        rgba(244, 244, 240, 0.13);
+}
+
+.ring-two {
+    border-color:
+        rgba(184, 255, 61, 0.09);
+}
+
+.ring-three {
+    border-color:
+        rgba(244, 244, 240, 0.11);
+}
+
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 800px) {
+
+    .hero-signal {
+        display: none;
+    }
+
+    .geometry-node.network-pulse {
+        transform: scale(1.45);
+    }
+
+}
