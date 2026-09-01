@@ -1,1 +1,486 @@
+/* =========================================================
+   IXVYN — MEMORY
+   INFRASTRUCTURE MEMORY / SPATIAL RECORD
+   ========================================================= */
 
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="IXVYN MEMORY — Infrastructure memory and spatial records."
+    >
+
+    <title>IXVYN — MEMORY</title>
+
+
+    <!-- GLOBAL IXVYN STYLES -->
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+
+    <!-- MEMORY STYLES -->
+
+    <link
+        rel="stylesheet"
+        href="memory.css"
+    >
+
+</head>
+
+
+<body class="memory-page">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="system-header">
+
+        <a
+            href="index.html"
+            class="wordmark"
+            aria-label="IXVYN home"
+        >
+            I X V Y N
+        </a>
+
+
+        <nav class="system-nav">
+
+            <a href="systems.html">
+                Systems
+            </a>
+
+            <a href="index.html#about">
+                About
+            </a>
+
+        </nav>
+
+
+        <div class="system-status">
+
+            <span class="status-dot"></span>
+
+            SYSTEM ONLINE
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MEMORY EXPERIENCE
+    ====================================================== -->
+
+    <main class="memory-experience">
+
+
+        <!-- =================================================
+             BACKGROUND GEOMETRY
+        ================================================== -->
+
+        <div
+            class="memory-geometry"
+            aria-hidden="true"
+        >
+
+            <div class="memory-ring memory-ring-a"></div>
+
+            <div class="memory-ring memory-ring-b"></div>
+
+            <div class="memory-ring memory-ring-c"></div>
+
+            <div class="memory-axis memory-axis-x"></div>
+
+            <div class="memory-axis memory-axis-y"></div>
+
+            <div class="memory-node memory-node-a"></div>
+
+            <div class="memory-node memory-node-b"></div>
+
+            <div class="memory-node memory-node-c"></div>
+
+            <div class="memory-core">
+                IX
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             SYSTEM IDENTIFICATION
+        ================================================== -->
+
+        <div class="memory-progress">
+
+            <span>
+                MEMORY / INFRASTRUCTURE RECORD
+            </span>
+
+            <span id="memory-state">
+                ONLINE
+            </span>
+
+        </div>
+
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section class="memory-intro">
+
+            <p class="eyebrow">
+                IXVYN / MEMORY
+            </p>
+
+
+            <h1>
+
+                WHAT THE CITY
+                <span>REMEMBERS.</span>
+
+            </h1>
+
+
+            <p class="memory-lead">
+
+                A persistent record of infrastructure
+                conditions detected through IXVYN.
+
+            </p>
+
+        </section>
+
+
+
+        <!-- =================================================
+             MEMORY SUMMARY
+        ================================================== -->
+
+        <section
+            class="memory-summary"
+            aria-label="Memory statistics"
+        >
+
+            <div class="memory-stat">
+
+                <span class="metric-label">
+                    TOTAL RECORDS
+                </span>
+
+                <strong id="memory-total">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="memory-stat">
+
+                <span class="metric-label">
+                    ACTIVE ANOMALIES
+                </span>
+
+                <strong id="memory-active">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="memory-stat">
+
+                <span class="metric-label">
+                    LAST DETECTION
+                </span>
+
+                <strong id="memory-last">
+                    —
+                </strong>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             SPATIAL MEMORY
+        ================================================== -->
+
+        <section class="memory-map-section">
+
+            <div class="memory-section-header">
+
+                <div>
+
+                    <p class="eyebrow">
+                        SPATIAL MEMORY
+                    </p>
+
+                    <h2>
+                        DETECTIONS
+                        <span>IN SPACE.</span>
+                    </h2>
+
+                </div>
+
+
+                <div class="memory-section-marker">
+                    LOCAL RECORD
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 MAP PLACEHOLDER
+            ================================================== -->
+
+            <div class="memory-map">
+
+                <div class="map-grid"></div>
+
+                <div class="map-axis map-axis-horizontal"></div>
+
+                <div class="map-axis map-axis-vertical"></div>
+
+
+                <div
+                    class="map-center"
+                    aria-hidden="true"
+                >
+                    IX
+                </div>
+
+
+                <div
+                    id="memory-map-points"
+                    class="memory-map-points"
+                >
+                </div>
+
+
+                <div class="map-label map-label-n">
+                    N
+                </div>
+
+                <div class="map-label map-label-e">
+                    E
+                </div>
+
+                <div class="map-label map-label-s">
+                    S
+                </div>
+
+                <div class="map-label map-label-w">
+                    W
+                </div>
+
+
+                <div class="map-status">
+
+                    <span class="status-dot"></span>
+
+                    SPATIAL INDEX ONLINE
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RECORDS
+        ================================================== -->
+
+        <section class="memory-records-section">
+
+            <div class="memory-section-header">
+
+                <div>
+
+                    <p class="eyebrow">
+                        INFRASTRUCTURE MEMORY
+                    </p>
+
+                    <h2>
+                        RECENT
+                        <span>DETECTIONS.</span>
+                    </h2>
+
+                </div>
+
+
+                <div
+                    class="memory-record-count"
+                    id="memory-record-count"
+                >
+                    00 RECORDS
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
+
+            <div
+                id="memory-empty"
+                class="memory-empty"
+            >
+
+                <div class="memory-empty-mark">
+                    +
+                </div>
+
+                <strong>
+                    MEMORY IS EMPTY.
+                </strong>
+
+                <p>
+                    Complete an inspection through
+                    LENS and save the result here.
+                </p>
+
+
+                <a
+                    href="lens.html"
+                    class="lens-button"
+                >
+                    ENTER LENS
+
+                    <span>
+                        ↗
+                    </span>
+
+                </a>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 RECORD LIST
+            ================================================== -->
+
+            <div
+                id="memory-records"
+                class="memory-records"
+            >
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             ACTIONS
+        ================================================== -->
+
+        <section class="memory-actions">
+
+            <a
+                href="lens.html"
+                class="lens-button"
+            >
+
+                NEW INSPECTION
+
+                <span>
+                    ↗
+                </span>
+
+            </a>
+
+
+            <button
+                id="clear-memory"
+                class="lens-button lens-button-secondary"
+                type="button"
+            >
+
+                CLEAR MEMORY
+
+                <span>
+                    ×
+                </span>
+
+            </button>
+
+
+            <a
+                href="systems.html"
+                class="lens-button lens-link"
+            >
+
+                RETURN TO SYSTEMS
+
+                <span>
+                    ↗
+                </span>
+
+            </a>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <footer class="memory-footer">
+
+            <span>
+                IXVYN / MEMORY
+            </span>
+
+            <span>
+                INFRASTRUCTURE MEMORY SYSTEM
+            </span>
+
+            <span>
+                BUILD 001
+            </span>
+
+        </footer>
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="memory.js"></script>
+
+
+</body>
+
+</html>
