@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta name="viewport"
@@ -14,6 +15,7 @@
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="systems.css">
+
 </head>
 
 
@@ -29,7 +31,9 @@
         <a href="index.html"
            class="wordmark"
            aria-label="IXVYN home">
+
             I X V Y N
+
         </a>
 
 
@@ -119,6 +123,26 @@
 
 
         <!-- =================================================
+             EXIT
+        ================================================== -->
+
+        <a href="index.html"
+           class="direction-exit"
+           aria-label="Exit systems and return home">
+
+            <span>
+                EXIT
+            </span>
+
+            <span>
+                ↖
+            </span>
+
+        </a>
+
+
+
+        <!-- =================================================
              MODULE SELECTOR
         ================================================== -->
 
@@ -126,7 +150,9 @@
                  aria-label="IXVYN systems">
 
 
-            <!-- M01 -->
+            <!-- =================================================
+                 M01 — LENS
+            ================================================== -->
 
             <button
                 class="module-panel"
@@ -159,7 +185,9 @@
 
 
 
-            <!-- M02 -->
+            <!-- =================================================
+                 M02 — PATHFINDER
+            ================================================== -->
 
             <button
                 class="module-panel"
@@ -192,7 +220,9 @@
 
 
 
-            <!-- M03 -->
+            <!-- =================================================
+                 M03 — CIVIC
+            ================================================== -->
 
             <button
                 class="module-panel"
@@ -225,7 +255,9 @@
 
 
 
-            <!-- M04 -->
+            <!-- =================================================
+                 M04 — ECHO
+            ================================================== -->
 
             <button
                 class="module-panel"
@@ -258,7 +290,9 @@
 
 
 
-            <!-- M05 -->
+            <!-- =================================================
+                 M05 — MEMORY
+            ================================================== -->
 
             <button
                 class="module-panel module-panel-wide"
@@ -289,17 +323,19 @@
 
             </button>
 
+
         </section>
 
 
 
         <!-- =================================================
-             ACTIVE SYSTEM
+             ACTIVE SYSTEM OVERLAY
         ================================================== -->
 
         <section
             class="system-overlay"
             aria-hidden="true">
+
 
             <div class="overlay-geometry"
                  aria-hidden="true">
@@ -344,7 +380,10 @@
                     type="button">
 
                     RETURN
-                    <span>↙</span>
+
+                    <span>
+                        ↙
+                    </span>
 
                 </button>
 
@@ -374,9 +413,14 @@
 
         </footer>
 
+
     </main>
 
 
+
+    <!-- =================================================
+         JAVASCRIPT
+    ================================================== -->
 
     <script src="systems.js"></script>
 
