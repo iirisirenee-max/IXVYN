@@ -1278,3 +1278,870 @@
     }
 
 }
+/* =========================================================
+   IXVYN — LENS / CINEMATIC INTELLIGENCE LAYER
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   SYSTEM ATMOSPHERE
+   --------------------------------------------------------- */
+
+.lens-page {
+    position: relative;
+    background:
+        radial-gradient(
+            circle at 78% 18%,
+            rgba(215,255,63,0.035),
+            transparent 28%
+        ),
+        #080a0f;
+}
+
+.lens-page::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+
+    background:
+        linear-gradient(
+            rgba(255,255,255,0.018) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,0.018) 1px,
+            transparent 1px
+        );
+
+    background-size: 72px 72px;
+
+    mask-image: linear-gradient(
+        to bottom,
+        black,
+        transparent 80%
+    );
+
+    opacity: 0.28;
+}
+
+
+/* ---------------------------------------------------------
+   LIVING BACKGROUND GEOMETRY
+   --------------------------------------------------------- */
+
+.lens-geometry {
+    opacity: 0.55;
+    transform-origin: center;
+    animation: lensGeometryDrift 18s ease-in-out infinite;
+}
+
+.lens-ring {
+    transition:
+        transform 1200ms cubic-bezier(.16,1,.3,1),
+        opacity 500ms ease;
+}
+
+.lens-ring-a {
+    animation: lensRingA 22s linear infinite;
+}
+
+.lens-ring-b {
+    animation: lensRingB 16s linear infinite reverse;
+}
+
+.lens-ring-c {
+    animation: lensRingC 11s linear infinite;
+}
+
+.lens-focus {
+    animation:
+        lensFocusPulse 2.2s ease-in-out infinite,
+        lensFocusRotate 8s linear infinite;
+}
+
+@keyframes lensGeometryDrift {
+    0%, 100% {
+        transform: translate3d(0,0,0);
+    }
+
+    50% {
+        transform: translate3d(-12px,8px,0);
+    }
+}
+
+@keyframes lensRingA {
+    from {
+        transform: rotate(0deg) scale(1);
+    }
+
+    to {
+        transform: rotate(360deg) scale(1.025);
+    }
+}
+
+@keyframes lensRingB {
+    from {
+        transform: rotate(0deg) scale(1);
+    }
+
+    to {
+        transform: rotate(360deg) scale(0.975);
+    }
+}
+
+@keyframes lensRingC {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(-360deg);
+    }
+}
+
+@keyframes lensFocusPulse {
+    0%, 100% {
+        opacity: 0.35;
+        box-shadow: 0 0 0 rgba(215,255,63,0);
+    }
+
+    50% {
+        opacity: 1;
+        box-shadow:
+            0 0 14px rgba(215,255,63,0.55),
+            0 0 35px rgba(215,255,63,0.12);
+    }
+}
+
+@keyframes lensFocusRotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   SYSTEM BAR
+   --------------------------------------------------------- */
+
+.lens-progress {
+    position: relative;
+}
+
+.lens-progress::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+
+    width: 80px;
+    height: 1px;
+
+    background: #d7ff3f;
+
+    box-shadow:
+        0 0 12px rgba(215,255,63,0.5);
+
+    animation: progressSignal 3.5s ease-in-out infinite;
+}
+
+@keyframes progressSignal {
+    0% {
+        transform: translateX(0);
+        opacity: 0.25;
+    }
+
+    50% {
+        transform: translateX(420px);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 0.25;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   HERO REVEAL
+   --------------------------------------------------------- */
+
+.lens-inspection {
+    animation: lensHeroReveal 1000ms cubic-bezier(.16,1,.3,1) both;
+}
+
+.lens-inspection .eyebrow {
+    animation:
+        lensElementReveal 700ms 100ms cubic-bezier(.16,1,.3,1) both;
+}
+
+.lens-inspection h1 {
+    animation:
+        lensTitleReveal 1000ms 180ms cubic-bezier(.16,1,.3,1) both;
+}
+
+.lens-lead {
+    animation:
+        lensElementReveal 800ms 350ms cubic-bezier(.16,1,.3,1) both;
+}
+
+.inspection-input {
+    animation:
+        lensInputReveal 900ms 500ms cubic-bezier(.16,1,.3,1) both;
+}
+
+@keyframes lensHeroReveal {
+    from {
+        opacity: 0;
+        transform: translateY(28px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes lensElementReveal {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes lensTitleReveal {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+        letter-spacing: -0.025em;
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        letter-spacing: -0.065em;
+    }
+}
+
+@keyframes lensInputReveal {
+    from {
+        opacity: 0;
+        transform: translateY(25px) scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   UPLOAD ZONE — ACTIVE INTELLIGENCE FEEL
+   --------------------------------------------------------- */
+
+.upload-zone {
+    position: relative;
+    overflow: hidden;
+}
+
+.upload-zone::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(215,255,63,0.06),
+            transparent
+        );
+
+    transform: translateX(-100%);
+    transition: transform 800ms ease;
+}
+
+.upload-zone:hover::before,
+.upload-zone.is-dragging::before {
+    transform: translateX(100%);
+}
+
+.upload-cross {
+    transition:
+        transform 400ms cubic-bezier(.16,1,.3,1),
+        box-shadow 400ms ease;
+}
+
+.upload-zone:hover .upload-cross,
+.upload-zone.is-dragging .upload-cross {
+    transform: rotate(90deg);
+    box-shadow:
+        0 0 20px rgba(215,255,63,0.15);
+}
+
+.upload-zone.has-file .upload-cross {
+    transform: rotate(45deg);
+    background: rgba(215,255,63,0.06);
+}
+
+
+/* ---------------------------------------------------------
+   ANALYSIS STATE
+   --------------------------------------------------------- */
+
+.inspection-analysis {
+    animation: analysisReveal 900ms cubic-bezier(.16,1,.3,1);
+}
+
+.analysis-console {
+    position: relative;
+    overflow: hidden;
+}
+
+.analysis-console::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: -100%;
+
+    width: 45%;
+    height: 1px;
+
+    background: #d7ff3f;
+
+    box-shadow:
+        0 0 16px rgba(215,255,63,0.65);
+
+    animation: analysisSweep 3s linear infinite;
+}
+
+.analysis-console::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            transparent 49.5%,
+            rgba(215,255,63,0.018) 50%,
+            transparent 50.5%
+        );
+
+    background-size: 100% 8px;
+
+    opacity: 0.25;
+}
+
+@keyframes analysisReveal {
+    from {
+        opacity: 0;
+        transform: translateY(35px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes analysisSweep {
+    from {
+        left: -45%;
+    }
+
+    to {
+        left: 100%;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   PROCESSING TIMER
+   --------------------------------------------------------- */
+
+.analysis-timer strong {
+    position: relative;
+
+    font-variant-numeric: tabular-nums;
+
+    text-shadow:
+        0 0 14px rgba(215,255,63,0.18);
+}
+
+.analysis-timer strong::after {
+    content: "";
+
+    display: inline-block;
+
+    width: 5px;
+    height: 5px;
+
+    margin-left: 8px;
+
+    vertical-align: middle;
+
+    border-radius: 50%;
+
+    background: #d7ff3f;
+
+    box-shadow:
+        0 0 10px rgba(215,255,63,0.8);
+
+    animation: timerLive 900ms ease-in-out infinite;
+}
+
+@keyframes timerLive {
+    0%, 100% {
+        opacity: 0.25;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   ANALYSIS ROWS
+   --------------------------------------------------------- */
+
+.analysis-line {
+    transition:
+        opacity 300ms ease,
+        transform 300ms ease;
+}
+
+.analysis-line:hover {
+    transform: translateX(5px);
+}
+
+.analysis-bar {
+    position: relative;
+}
+
+.analysis-bar span {
+    position: relative;
+    box-shadow:
+        0 0 10px rgba(215,255,63,0.25);
+}
+
+
+/* ---------------------------------------------------------
+   IMAGE PREVIEW — FRAME ACQUIRED
+   --------------------------------------------------------- */
+
+.inspection-preview {
+    animation: frameAcquired 800ms cubic-bezier(.16,1,.3,1);
+}
+
+.preview-stage {
+    position: relative;
+}
+
+.preview-stage::before {
+    content: "FRAME ACQUIRED";
+
+    position: absolute;
+    top: 18px;
+    left: 20px;
+
+    z-index: 4;
+
+    padding: 6px 9px;
+
+    background: rgba(5,6,9,0.75);
+
+    border-left: 1px solid #d7ff3f;
+
+    font-family: "DM Mono", monospace;
+    font-size: 8px;
+    letter-spacing: 0.16em;
+
+    color: #d7ff3f;
+
+    opacity: 0;
+
+    animation: frameLabel 700ms 350ms ease forwards;
+}
+
+.preview-stage::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at center,
+            transparent 45%,
+            rgba(0,0,0,0.22)
+        );
+}
+
+@keyframes frameAcquired {
+    from {
+        opacity: 0;
+        transform: scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes frameLabel {
+    from {
+        opacity: 0;
+        transform: translateX(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   SCAN LINE
+   --------------------------------------------------------- */
+
+.scan-line {
+    height: 1px;
+
+    box-shadow:
+        0 0 8px rgba(215,255,63,0.8),
+        0 0 28px rgba(215,255,63,0.3);
+}
+
+
+/* ---------------------------------------------------------
+   RESULTS — INTELLIGENCE REVEAL
+   --------------------------------------------------------- */
+
+.inspection-results {
+    animation:
+        resultReveal 1000ms cubic-bezier(.16,1,.3,1);
+}
+
+.results-header {
+    position: relative;
+}
+
+.results-header h2 {
+    animation:
+        resultTitleReveal 900ms 100ms cubic-bezier(.16,1,.3,1) both;
+}
+
+.result-visual,
+.result-intelligence,
+.location-panel,
+.diagnosis-actions {
+    animation:
+        resultBlockReveal 700ms cubic-bezier(.16,1,.3,1) both;
+}
+
+.result-visual {
+    animation-delay: 180ms;
+}
+
+.result-intelligence {
+    animation-delay: 300ms;
+}
+
+.location-panel {
+    animation-delay: 430ms;
+}
+
+.diagnosis-actions {
+    animation-delay: 520ms;
+}
+
+@keyframes resultReveal {
+    from {
+        opacity: 0;
+        transform: translateY(45px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes resultTitleReveal {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes resultBlockReveal {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ---------------------------------------------------------
+   RESULT IMAGE
+   --------------------------------------------------------- */
+
+.result-image-stage::before {
+    content: "VISUAL EVIDENCE";
+
+    position: absolute;
+    top: 16px;
+    left: 18px;
+
+    z-index: 3;
+
+    font-family: "DM Mono", monospace;
+    font-size: 8px;
+    letter-spacing: 0.15em;
+
+    color: rgba(255,255,255,0.45);
+}
+
+.result-overlay {
+    animation:
+        anomalyLock 1000ms 600ms cubic-bezier(.16,1,.3,1) both;
+}
+
+@keyframes anomalyLock {
+    from {
+        opacity: 0;
+        transform: scale(0.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.result-overlay::before,
+.result-overlay::after {
+    content: "";
+
+    position: absolute;
+
+    width: 8px;
+    height: 8px;
+
+    border-color: #d7ff3f;
+}
+
+.result-overlay::before {
+    top: -1px;
+    right: -1px;
+
+    border-top: 1px solid;
+    border-right: 1px solid;
+}
+
+.result-overlay::after {
+    bottom: -1px;
+    left: -1px;
+
+    border-bottom: 1px solid;
+    border-left: 1px solid;
+}
+
+
+/* ---------------------------------------------------------
+   INTELLIGENCE VALUES
+   --------------------------------------------------------- */
+
+.intelligence-block strong {
+    transition:
+        color 250ms ease,
+        transform 250ms ease;
+}
+
+.intelligence-block:hover strong {
+    color: #d7ff3f;
+    transform: translateX(4px);
+}
+
+.location-panel {
+    position: relative;
+    overflow: hidden;
+}
+
+.location-panel::after {
+    content: "";
+
+    position: absolute;
+
+    right: -30px;
+    bottom: -30px;
+
+    width: 100px;
+    height: 100px;
+
+    border: 1px solid rgba(215,255,63,0.15);
+    border-radius: 50%;
+
+    animation: locationPulse 5s ease-in-out infinite;
+}
+
+@keyframes locationPulse {
+    0%, 100% {
+        transform: scale(0.8);
+        opacity: 0.2;
+    }
+
+    50% {
+        transform: scale(1.15);
+        opacity: 0.7;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   BUTTONS
+   --------------------------------------------------------- */
+
+.lens-button {
+    position: relative;
+    overflow: hidden;
+}
+
+.lens-button::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    bottom: -1px;
+
+    width: 0;
+    height: 1px;
+
+    background: #f2f1ec;
+
+    transition: width 350ms cubic-bezier(.16,1,.3,1);
+}
+
+.lens-button:hover:not(:disabled)::before {
+    width: 100%;
+}
+
+.lens-button:hover:not(:disabled) span {
+    display: inline-block;
+    transform: translateX(4px);
+}
+
+
+/* ---------------------------------------------------------
+   FOOTER SIGNAL
+   --------------------------------------------------------- */
+
+.lens-footer {
+    position: relative;
+}
+
+.lens-footer::before {
+    content: "";
+
+    position: absolute;
+
+    top: -1px;
+    left: 0;
+
+    width: 35px;
+    height: 1px;
+
+    background: #d7ff3f;
+
+    box-shadow:
+        0 0 12px rgba(215,255,63,0.5);
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 800px) {
+
+    .lens-page::before {
+        background-size: 48px 48px;
+    }
+
+    .lens-geometry {
+        opacity: 0.28;
+    }
+
+    .progressSignal {
+        display: none;
+    }
+
+    .lens-inspection h1 {
+        animation-duration: 700ms;
+    }
+
+    .preview-stage::before {
+        left: 12px;
+        top: 12px;
+    }
+
+    .analysis-console::before {
+        animation-duration: 4s;
+    }
+
+    .result-overlay {
+        animation-delay: 350ms;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   REDUCED MOTION
+   --------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .lens-geometry,
+    .lens-ring-a,
+    .lens-ring-b,
+    .lens-ring-c,
+    .lens-focus,
+    .analysis-timer strong::after,
+    .analysis-console::before,
+    .location-panel::after {
+        animation: none !important;
+    }
+}
