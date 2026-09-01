@@ -1531,8 +1531,8 @@ body {
     .direction-title {
         width: 100%;
         max-width: 100%;
-        font-size: clamp(3.2rem, 16vw, 6rem);
-        line-height: 0.86;
+        font-size: clamp(2.5rem, 11vw, 5rem);
+        line-height: 0.88;
         letter-spacing: -0.075em;
         overflow-wrap: normal;
     }
