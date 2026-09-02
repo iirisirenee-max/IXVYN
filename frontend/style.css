@@ -3533,3 +3533,268 @@ body {
     }
 
 }
+/* ============================================================
+   IXVYN — VISUAL CALIBRATION
+   DARK ≠ INVISIBLE
+   ============================================================ */
+
+:root {
+    --ixvyn-void: #050506;
+    --ixvyn-white: #f2f1eb;
+
+    --ixvyn-green: #b8ff3d;
+    --ixvyn-cyan: #35e7ee;
+    --ixvyn-violet: #8f72ff;
+    --ixvyn-amber: #ffbd5a;
+    --ixvyn-magenta: #e66bc5;
+}
+
+/* ------------------------------------------------------------
+   THE FIELD
+   ------------------------------------------------------------ */
+
+.ixvyn-intelligence-field {
+    opacity: 1.85;
+    mix-blend-mode: screen;
+}
+
+/* ------------------------------------------------------------
+   MAKE THE EXISTING GEOMETRY READ
+   ------------------------------------------------------------ */
+
+.hero-geometry {
+    opacity: .82;
+}
+
+.geometry-ring {
+    border-color:
+        rgba(242, 241, 235, .22);
+}
+
+.ring-one {
+    border-color:
+        rgba(184, 255, 61, .28);
+}
+
+.ring-two {
+    border-color:
+        rgba(53, 231, 238, .18);
+}
+
+.ring-three {
+    border-color:
+        rgba(143, 114, 255, .17);
+}
+
+.geometry-line {
+    background:
+        rgba(242, 241, 235, .18);
+}
+
+/* ------------------------------------------------------------
+   NODES
+   ------------------------------------------------------------ */
+
+.geometry-node {
+    width: 7px;
+    height: 7px;
+
+    border-color:
+        rgba(242, 241, 235, .78);
+
+    background:
+        rgba(5, 5, 6, .9);
+
+    box-shadow:
+        0 0 7px rgba(184, 255, 61, .16);
+}
+
+.geometry-node.network-pulse {
+    background:
+        var(--ixvyn-green);
+
+    border-color:
+        var(--ixvyn-green);
+
+    box-shadow:
+        0 0 10px rgba(184, 255, 61, .8),
+        0 0 26px rgba(184, 255, 61, .28);
+}
+
+/* ------------------------------------------------------------
+   CORE — THE VISUAL ANCHOR
+   ------------------------------------------------------------ */
+
+.geometry-core {
+    color:
+        var(--ixvyn-white);
+
+    border-color:
+        rgba(242, 241, 235, .72);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(184, 255, 61, .075),
+            rgba(5, 5, 6, .18) 52%,
+            transparent 72%
+        );
+
+    box-shadow:
+        0 0 12px rgba(184, 255, 61, .14),
+        0 0 38px rgba(184, 255, 61, .08);
+}
+
+.geometry-core::before {
+    border-color:
+        rgba(184, 255, 61, .22);
+}
+
+.geometry-core::after {
+    content: "";
+
+    position: absolute;
+    inset: 24%;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(184, 255, 61, .72) 0%,
+            rgba(184, 255, 61, .22) 18%,
+            transparent 62%
+        );
+
+    opacity: .7;
+
+    animation:
+        ixvynCoreLight
+        3.2s ease-in-out
+        infinite;
+}
+
+@keyframes ixvynCoreLight {
+
+    0%,
+    100% {
+        transform: scale(.72);
+        opacity: .42;
+    }
+
+    50% {
+        transform: scale(1);
+        opacity: .9;
+    }
+
+}
+
+/* ------------------------------------------------------------
+   TRAVELLING SIGNAL
+   ------------------------------------------------------------ */
+
+.hero-signal {
+    width: 7px;
+    height: 7px;
+
+    background:
+        var(--ixvyn-green);
+
+    box-shadow:
+        0 0 9px rgba(184, 255, 61, .95),
+        0 0 25px rgba(184, 255, 61, .38);
+}
+
+/* ------------------------------------------------------------
+   SUBTLE SPECTRAL ATMOSPHERE
+   ------------------------------------------------------------ */
+
+.hero-geometry::before {
+    opacity: .9;
+
+    background:
+        radial-gradient(
+            circle at 42% 48%,
+            rgba(184, 255, 61, .045),
+            transparent 24%
+        ),
+        radial-gradient(
+            circle at 62% 34%,
+            rgba(53, 231, 238, .035),
+            transparent 22%
+        ),
+        radial-gradient(
+            circle at 34% 68%,
+            rgba(143, 114, 255, .028),
+            transparent 20%
+        );
+}
+
+/* ------------------------------------------------------------
+   TYPOGRAPHY — KEEP IT BRIGHT
+   ------------------------------------------------------------ */
+
+.hero h1,
+.hero-main h1 {
+    color:
+        var(--ixvyn-white);
+}
+
+.hero-description {
+    color:
+        rgba(242, 241, 235, .68);
+}
+
+/* ------------------------------------------------------------
+   MOBILE
+   Keep the same visual identity, but slightly clearer.
+   ------------------------------------------------------------ */
+
+@media (max-width: 700px) {
+
+    .hero-geometry {
+        opacity: .9;
+    }
+
+    .geometry-ring {
+        border-color:
+            rgba(242, 241, 235, .24);
+    }
+
+    .ring-one {
+        border-color:
+            rgba(184, 255, 61, .32);
+    }
+
+    .ring-two {
+        border-color:
+            rgba(53, 231, 238, .22);
+    }
+
+    .ring-three {
+        border-color:
+            rgba(143, 114, 255, .20);
+    }
+
+    .geometry-line {
+        background:
+            rgba(242, 241, 235, .20);
+    }
+
+    .geometry-node {
+        width: 8px;
+        height: 8px;
+    }
+
+    .hero-signal {
+        width: 8px;
+        height: 8px;
+    }
+
+    .geometry-core {
+        box-shadow:
+            0 0 15px rgba(184, 255, 61, .18),
+            0 0 42px rgba(184, 255, 61, .09);
+    }
+
+}
