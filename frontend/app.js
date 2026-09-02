@@ -1067,3 +1067,775 @@ if (directionSection && directionTitle) {
     updateCivicLoop();
 
 }
+/* ============================================================
+   IXVYN — PASS 02
+   SPECTRAL INTELLIGENCE FIELD
+   Lightweight canvas intelligence layer
+   ============================================================ */
+
+(() => {
+    "use strict";
+
+    const geometry = document.querySelector(".hero-geometry");
+    if (!geometry) return;
+
+    // Respect accessibility / reduced-motion preferences.
+    const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (reducedMotion) return;
+
+    /* ---------------------------------------------------------
+       CANVAS
+       --------------------------------------------------------- */
+
+    const canvas = document.createElement("canvas");
+    canvas.className = "ixvyn-intelligence-field";
+
+    Object.assign(canvas.style, {
+        position: "absolute",
+        inset: "-8%",
+        width: "116%",
+        height: "116%",
+        pointerEvents: "none",
+        zIndex: "0"
+    });
+
+    geometry.insertBefore(canvas, geometry.firstChild);
+
+    const ctx = canvas.getContext("2d", {
+        alpha: true,
+        desynchronized: true
+    });
+
+    if (!ctx) return;
+
+    /* ---------------------------------------------------------
+       DEVICE / QUALITY
+       --------------------------------------------------------- */
+
+    const finePointer = window.matchMedia("(pointer: fine)").matches;
+
+    const cores = navigator.hardwareConcurrency || 4;
+
+    let quality = cores <= 2 ? 0.62 : cores <= 4 ? 0.78 : 1;
+
+    const mobile =
+        window.matchMedia("(max-width: 700px)").matches;
+
+    if (mobile) quality *= 0.72;
+
+    const MAX_DPR = mobile ? 1.25 : 1.5;
+
+    let dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+
+    let width = 0;
+    let height = 0;
+
+    /* ---------------------------------------------------------
+       PALETTE
+       --------------------------------------------------------- */
+
+    // Green remains the identity.
+    const COLORS = {
+        green: [184, 255, 61],
+
+        // Spectral colours are deliberately restrained.
+        cyan: [0, 210, 225],
+        violet: [125, 90, 255],
+        amber: [255, 174, 55],
+        magenta: [230, 70, 190]
+    };
+
+    /* ---------------------------------------------------------
+       STATE
+       --------------------------------------------------------- */
+
+    let particles = [];
+    let animationFrame = 0;
+
+    let running = true;
+    let visible = true;
+
+    let mouseX = 0.5;
+    let mouseY = 0.5;
+
+    let targetMouseX = 0.5;
+    let targetMouseY = 0.5;
+
+    let time = 0;
+
+    let lastTime = performance.now();
+    let fpsTime = lastTime;
+    let fpsFrames = 0;
+
+    let adaptiveReduction = 0;
+
+    /* ---------------------------------------------------------
+       HELPERS
+       --------------------------------------------------------- */
+
+    const random = (min, max) =>
+        Math.random() * (max - min) + min;
+
+    const lerp = (a, b, amount) =>
+        a + (b - a) * amount;
+
+    const clamp = (value, min, max) =>
+        Math.max(min, Math.min(max, value));
+
+    const distance = (x1, y1, x2, y2) => {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        return Math.sqrt(dx * dx + dy * dy);
+    };
+
+    function colour(c, alpha) {
+        return `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${alpha})`;
+    }
+
+    /* ---------------------------------------------------------
+       RESIZE
+       --------------------------------------------------------- */
+
+    function resize() {
+        const rect = geometry.getBoundingClientRect();
+
+        width = rect.width;
+        height = rect.height;
+
+        dpr = Math.min(
+            window.devicePixelRatio || 1,
+            MAX_DPR
+        );
+
+        canvas.width = Math.max(1, Math.floor(width * dpr));
+        canvas.height = Math.max(1, Math.floor(height * dpr));
+
+        ctx.setTransform(
+            dpr,
+            0,
+            0,
+            dpr,
+            0,
+            0
+        );
+
+        createParticles();
+    }
+
+    /* ---------------------------------------------------------
+       PARTICLES
+       --------------------------------------------------------- */
+
+    function particleCount() {
+        const base = mobile ? 34 : 78;
+
+        return Math.max(
+            22,
+            Math.floor(
+                base * quality * (1 - adaptiveReduction)
+            )
+        );
+    }
+
+    function createParticles() {
+        particles = [];
+
+        const count = particleCount();
+
+        for (let i = 0; i < count; i++) {
+            const angle = random(0, Math.PI * 2);
+            const radius = Math.pow(
+                Math.random(),
+                0.65
+            ) * 0.46;
+
+            const x =
+                0.5 +
+                Math.cos(angle) * radius;
+
+            const y =
+                0.5 +
+                Math.sin(angle) * radius;
+
+            particles.push({
+                x: x * width,
+                y: y * height,
+
+                px: x * width,
+                py: y * height,
+
+                vx: random(-0.07, 0.07),
+                vy: random(-0.07, 0.07),
+
+                size: random(0.45, 1.35),
+
+                // Mostly green / neutral.
+                spectral:
+                    Math.random() < 0.17
+                        ? random(0, 1)
+                        : 0,
+
+                phase: random(0, Math.PI * 2),
+
+                life: random(0, 100)
+            });
+        }
+    }
+
+    /* ---------------------------------------------------------
+       POINTER FIELD
+       --------------------------------------------------------- */
+
+    if (finePointer) {
+        window.addEventListener(
+            "pointermove",
+            event => {
+                targetMouseX =
+                    event.clientX /
+                    Math.max(window.innerWidth, 1);
+
+                targetMouseY =
+                    event.clientY /
+                    Math.max(window.innerHeight, 1);
+            },
+            { passive: true }
+        );
+    }
+
+    /* ---------------------------------------------------------
+       PARTICLE COLOUR
+       --------------------------------------------------------- */
+
+    function particleColour(p, alpha) {
+        const pulse =
+            0.5 +
+            0.5 *
+                Math.sin(
+                    time * 0.00055 +
+                    p.phase
+                );
+
+        // Most particles remain green/neutral.
+        if (p.spectral < 0.12) {
+            return colour(
+                COLORS.green,
+                alpha
+            );
+        }
+
+        // Slow spectral drift.
+        const spectral =
+            (p.spectral + pulse * 0.18) % 1;
+
+        if (spectral < 0.25) {
+            return colour(
+                COLORS.cyan,
+                alpha * 0.68
+            );
+        }
+
+        if (spectral < 0.5) {
+            return colour(
+                COLORS.violet,
+                alpha * 0.58
+            );
+        }
+
+        if (spectral < 0.75) {
+            return colour(
+                COLORS.magenta,
+                alpha * 0.42
+            );
+        }
+
+        return colour(
+            COLORS.amber,
+            alpha * 0.48
+        );
+    }
+
+    /* ---------------------------------------------------------
+       UPDATE
+       --------------------------------------------------------- */
+
+    function update(delta) {
+        const dt =
+            Math.min(delta, 32) / 16.67;
+
+        time += delta;
+
+        mouseX = lerp(
+            mouseX,
+            targetMouseX,
+            0.045
+        );
+
+        mouseY = lerp(
+            mouseY,
+            targetMouseY,
+            0.045
+        );
+
+        const coreX = width * 0.5;
+        const coreY = height * 0.5;
+
+        const pointerX =
+            mouseX * width;
+
+        const pointerY =
+            mouseY * height;
+
+        for (const p of particles) {
+            p.life += delta * 0.001;
+
+            // Very weak gravitational relationship
+            // with the central intelligence core.
+            const dx = coreX - p.x;
+            const dy = coreY - p.y;
+
+            const dist =
+                Math.sqrt(dx * dx + dy * dy) || 1;
+
+            const coreForce =
+                clamp(
+                    0.00055 *
+                        (1 - dist / (width * 0.7)),
+                    -0.00015,
+                    0.00055
+                );
+
+            p.vx +=
+                (dx / dist) *
+                coreForce *
+                dt;
+
+            p.vy +=
+                (dy / dist) *
+                coreForce *
+                dt;
+
+            // Cursor creates a subtle gravitational distortion.
+            if (finePointer) {
+                const mdx = pointerX - p.x;
+                const mdy = pointerY - p.y;
+
+                const md =
+                    Math.sqrt(
+                        mdx * mdx +
+                        mdy * mdy
+                    ) || 1;
+
+                const influence =
+                    clamp(
+                        1 -
+                            md /
+                                (Math.min(
+                                    width,
+                                    height
+                                ) * 0.42),
+                        0,
+                        1
+                    );
+
+                p.vx +=
+                    (mdx / md) *
+                    influence *
+                    0.008 *
+                    dt;
+
+                p.vy +=
+                    (mdy / md) *
+                    influence *
+                    0.008 *
+                    dt;
+            }
+
+            // Organic drift.
+            p.vx +=
+                Math.sin(
+                    time * 0.00035 +
+                    p.phase
+                ) *
+                0.0008 *
+                dt;
+
+            p.vy +=
+                Math.cos(
+                    time * 0.00031 +
+                    p.phase
+                ) *
+                0.0008 *
+                dt;
+
+            // Damping keeps the system calm.
+            p.vx *= 0.992;
+            p.vy *= 0.992;
+
+            p.px = p.x;
+            p.py = p.y;
+
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+
+            // Soft containment.
+            const margin = Math.min(
+                width,
+                height
+            ) * 0.06;
+
+            if (p.x < margin) {
+                p.vx += 0.006;
+            }
+
+            if (p.x > width - margin) {
+                p.vx -= 0.006;
+            }
+
+            if (p.y < margin) {
+                p.vy += 0.006;
+            }
+
+            if (p.y > height - margin) {
+                p.vy -= 0.006;
+            }
+
+            // Extremely slow spectral activation.
+            if (
+                Math.random() <
+                0.0007 * dt
+            ) {
+                p.spectral =
+                    Math.random() < 0.72
+                        ? random(0.12, 1)
+                        : 0;
+            }
+        }
+    }
+
+    /* ---------------------------------------------------------
+       DRAW
+       --------------------------------------------------------- */
+
+    function draw() {
+        // Soft persistence creates restrained trails.
+        ctx.fillStyle =
+            "rgba(5, 5, 6, 0.12)";
+
+        ctx.fillRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+        const maxConnection =
+            Math.min(width, height) *
+            (mobile ? 0.115 : 0.14);
+
+        /* -----------------------------------------------------
+           CONNECTIONS
+           ----------------------------------------------------- */
+
+        for (let i = 0; i < particles.length; i++) {
+            const a = particles[i];
+
+            for (
+                let j = i + 1;
+                j < particles.length;
+                j++
+            ) {
+                const b = particles[j];
+
+                const dx = b.x - a.x;
+                const dy = b.y - a.y;
+
+                const dist =
+                    Math.sqrt(
+                        dx * dx +
+                        dy * dy
+                    );
+
+                if (dist > maxConnection)
+                    continue;
+
+                const alpha =
+                    (1 -
+                        dist /
+                            maxConnection) *
+                    0.095;
+
+                ctx.beginPath();
+
+                // Mostly monochrome connections.
+                // Spectral colour appears only occasionally.
+                if (
+                    a.spectral > 0.65 &&
+                    b.spectral > 0.45
+                ) {
+                    ctx.strokeStyle =
+                        particleColour(
+                            a,
+                            alpha
+                        );
+                } else {
+                    ctx.strokeStyle =
+                        `rgba(184,255,61,${alpha})`;
+                }
+
+                ctx.lineWidth = 0.55;
+
+                ctx.moveTo(
+                    a.x,
+                    a.y
+                );
+
+                ctx.lineTo(
+                    b.x,
+                    b.y
+                );
+
+                ctx.stroke();
+            }
+        }
+
+        /* -----------------------------------------------------
+           PARTICLES
+           ----------------------------------------------------- */
+
+        for (const p of particles) {
+            const pulse =
+                0.72 +
+                Math.sin(
+                    time * 0.001 +
+                    p.phase
+                ) *
+                    0.18;
+
+            ctx.beginPath();
+
+            ctx.fillStyle =
+                particleColour(
+                    p,
+                    0.26 * pulse
+                );
+
+            ctx.arc(
+                p.x,
+                p.y,
+                p.size,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fill();
+
+            // Occasional spectral micro-trail.
+            if (
+                p.spectral > 0.72 &&
+                p.size > 0.8
+            ) {
+                ctx.beginPath();
+
+                ctx.strokeStyle =
+                    particleColour(
+                        p,
+                        0.10
+                    );
+
+                ctx.lineWidth = 0.45;
+
+                ctx.moveTo(
+                    p.px,
+                    p.py
+                );
+
+                ctx.lineTo(
+                    p.x,
+                    p.y
+                );
+
+                ctx.stroke();
+            }
+        }
+
+        /* -----------------------------------------------------
+           CENTRAL FIELD
+           ----------------------------------------------------- */
+
+        const corePulse =
+            0.5 +
+            Math.sin(
+                time * 0.0012
+            ) *
+                0.5;
+
+        const radius =
+            Math.min(width, height) *
+            (0.075 +
+                corePulse * 0.008);
+
+        const gradient =
+            ctx.createRadialGradient(
+                width * 0.5,
+                height * 0.5,
+                0,
+                width * 0.5,
+                height * 0.5,
+                radius
+            );
+
+        gradient.addColorStop(
+            0,
+            colour(
+                COLORS.green,
+                0.075
+            )
+        );
+
+        gradient.addColorStop(
+            0.45,
+            colour(
+                COLORS.cyan,
+                0.018
+            )
+        );
+
+        gradient.addColorStop(
+            1,
+            "rgba(0,0,0,0)"
+        );
+
+        ctx.fillStyle = gradient;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            width * 0.5,
+            height * 0.5,
+            radius,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+    }
+
+    /* ---------------------------------------------------------
+       ANIMATION LOOP
+       --------------------------------------------------------- */
+
+    function frame(now) {
+        if (!running) return;
+
+        animationFrame =
+            requestAnimationFrame(frame);
+
+        if (!visible) return;
+
+        const delta =
+            now - lastTime;
+
+        lastTime = now;
+
+        update(delta);
+        draw();
+
+        /* -----------------------------------------------------
+           ADAPTIVE PERFORMANCE
+           ----------------------------------------------------- */
+
+        fpsFrames++;
+
+        if (now - fpsTime > 1000) {
+            const fps =
+                fpsFrames /
+                ((now - fpsTime) / 1000);
+
+            fpsFrames = 0;
+            fpsTime = now;
+
+            if (fps < 46) {
+                adaptiveReduction =
+                    clamp(
+                        adaptiveReduction + 0.18,
+                        0,
+                        0.65
+                    );
+
+                createParticles();
+            }
+        }
+    }
+
+    /* ---------------------------------------------------------
+       VISIBILITY
+       --------------------------------------------------------- */
+
+    const observer =
+        new IntersectionObserver(
+            entries => {
+                visible =
+                    entries[0]?.isIntersecting ??
+                    true;
+            },
+            {
+                threshold: 0.05
+            }
+        );
+
+    observer.observe(geometry);
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+            if (
+                document.hidden
+            ) {
+                visible = false;
+            } else {
+                visible = true;
+                lastTime =
+                    performance.now();
+            }
+        }
+    );
+
+    /* ---------------------------------------------------------
+       RESIZE
+       --------------------------------------------------------- */
+
+    let resizeTimer;
+
+    window.addEventListener(
+        "resize",
+        () => {
+            clearTimeout(resizeTimer);
+
+            resizeTimer = setTimeout(
+                resize,
+                180
+            );
+        },
+        { passive: true }
+    );
+
+    /* ---------------------------------------------------------
+       START
+       --------------------------------------------------------- */
+
+    resize();
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+    animationFrame =
+        requestAnimationFrame(frame);
+
+})();
