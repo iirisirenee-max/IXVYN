@@ -4107,3 +4107,370 @@ body {
     }
 
 }
+/* ============================================================
+   IXVYN — PASS 05
+   THE CIVIC NETWORK
+   ============================================================ */
+
+.systems {
+    position: relative;
+    isolation: isolate;
+}
+
+.ixvyn-civic-network {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 0;
+
+    overflow: hidden;
+
+    opacity: 0;
+
+    transition:
+        opacity 1.2s ease;
+}
+
+.ixvyn-civic-network.network-ready {
+    opacity: 1;
+}
+
+/* ------------------------------------------------------------
+   CENTRAL AXIS
+   ------------------------------------------------------------ */
+
+.network-axis {
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+
+    left: 50%;
+
+    width: 1px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(184,255,61,.12) 12%,
+            rgba(242,241,235,.18) 50%,
+            rgba(184,255,61,.10) 88%,
+            transparent
+        );
+
+    transform:
+        translateX(-50%);
+}
+
+/* ------------------------------------------------------------
+   MOVING CENTRAL SIGNAL
+   ------------------------------------------------------------ */
+
+.network-pulse {
+    position: absolute;
+
+    left: 50%;
+
+    top: -10%;
+
+    width: 3px;
+    height: 3px;
+
+    border-radius: 50%;
+
+    background:
+        var(--ixvyn-green, #b8ff3d);
+
+    box-shadow:
+        0 0 8px
+        rgba(184,255,61,.9),
+
+        0 0 24px
+        rgba(184,255,61,.25);
+
+    transform:
+        translateX(-50%);
+
+    animation:
+        civicNetworkPulse
+        7s
+        cubic-bezier(.45,0,.55,1)
+        infinite;
+}
+
+@keyframes civicNetworkPulse {
+
+    0% {
+        top: -5%;
+        opacity: 0;
+    }
+
+    8% {
+        opacity: .9;
+    }
+
+    50% {
+        opacity: .65;
+    }
+
+    92% {
+        opacity: .9;
+    }
+
+    100% {
+        top: 105%;
+        opacity: 0;
+    }
+}
+
+/* ------------------------------------------------------------
+   NETWORK NODES
+   ------------------------------------------------------------ */
+
+.network-node {
+    position: absolute;
+
+    width: 6px;
+    height: 6px;
+
+    margin-left: -3px;
+    margin-top: -3px;
+
+    border-radius: 50%;
+
+    background:
+        var(--ixvyn-void, #050506);
+
+    border:
+        1px solid
+        rgba(242,241,235,.38);
+
+    box-shadow:
+        0 0 0
+        rgba(184,255,61,0);
+
+    opacity: 0;
+
+    transform:
+        scale(.35);
+
+    transition:
+        opacity .8s ease,
+        transform .65s cubic-bezier(.16,1,.3,1),
+        border-color .35s ease,
+        box-shadow .35s ease,
+        background .35s ease;
+}
+
+.network-node-visible {
+    opacity: 1;
+
+    transform:
+        scale(1);
+}
+
+.network-node-active {
+    background:
+        var(--ixvyn-green, #b8ff3d);
+
+    border-color:
+        var(--ixvyn-green, #b8ff3d);
+
+    transform:
+        scale(2.2);
+
+    box-shadow:
+        0 0 10px
+        rgba(184,255,61,.8),
+
+        0 0 28px
+        rgba(184,255,61,.24);
+}
+
+/* ------------------------------------------------------------
+   ORBITAL THREADS
+   ------------------------------------------------------------ */
+
+.network-orbit {
+    position: absolute;
+
+    left: 50%;
+
+    width: min(38vw, 520px);
+
+    height: 120px;
+
+    border:
+        1px solid
+        rgba(242,241,235,.06);
+
+    border-radius: 50%;
+
+    transform:
+        translateX(-50%)
+        rotate(-8deg);
+
+    opacity: .65;
+}
+
+.orbit-a {
+    top: 20%;
+
+    animation:
+        networkOrbitA
+        14s
+        linear
+        infinite;
+}
+
+.orbit-b {
+    top: 67%;
+
+    transform:
+        translateX(-50%)
+        rotate(11deg);
+
+    animation:
+        networkOrbitB
+        18s
+        linear
+        infinite;
+}
+
+@keyframes networkOrbitA {
+
+    from {
+        transform:
+            translateX(-50%)
+            rotate(-8deg);
+    }
+
+    to {
+        transform:
+            translateX(-50%)
+            rotate(352deg);
+    }
+}
+
+@keyframes networkOrbitB {
+
+    from {
+        transform:
+            translateX(-50%)
+            rotate(11deg);
+    }
+
+    to {
+        transform:
+            translateX(-50%)
+            rotate(-349deg);
+    }
+}
+
+/* ------------------------------------------------------------
+   THREADS
+   ------------------------------------------------------------ */
+
+.network-threads {
+    position: absolute;
+
+    inset: 0;
+
+    opacity: .35;
+}
+
+.network-threads span {
+    position: absolute;
+
+    left: 50%;
+
+    width: 1px;
+
+    height: 18%;
+
+    transform-origin:
+        center bottom;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(184,255,61,.13),
+            transparent
+        );
+}
+
+.network-threads span:nth-child(1) {
+    top: 8%;
+    transform:
+        rotate(16deg);
+}
+
+.network-threads span:nth-child(2) {
+    top: 29%;
+    transform:
+        rotate(-13deg);
+}
+
+.network-threads span:nth-child(3) {
+    top: 53%;
+    transform:
+        rotate(18deg);
+}
+
+.network-threads span:nth-child(4) {
+    top: 74%;
+    transform:
+        rotate(-16deg);
+}
+
+/* ------------------------------------------------------------
+   KEEP CARDS ABOVE NETWORK
+   ------------------------------------------------------------ */
+
+.systems .system-card {
+    position: relative;
+    z-index: 2;
+}
+
+/* ------------------------------------------------------------
+   MOBILE
+   ------------------------------------------------------------ */
+
+@media (max-width: 700px) {
+
+    .ixvyn-civic-network {
+        inset:
+            0 -18vw;
+    }
+
+    .network-axis {
+        left: 50%;
+    }
+
+    .network-orbit {
+        width: 95vw;
+        height: 90px;
+    }
+
+    .network-node {
+        width: 7px;
+        height: 7px;
+
+        margin-left: -3.5px;
+        margin-top: -3.5px;
+    }
+
+    .network-node-active {
+        transform:
+            scale(2);
+    }
+
+    .network-threads {
+        opacity: .28;
+    }
+
+}
