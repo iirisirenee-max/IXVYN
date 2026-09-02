@@ -5150,3 +5150,371 @@ html[data-ixvyn-state="remember"]
         transition: none;
     }
 }
+/* ============================================================
+   IXVYN — PASS 08
+   MEMORY CONVERGENCE
+   ============================================================ */
+
+.about {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+/* ------------------------------------------------------------
+   MEMORY FIELD
+   ------------------------------------------------------------ */
+
+.ixvyn-memory-field {
+    position: absolute;
+    inset: 0;
+
+    z-index: 0;
+    pointer-events: none;
+
+    opacity: 0;
+
+    transition:
+        opacity 1.6s ease;
+
+    --memory-progress: 0;
+}
+
+.ixvyn-memory-field.memory-visible {
+    opacity: 1;
+}
+
+/* ------------------------------------------------------------
+   TRACES
+   ------------------------------------------------------------ */
+
+.memory-traces {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: visible;
+}
+
+.memory-trace {
+    fill: none;
+
+    stroke:
+        rgba(184,255,61,.16);
+
+    stroke-width: 1;
+
+    vector-effect:
+        non-scaling-stroke;
+
+    filter:
+        drop-shadow(
+            0 0 8px
+            rgba(184,255,61,.12)
+        );
+
+    transition:
+        stroke .9s ease;
+}
+
+.memory-trace-faint {
+    stroke:
+        rgba(244,244,240,.055);
+
+    stroke-width: .7;
+}
+
+/* ------------------------------------------------------------
+   MEMORY CORE
+   ------------------------------------------------------------ */
+
+.memory-core {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 12px;
+    height: 12px;
+
+    transform:
+        translate(-50%, -50%)
+        scale(.72);
+
+    transition:
+        transform .2s linear;
+
+    filter:
+        drop-shadow(
+            0 0
+            calc(12px + 24px * var(--memory-glow, .2))
+            rgba(184,255,61,.28)
+        );
+}
+
+.memory-core-point {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 5px;
+    height: 5px;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background:
+        var(--accent);
+
+    box-shadow:
+        0 0 12px
+        rgba(184,255,61,.8);
+}
+
+.memory-core-ring {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 100%;
+    height: 100%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border:
+        1px solid
+        rgba(184,255,61,.35);
+
+    border-radius: 50%;
+
+    animation:
+        memoryPulse
+        4s
+        ease-in-out
+        infinite;
+}
+
+@keyframes memoryPulse {
+
+    0%,
+    100% {
+        width: 12px;
+        height: 12px;
+        opacity: .35;
+    }
+
+    50% {
+        width: 34px;
+        height: 34px;
+        opacity: .08;
+    }
+}
+
+/* ------------------------------------------------------------
+   ORBITS
+   ------------------------------------------------------------ */
+
+.memory-orbit {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    border:
+        1px solid
+        rgba(244,244,240,.045);
+
+    border-radius: 50%;
+
+    transform:
+        translate(-50%, -50%)
+        rotate(-12deg);
+}
+
+.memory-orbit-a {
+    width: min(42vw, 560px);
+    height: 150px;
+
+    animation:
+        memoryOrbitA
+        24s
+        linear
+        infinite;
+}
+
+.memory-orbit-b {
+    width: min(58vw, 760px);
+    height: 210px;
+
+    transform:
+        translate(-50%, -50%)
+        rotate(17deg);
+
+    animation:
+        memoryOrbitB
+        32s
+        linear
+        infinite;
+}
+
+@keyframes memoryOrbitA {
+    from {
+        transform:
+            translate(-50%, -50%)
+            rotate(-12deg);
+    }
+
+    to {
+        transform:
+            translate(-50%, -50%)
+            rotate(348deg);
+    }
+}
+
+@keyframes memoryOrbitB {
+    from {
+        transform:
+            translate(-50%, -50%)
+            rotate(17deg);
+    }
+
+    to {
+        transform:
+            translate(-50%, -50%)
+            rotate(-343deg);
+    }
+}
+
+/* ------------------------------------------------------------
+   STATUS
+   ------------------------------------------------------------ */
+
+.memory-status {
+    position: absolute;
+
+    right: 4vw;
+    bottom: 9%;
+
+    display: flex;
+    gap: 9px;
+    align-items: baseline;
+
+    font-family:
+        "DM Mono",
+        monospace;
+
+    font-size: 8px;
+
+    letter-spacing: .18em;
+
+    color:
+        rgba(244,244,240,.22);
+
+    transition:
+        color 1s ease;
+}
+
+.memory-status strong {
+    font-weight: 400;
+
+    color:
+        rgba(244,244,240,.42);
+
+    transition:
+        color 1s ease;
+}
+
+.memory-status.memory-stable strong {
+    color:
+        rgba(184,255,61,.72);
+}
+
+/* ------------------------------------------------------------
+   CONTENT ABOVE FIELD
+   ------------------------------------------------------------ */
+
+.about-label,
+.about-content {
+    position: relative;
+
+    z-index: 2;
+}
+
+/* ------------------------------------------------------------
+   MEMORY STATE
+   ------------------------------------------------------------ */
+
+html[data-ixvyn-state="remember"]
+.ixvyn-memory-field {
+    opacity: .92;
+}
+
+html[data-ixvyn-state="remember"]
+.memory-trace {
+    stroke:
+        rgba(184,255,61,.12);
+}
+
+/* ------------------------------------------------------------
+   MOBILE
+   ------------------------------------------------------------ */
+
+@media (max-width: 700px) {
+
+    .ixvyn-memory-field {
+        inset:
+            0 -35vw;
+    }
+
+    .memory-orbit-a {
+        width: 125vw;
+        height: 120px;
+    }
+
+    .memory-orbit-b {
+        width: 155vw;
+        height: 170px;
+    }
+
+    .memory-traces {
+        width: 140%;
+        left: -20%;
+    }
+
+    .memory-status {
+        right: 7vw;
+        bottom: 5%;
+
+        font-size: 7px;
+    }
+
+    .memory-core {
+        transform:
+            translate(-50%, -50%)
+            scale(.68);
+    }
+}
+
+/* ------------------------------------------------------------
+   REDUCED MOTION
+   ------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .memory-orbit-a,
+    .memory-orbit-b,
+    .memory-core-ring {
+        animation: none;
+    }
+
+    .memory-status {
+        transition: none;
+    }
+}
