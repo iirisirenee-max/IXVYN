@@ -2994,3 +2994,333 @@ if (directionSection && directionTitle) {
     calculateState();
 
 })();
+/* ============================================================
+   IXVYN — PASS 07
+   CIVIC TRAJECTORY
+   DIRECTION becomes a living trajectory.
+   ============================================================ */
+
+(() => {
+    "use strict";
+
+    const section =
+        document.querySelector(".direction");
+
+    if (!section) return;
+
+    const title =
+        section.querySelector(".direction-main h2");
+
+    if (!title) return;
+
+    const words =
+        [...title.querySelectorAll(".loop-word")];
+
+    if (words.length !== 5) return;
+
+    /* ---------------------------------------------------------
+       TRAJECTORY LAYER
+       --------------------------------------------------------- */
+
+    const visual =
+        document.createElement("div");
+
+    visual.className =
+        "ixvyn-trajectory";
+
+    visual.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    visual.innerHTML = `
+        <svg
+            class="trajectory-svg"
+            viewBox="0 0 700 900"
+            preserveAspectRatio="none"
+        >
+            <path
+                class="trajectory-trace"
+                d="
+                    M 80 110
+                    C 210 120, 480 150, 590 255
+                    C 665 325, 560 390, 360 430
+                    C 155 470, 80 555, 205 650
+                    C 315 730, 520 700, 625 790
+                "
+            />
+
+            <path
+                class="trajectory-memory"
+                d="
+                    M 80 110
+                    C 210 120, 480 150, 590 255
+                    C 665 325, 560 390, 360 430
+                    C 155 470, 80 555, 205 650
+                    C 315 730, 520 700, 625 790
+                "
+            />
+        </svg>
+
+        <div class="trajectory-signal"></div>
+
+        <div class="trajectory-nodes">
+            <span data-stage="0"></span>
+            <span data-stage="1"></span>
+            <span data-stage="2"></span>
+            <span data-stage="3"></span>
+            <span data-stage="4"></span>
+        </div>
+
+        <div class="trajectory-readout">
+            <span>TRAJECTORY /</span>
+            <strong>00</strong>
+        </div>
+    `;
+
+    section.insertBefore(
+        visual,
+        section.firstChild
+    );
+
+    const signal =
+        visual.querySelector(
+            ".trajectory-signal"
+        );
+
+    const nodes =
+        [...visual.querySelectorAll(
+            ".trajectory-nodes span"
+        )];
+
+    const readout =
+        visual.querySelector(
+            ".trajectory-readout strong"
+        );
+
+    const path =
+        visual.querySelector(
+            ".trajectory-trace"
+        );
+
+    const memoryPath =
+        visual.querySelector(
+            ".trajectory-memory"
+        );
+
+    /* ---------------------------------------------------------
+       POSITION STAGE NODES
+       --------------------------------------------------------- */
+
+    const positions = [
+        [11, 12],
+        [84, 28],
+        [51, 48],
+        [28, 72],
+        [89, 88]
+    ];
+
+    nodes.forEach((node, index) => {
+        node.style.left =
+            `${positions[index][0]}%`;
+
+        node.style.top =
+            `${positions[index][1]}%`;
+    });
+
+    /* ---------------------------------------------------------
+       PATH DRAW
+       --------------------------------------------------------- */
+
+    const pathLength =
+        path.getTotalLength();
+
+    path.style.strokeDasharray =
+        `${pathLength}`;
+
+    path.style.strokeDashoffset =
+        `${pathLength}`;
+
+    memoryPath.style.strokeDasharray =
+        `${pathLength}`;
+
+    memoryPath.style.strokeDashoffset =
+        `${pathLength}`;
+
+    /* ---------------------------------------------------------
+       SCROLL STATE
+       --------------------------------------------------------- */
+
+    let progress = 0;
+    let targetProgress = 0;
+    let ticking = false;
+
+    function calculateProgress() {
+
+        const rect =
+            section.getBoundingClientRect();
+
+        const viewport =
+            window.innerHeight;
+
+        const travel =
+            Math.max(
+                section.offsetHeight -
+                viewport * 0.35,
+                1
+            );
+
+        targetProgress =
+            Math.max(
+                0,
+                Math.min(
+                    1,
+                    (viewport * 0.78 - rect.top) /
+                    travel
+                )
+            );
+    }
+
+    function render() {
+
+        progress +=
+            (targetProgress - progress) *
+            0.075;
+
+        const activeIndex =
+            Math.min(
+                4,
+                Math.floor(
+                    progress * 5
+                )
+            );
+
+        /* Main trajectory reveal */
+
+        path.style.strokeDashoffset =
+            pathLength *
+            (1 - progress);
+
+        /* Memory trail grows behind it */
+
+        memoryPath.style.strokeDashoffset =
+            pathLength *
+            (1 - Math.max(
+                0,
+                progress - 0.08
+            ));
+
+        /* Stage nodes */
+
+        nodes.forEach(
+            (node, index) => {
+
+                node.classList.toggle(
+                    "trajectory-node-past",
+                    index < activeIndex
+                );
+
+                node.classList.toggle(
+                    "trajectory-node-active",
+                    index === activeIndex
+                );
+            }
+        );
+
+        /* Signal */
+
+        const signalProgress =
+            Math.min(
+                0.985,
+                progress
+            );
+
+        const point =
+            path.getPointAtLength(
+                pathLength *
+                signalProgress
+            );
+
+        signal.style.left =
+            `${(point.x / 700) * 100}%`;
+
+        signal.style.top =
+            `${(point.y / 900) * 100}%`;
+
+        /* Readout */
+
+        readout.textContent =
+            String(
+                activeIndex + 1
+            ).padStart(2, "0");
+
+        /* Existing words */
+
+        words.forEach(
+            (word, index) => {
+
+                word.classList.toggle(
+                    "trajectory-current",
+                    index === activeIndex
+                );
+
+                word.classList.toggle(
+                    "trajectory-completed",
+                    index < activeIndex
+                );
+            }
+        );
+
+        ticking = false;
+    }
+
+    function requestRender() {
+
+        calculateProgress();
+
+        if (ticking) return;
+
+        ticking = true;
+
+        requestAnimationFrame(
+            render
+        );
+    }
+
+    window.addEventListener(
+        "scroll",
+        requestRender,
+        { passive: true }
+    );
+
+    window.addEventListener(
+        "resize",
+        requestRender
+    );
+
+    requestRender();
+
+    const visibility =
+        new IntersectionObserver(
+            entries => {
+
+                entries.forEach(
+                    entry => {
+
+                        visual.classList.toggle(
+                            "trajectory-visible",
+                            entry.isIntersecting
+                        );
+
+                    }
+                );
+
+            },
+            {
+                threshold: 0.05
+            }
+        );
+
+    visibility.observe(section);
+
+})();
