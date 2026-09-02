@@ -190,17 +190,6 @@ document.addEventListener("DOMContentLoaded", () => {
        UPLOAD ZONE
     ===================================================== */
 
-    uploadZone.addEventListener(
-        "click",
-        () => {
-
-            if (!selectedFile) {
-                imageInput.click();
-            }
-
-        }
-    );
-
 
     /* =====================================================
        PROCESS FILE
