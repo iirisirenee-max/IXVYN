@@ -1,1169 +1,600 @@
-/* =========================================================
-   IXVYN — MEMORY
-   INFRASTRUCTURE MEMORY / SPATIAL RECORD
-   ========================================================= */
-
-
-/* =========================================================
-   RESET / PAGE
-   ========================================================= */
-
-.memory-page {
-    background: #080a0f;
-    color: #f2f0e8;
-    min-height: 100vh;
-    overflow-x: hidden;
+:root {
+    --bg: #050706;
+    --panel: rgba(10, 15, 12, .8);
+    --line: rgba(128, 255, 177, .16);
+    --line-strong: rgba(128, 255, 177, .35);
+    --text: #e9f4ec;
+    --muted: #819087;
+    --green: #7dffad;
+    --green-soft: rgba(125, 255, 173, .1);
+    --dim: #5c6961;
 }
 
-
-/* =========================================================
-   EXPERIENCE
-   ========================================================= */
-
-.memory-experience {
-    position: relative;
-    min-height: 100vh;
-    padding: 150px 7vw 70px;
-    overflow: hidden;
+* {
+    box-sizing: border-box;
 }
 
-
-/* =========================================================
-   BACKGROUND GEOMETRY
-   ========================================================= */
-
-.memory-geometry {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 0;
+html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-
-.memory-ring {
-    position: absolute;
-    border: 1px solid rgba(242, 240, 232, 0.08);
-    border-radius: 50%;
-}
-
-
-.memory-ring-a {
-    width: 620px;
-    height: 620px;
-    right: -210px;
-    top: 80px;
-}
-
-
-.memory-ring-b {
-    width: 440px;
-    height: 440px;
-    right: -120px;
-    top: 170px;
-}
-
-
-.memory-ring-c {
-    width: 270px;
-    height: 270px;
-    right: -35px;
-    top: 255px;
-}
-
-
-.memory-axis {
-    position: absolute;
-    background: rgba(242, 240, 232, 0.06);
-}
-
-
-.memory-axis-x {
-    width: 100%;
-    height: 1px;
-    top: 410px;
-    left: 0;
-}
-
-
-.memory-axis-y {
-    width: 1px;
-    height: 100%;
-    right: 18%;
-    top: 0;
-}
-
-
-.memory-node {
-    position: absolute;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #d7ff3f;
-    box-shadow: 0 0 0 5px rgba(215, 255, 63, 0.08);
-}
-
-
-.memory-node-a {
-    right: 18%;
-    top: 410px;
-}
-
-
-.memory-node-b {
-    right: 28%;
-    top: 280px;
-}
-
-
-.memory-node-c {
-    right: 10%;
-    top: 570px;
-}
-
-
-.memory-core {
-    position: absolute;
-    right: calc(18% - 24px);
-    top: 386px;
-
-    width: 48px;
-    height: 48px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 1px solid rgba(215, 255, 63, 0.35);
-    border-radius: 50%;
-
-    color: #d7ff3f;
-    font-family: "DM Mono", monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-}
-
-
-/* =========================================================
-   SYSTEM IDENTIFICATION
-   ========================================================= */
-
-.memory-progress {
-    position: relative;
-    z-index: 2;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    padding-bottom: 18px;
-
-    border-bottom: 1px solid rgba(242, 240, 232, 0.12);
-
-    color: rgba(242, 240, 232, 0.48);
-
-    font-family: "DM Mono", monospace;
-    font-size: 9px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-}
-
-
-.memory-progress span:last-child {
-    color: #d7ff3f;
-}
-
-
-/* =========================================================
-   INTRO
-   ========================================================= */
-
-.memory-intro {
-    position: relative;
-    z-index: 2;
-
-    max-width: 900px;
-
-    margin-top: 90px;
-}
-
-
-.memory-intro .eyebrow {
-    margin-bottom: 24px;
-}
-
-
-.memory-intro h1 {
+body {
     margin: 0;
-
-    max-width: 850px;
-
-    font-family: "Inter", sans-serif;
-    font-size: clamp(58px, 9vw, 140px);
-    font-weight: 500;
-
-    line-height: 0.9;
-    letter-spacing: -0.065em;
-}
-
-
-.memory-intro h1 span {
-    display: block;
-    color: #d7ff3f;
-}
-
-
-.memory-lead {
-    max-width: 580px;
-
-    margin: 34px 0 0;
-
-    color: rgba(242, 240, 232, 0.58);
-
-    font-family: "Inter", sans-serif;
-    font-size: 17px;
-    line-height: 1.6;
-}
-
-
-/* =========================================================
-   SUMMARY
-   ========================================================= */
-
-.memory-summary {
-    position: relative;
-    z-index: 2;
-
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-
-    margin-top: 85px;
-
-    border-top: 1px solid rgba(242, 240, 232, 0.12);
-    border-bottom: 1px solid rgba(242, 240, 232, 0.12);
-}
-
-
-.memory-stat {
-    min-height: 145px;
-
-    padding: 28px 30px;
-
-    border-right: 1px solid rgba(242, 240, 232, 0.12);
-}
-
-
-.memory-stat:last-child {
-    border-right: 0;
-}
-
-
-.memory-stat .metric-label {
-    display: block;
-
-    margin-bottom: 18px;
-
-    color: rgba(242, 240, 232, 0.42);
-
-    font-family: "DM Mono", monospace;
-    font-size: 9px;
-    letter-spacing: 0.13em;
-}
-
-
-.memory-stat strong {
-    display: block;
-
-    color: #f2f0e8;
-
-    font-family: "Inter", sans-serif;
-    font-size: clamp(28px, 4vw, 48px);
-    font-weight: 500;
-
-    letter-spacing: -0.04em;
-}
-
-
-.memory-stat strong:first-letter {
-    color: #d7ff3f;
-}
-
-
-/* =========================================================
-   SECTION HEADERS
-   ========================================================= */
-
-.memory-section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-
-    gap: 30px;
-
-    margin-bottom: 35px;
-}
-
-
-.memory-section-header h2 {
-    margin: 0;
-
-    font-family: "Inter", sans-serif;
-    font-size: clamp(42px, 6vw, 82px);
-    font-weight: 500;
-
-    line-height: 0.92;
-    letter-spacing: -0.06em;
-}
-
-
-.memory-section-header h2 span {
-    display: block;
-    color: #d7ff3f;
-}
-
-
-.memory-section-marker,
-.memory-record-count {
-    padding-bottom: 8px;
-
-    color: rgba(242, 240, 232, 0.42);
-
-    font-family: "DM Mono", monospace;
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   SPATIAL MEMORY
-   ========================================================= */
-
-.memory-map-section {
-    position: relative;
-    z-index: 2;
-
-    margin-top: 120px;
-}
-
-
-.memory-map {
-    position: relative;
-
-    width: 100%;
-    min-height: 520px;
-
-    overflow: hidden;
-
-    border: 1px solid rgba(242, 240, 232, 0.14);
-
-    background:
-        linear-gradient(
-            rgba(242, 240, 232, 0.035) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(242, 240, 232, 0.035) 1px,
-            transparent 1px
-        );
-
-    background-size: 50px 50px;
-}
-
-
-.map-grid {
-    position: absolute;
-    inset: 0;
+    min-height: 100vh;
 
     background:
         radial-gradient(
-            circle at center,
-            rgba(215, 255, 63, 0.055),
-            transparent 42%
+            circle at 50% 30%,
+            rgba(50, 130, 75, .08),
+            transparent 34%
+        ),
+        var(--bg);
+
+    overflow-x: hidden;
+}
+
+.noise {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+    opacity: .035;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0,
+            transparent 2px,
+            rgba(255,255,255,.3) 3px
         );
 }
 
+.topbar {
+    height: 72px;
+    padding: 0 5vw;
 
-.map-axis {
-    position: absolute;
-
-    background: rgba(242, 240, 232, 0.13);
-}
-
-
-.map-axis-horizontal {
-    width: 100%;
-    height: 1px;
-
-    left: 0;
-    top: 50%;
-}
-
-
-.map-axis-vertical {
-    width: 1px;
-    height: 100%;
-
-    top: 0;
-    left: 50%;
-}
-
-
-.map-center {
-    position: absolute;
-
-    left: 50%;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-
-    width: 54px;
-    height: 54px;
+    border-bottom: 1px solid var(--line);
 
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 35px;
 
-    border: 1px solid rgba(215, 255, 63, 0.45);
-    border-radius: 50%;
-
-    color: #d7ff3f;
-
-    font-family: "DM Mono", monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-
-    background: rgba(8, 10, 15, 0.88);
+    font: 11px monospace;
+    letter-spacing: .14em;
 }
 
+.wordmark {
+    color: var(--text);
+    text-decoration: none;
 
-.map-label {
-    position: absolute;
-
-    color: rgba(242, 240, 232, 0.35);
-
-    font-family: "DM Mono", monospace;
-    font-size: 8px;
-    letter-spacing: 0.1em;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: .2em;
 }
 
-
-.map-label-n {
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%);
+.wordmark span {
+    color: var(--green);
 }
 
-
-.map-label-e {
-    right: 18px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-
-.map-label-s {
-    bottom: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-
-.map-label-w {
-    left: 18px;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-
-.map-status {
-    position: absolute;
-
-    left: 20px;
-    bottom: 20px;
+.module-id {
+    color: var(--green);
 
     display: flex;
     align-items: center;
     gap: 9px;
-
-    color: rgba(242, 240, 232, 0.48);
-
-    font-family: "DM Mono", monospace;
-    font-size: 8px;
-    letter-spacing: 0.12em;
 }
 
-
-.map-status .status-dot {
+.pulse {
     width: 6px;
     height: 6px;
 
-    background: #d7ff3f;
-    border-radius: 50%;
-}
-
-
-/* =========================================================
-   MAP POINTS
-   ========================================================= */
-
-.memory-map-points {
-    position: absolute;
-    inset: 0;
-}
-
-
-.memory-map-point {
-    position: absolute;
-
-    width: 12px;
-    height: 12px;
-
-    transform: translate(-50%, -50%);
-
-    border: 2px solid #d7ff3f;
     border-radius: 50%;
 
-    background: #080a0f;
+    background: var(--green);
 
     box-shadow:
-        0 0 0 5px rgba(215, 255, 63, 0.08),
-        0 0 18px rgba(215, 255, 63, 0.28);
-
-    cursor: pointer;
+        0 0 14px var(--green);
 }
 
-
-.memory-map-point::after {
-    content: "";
-
-    position: absolute;
-
-    inset: -7px;
-
-    border: 1px solid rgba(215, 255, 63, 0.18);
-    border-radius: 50%;
-
-    animation: memoryPulse 2.5s ease-out infinite;
+.role {
+    margin-left: auto;
+    color: var(--muted);
 }
 
+main {
+    width: min(1180px, 90vw);
+    margin: auto;
 
-@keyframes memoryPulse {
-
-    0% {
-        transform: scale(0.65);
-        opacity: 0.9;
-    }
-
-    70% {
-        transform: scale(1.25);
-        opacity: 0;
-    }
-
-    100% {
-        transform: scale(1.25);
-        opacity: 0;
-    }
-
+    padding: 80px 0 110px;
 }
 
-
-/* =========================================================
-   RECORDS
-   ========================================================= */
-
-.memory-records-section {
-    position: relative;
-    z-index: 2;
-
-    margin-top: 120px;
+.intro {
+    max-width: 900px;
+    margin-bottom: 70px;
 }
 
+.eyebrow {
+    color: var(--green);
 
-.memory-empty {
+    font: 10px monospace;
+    letter-spacing: .22em;
+
+    margin-bottom: 20px;
+}
+
+h1 {
+    margin: 0;
+
+    font-size: clamp(76px, 14vw, 190px);
+    line-height: .78;
+
+    letter-spacing: -.075em;
+}
+
+.intro p {
+    max-width: 680px;
+
+    color: var(--muted);
+
+    font-size: 18px;
+    line-height: 1.6;
+
+    margin: 35px 0;
+}
+
+.chain {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
 
-    padding: 60px 35px;
+    font: 10px monospace;
+    letter-spacing: .16em;
 
-    border: 1px solid rgba(242, 240, 232, 0.12);
-
-    background: rgba(242, 240, 232, 0.015);
+    color: var(--muted);
 }
 
+.chain i {
+    color: var(--line-strong);
+    font-style: normal;
+}
 
-.memory-empty-mark {
-    width: 42px;
-    height: 42px;
+.chain strong {
+    color: var(--green);
+}
+
+.panel {
+    margin-top: 18px;
+
+    border: 1px solid var(--line);
+
+    background: var(--panel);
+
+    backdrop-filter: blur(12px);
+}
+
+.panel-head {
+    min-height: 48px;
+    padding: 0 20px;
+
+    border-bottom: 1px solid var(--line);
 
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
 
-    margin-bottom: 25px;
+    color: var(--muted);
 
-    border: 1px solid rgba(215, 255, 63, 0.35);
-
-    color: #d7ff3f;
-
-    font-family: "DM Mono", monospace;
-    font-size: 18px;
+    font: 10px monospace;
+    letter-spacing: .16em;
 }
 
+.stats {
+    display: grid;
+    grid-template-columns:
+        repeat(4, 1fr);
 
-.memory-empty strong {
-    margin-bottom: 14px;
+    gap: 1px;
 
-    color: #f2f0e8;
+    background: var(--line);
+}
 
-    font-family: "Inter", sans-serif;
+.stat {
+    min-height: 130px;
+    padding: 27px;
+
+    background: rgba(5,8,6,.95);
+}
+
+.stat strong {
+    display: block;
+
+    color: var(--green);
+
+    font: 42px monospace;
+
+    letter-spacing: -.06em;
+}
+
+label {
+    display: block;
+
+    margin-bottom: 13px;
+
+    color: var(--muted);
+
+    font: 9px monospace;
+    letter-spacing: .18em;
+}
+
+.timeline {
+    padding: 25px;
+}
+
+.memory-record {
+    position: relative;
+
+    display: grid;
+    grid-template-columns: 100px 1fr;
+
+    gap: 30px;
+
+    padding: 28px 0;
+
+    border-bottom: 1px solid var(--line);
+}
+
+.memory-record:last-child {
+    border-bottom: 0;
+}
+
+.record-index {
+    color: var(--green);
+
+    font: 10px monospace;
+    letter-spacing: .15em;
+}
+
+.record-line {
+    position: absolute;
+
+    left: 45px;
+    top: 53px;
+    bottom: -1px;
+
+    width: 1px;
+
+    background: var(--line);
+}
+
+.memory-record:last-child .record-line {
+    display: none;
+}
+
+.record-node {
+    position: absolute;
+
+    left: 40px;
+    top: 31px;
+
+    width: 11px;
+    height: 11px;
+
+    border: 1px solid var(--green);
+
+    border-radius: 50%;
+
+    background: var(--bg);
+
+    box-shadow:
+        0 0 15px rgba(125,255,173,.3);
+}
+
+.record-main h3 {
+    margin: 0 0 9px;
+
     font-size: 22px;
-    font-weight: 500;
-
-    letter-spacing: -0.02em;
+    font-weight: 400;
 }
 
+.record-main p {
+    max-width: 760px;
 
-.memory-empty p {
-    max-width: 470px;
+    margin: 0;
 
-    margin: 0 0 30px;
+    color: var(--muted);
 
-    color: rgba(242, 240, 232, 0.48);
+    line-height: 1.55;
+}
 
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
+.record-meta {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-top: 18px;
+}
+
+.record-meta span {
+    padding: 7px 9px;
+
+    border: 1px solid var(--line);
+
+    color: var(--muted);
+
+    font: 9px monospace;
+    letter-spacing: .1em;
+}
+
+.status-observed {
+    color: #9bbca7 !important;
+}
+
+.status-intervention {
+    color: var(--green) !important;
+}
+
+.status-outcome {
+    color: var(--green) !important;
+}
+
+.empty-state {
+    min-height: 210px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 25px;
+
+    padding: 40px 15px;
+}
+
+.empty-number {
+    color: var(--green);
+    font: 11px monospace;
+}
+
+.empty-state h2 {
+    margin: 0 0 12px;
+
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.empty-state p {
+    max-width: 600px;
+
+    margin: 0;
+
+    color: var(--muted);
+
     line-height: 1.6;
 }
 
-
-/* =========================================================
-   RECORD LIST
-   ========================================================= */
-
-.memory-records {
+.latest {
     display: grid;
+    grid-template-columns: 1.5fr 1fr;
+
     gap: 1px;
 
-    border: 1px solid rgba(242, 240, 232, 0.12);
-
-    background: rgba(242, 240, 232, 0.12);
+    background: var(--line);
 }
 
+.latest-main {
+    padding: 35px;
+    background: rgba(5,8,6,.95);
+}
 
-.memory-record {
+.latest-main h2 {
+    margin: 0 0 14px;
+
+    font-size: 30px;
+    font-weight: 400;
+}
+
+.latest-main p {
+    max-width: 700px;
+
+    margin: 0;
+
+    color: var(--muted);
+
+    line-height: 1.65;
+}
+
+.latest-metrics {
     display: grid;
+    grid-template-columns: 1fr 1fr;
 
-    grid-template-columns:
-        90px
-        minmax(150px, 1fr)
-        minmax(110px, 0.7fr)
-        minmax(160px, 1fr)
-        90px;
+    gap: 1px;
 
-    align-items: center;
-
-    min-height: 105px;
-
-    padding: 22px 25px;
-
-    background: #080a0f;
-
-    transition:
-        background 180ms ease,
-        transform 180ms ease;
+    background: var(--line);
 }
 
+.latest-metrics > div {
+    padding: 25px;
 
-.memory-record:hover {
-    background: #0d1016;
-    transform: translateX(4px);
+    background: rgba(5,8,6,.95);
 }
 
+.latest-metrics strong {
+    display: block;
 
-.memory-record-index {
-    color: rgba(242, 240, 232, 0.32);
+    color: var(--green);
 
-    font-family: "DM Mono", monospace;
-    font-size: 9px;
-    letter-spacing: 0.1em;
+    font: 15px monospace;
+    line-height: 1.45;
 }
 
-
-.memory-record-defect {
-    color: #f2f0e8;
-
-    font-family: "Inter", sans-serif;
-    font-size: 20px;
-    font-weight: 500;
-
-    letter-spacing: -0.02em;
+.outcome-copy {
+    padding: 35px;
 }
 
+.outcome-copy h2 {
+    margin: 0 0 12px;
 
-.memory-record-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+    font-size: 30px;
+    font-weight: 400;
 }
 
+.outcome-copy p {
+    max-width: 700px;
 
-.memory-record-meta span:first-child {
-    color: #d7ff3f;
+    margin: 0 0 25px;
 
-    font-family: "DM Mono", monospace;
-    font-size: 9px;
-    letter-spacing: 0.1em;
+    color: var(--muted);
+
+    line-height: 1.65;
 }
 
-
-.memory-record-meta span:last-child {
-    color: rgba(242, 240, 232, 0.38);
-
-    font-family: "DM Mono", monospace;
-    font-size: 8px;
-    letter-spacing: 0.08em;
-}
-
-
-.memory-record-location {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-
-    color: rgba(242, 240, 232, 0.48);
-
-    font-family: "DM Mono", monospace;
-    font-size: 8px;
-    letter-spacing: 0.06em;
-}
-
-
-.memory-record-date {
-    color: rgba(242, 240, 232, 0.32);
-
-    font-family: "DM Mono", monospace;
-    font-size: 8px;
-    line-height: 1.5;
-    text-align: right;
-}
-
-
-/* =========================================================
-   SEVERITY STATES
-   ========================================================= */
-
-.memory-severity-high {
-    color: #ff6b6b !important;
-}
-
-
-.memory-severity-medium {
-    color: #f2d96b !important;
-}
-
-
-.memory-severity-low {
-    color: #d7ff3f !important;
-}
-
-
-/* =========================================================
-   ACTIONS
-   ========================================================= */
-
-.memory-actions {
-    position: relative;
-    z-index: 2;
-
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-
-    margin-top: 60px;
-}
-
-
-.lens-button {
+.primary-btn,
+.secondary-btn {
     min-height: 48px;
+    padding: 0 20px;
 
-    padding: 0 22px;
+    border: 1px solid var(--line-strong);
 
-    border: 1px solid #d7ff3f;
+    background: transparent;
 
-    background: #d7ff3f;
-
-    color: #080a0f;
-
-    font-family: "DM Mono", monospace;
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    color: var(--text);
 
     cursor: pointer;
 
+    font: 10px monospace;
+    letter-spacing: .13em;
+}
+
+.primary-btn {
+    border-color: var(--green);
+
+    background: var(--green-soft);
+
+    color: var(--green);
+}
+
+.primary-btn:hover,
+.secondary-btn:hover {
+    background: rgba(125,255,173,.15);
+}
+
+.bottom-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 25px;
+}
+
+.return-link {
+    margin-left: auto;
+
+    color: var(--muted);
+
     text-decoration: none;
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-
-    transition:
-        background 180ms ease,
-        color 180ms ease,
-        transform 180ms ease;
+    font: 10px monospace;
+    letter-spacing: .12em;
 }
 
-
-.lens-button:hover {
-    transform: translateY(-2px);
-
-    background: transparent;
-    color: #d7ff3f;
+.return-link:hover {
+    color: var(--green);
 }
 
-
-.lens-button span {
-    font-size: 15px;
-}
-
-
-.lens-button-secondary {
-    border-color: rgba(242, 240, 232, 0.25);
-
-    background: transparent;
-
-    color: rgba(242, 240, 232, 0.7);
-}
-
-
-.lens-button-secondary:hover {
-    border-color: #d7ff3f;
-
-    color: #d7ff3f;
-}
-
-
-.lens-link {
-    border-color: rgba(242, 240, 232, 0.18);
-
-    background: transparent;
-
-    color: rgba(242, 240, 232, 0.55);
-}
-
-
-.lens-link:hover {
-    border-color: #d7ff3f;
-
-    color: #d7ff3f;
-}
-
-
-/* =========================================================
-   FOOTER
-   ========================================================= */
-
-.memory-footer {
-    position: relative;
-    z-index: 2;
-
-    display: flex;
-    justify-content: space-between;
-
-    margin-top: 100px;
-    padding-top: 22px;
-
-    border-top: 1px solid rgba(242, 240, 232, 0.1);
-
-    color: rgba(242, 240, 232, 0.28);
-
-    font-family: "DM Mono", monospace;
-    font-size: 8px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
-
-
-/* =========================================================
-   HIDDEN STATE
-   ========================================================= */
-
-[hidden] {
+.hidden {
     display: none !important;
 }
 
+@media (max-width: 800px) {
 
-/* =========================================================
-   TABLET
-   ========================================================= */
-
-@media (max-width: 900px) {
-
-    .memory-experience {
-        padding: 130px 5vw 60px;
+    .stats {
+        grid-template-columns: 1fr 1fr;
     }
 
-
-    .memory-intro {
-        margin-top: 70px;
-    }
-
-
-    .memory-summary {
+    .latest {
         grid-template-columns: 1fr;
     }
-
-
-    .memory-stat {
-        min-height: auto;
-
-        border-right: 0;
-        border-bottom: 1px solid rgba(242, 240, 232, 0.12);
-    }
-
-
-    .memory-stat:last-child {
-        border-bottom: 0;
-    }
-
-
-    .memory-map {
-        min-height: 420px;
-    }
-
-
-    .memory-record {
-        grid-template-columns:
-            60px
-            1fr
-            100px;
-        gap: 18px;
-    }
-
-
-    .memory-record-location {
-        grid-column: 2;
-    }
-
-
-    .memory-record-date {
-        grid-column: 3;
-        grid-row: 1;
-    }
-
 }
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
 
 @media (max-width: 600px) {
 
-    .memory-experience {
-        padding: 105px 16px 45px;
+    .topbar {
+        height: 62px;
+        padding: 0 20px;
+        gap: 18px;
     }
 
-
-    .memory-progress {
-        font-size: 7px;
-        letter-spacing: 0.1em;
+    .role {
+        display: none;
     }
 
-
-    .memory-intro {
-        margin-top: 55px;
+    main {
+        width: calc(100vw - 30px);
+        padding-top: 55px;
     }
 
-
-    .memory-intro h1 {
-        font-size: clamp(48px, 14vw, 72px);
+    h1 {
+        font-size: 23vw;
     }
 
-
-    .memory-lead {
-        font-size: 14px;
-        line-height: 1.55;
+    .intro p {
+        font-size: 15px;
     }
 
-
-    .memory-summary {
-        margin-top: 60px;
+    .stats {
+        grid-template-columns: 1fr 1fr;
     }
 
-
-    .memory-stat {
-        padding: 22px 18px;
+    .stat {
+        min-height: 105px;
+        padding: 20px;
     }
 
-
-    .memory-stat strong {
-        font-size: 34px;
+    .stat strong {
+        font-size: 32px;
     }
-
-
-    .memory-map-section,
-    .memory-records-section {
-        margin-top: 80px;
-    }
-
-
-    .memory-section-header {
-        display: block;
-    }
-
-
-    .memory-section-marker,
-    .memory-record-count {
-        display: block;
-
-        margin-top: 18px;
-
-        padding-bottom: 0;
-    }
-
-
-    .memory-section-header h2 {
-        font-size: clamp(40px, 12vw, 58px);
-    }
-
-
-    .memory-map {
-        min-height: 330px;
-
-        background-size: 35px 35px;
-    }
-
-
-    .memory-ring-a {
-        width: 400px;
-        height: 400px;
-
-        right: -250px;
-    }
-
-
-    .memory-ring-b {
-        width: 280px;
-        height: 280px;
-
-        right: -170px;
-    }
-
-
-    .memory-ring-c {
-        width: 170px;
-        height: 170px;
-
-        right: -100px;
-    }
-
-
-    .memory-axis-y {
-        right: 10%;
-    }
-
-
-    .memory-core {
-        right: calc(10% - 22px);
-    }
-
-
-    .memory-records {
-        border-left: 0;
-        border-right: 0;
-    }
-
 
     .memory-record {
-        grid-template-columns:
-            45px
-            1fr;
-
-        gap: 12px 15px;
-
-        padding: 20px 15px;
+        grid-template-columns: 45px 1fr;
+        gap: 15px;
     }
 
-
-    .memory-record-index {
-        grid-column: 1;
-        grid-row: 1;
+    .record-line {
+        left: 20px;
     }
 
-
-    .memory-record-defect {
-        grid-column: 2;
-        grid-row: 1;
-
-        font-size: 18px;
+    .record-node {
+        left: 15px;
     }
 
-
-    .memory-record-meta {
-        grid-column: 2;
-        grid-row: 2;
+    .record-main h3 {
+        font-size: 19px;
     }
 
-
-    .memory-record-location {
-        grid-column: 2;
-        grid-row: 3;
+    .latest-metrics {
+        grid-template-columns: 1fr;
     }
 
-
-    .memory-record-date {
-        grid-column: 2;
-        grid-row: 4;
-
-        text-align: left;
-    }
-
-
-    .memory-empty {
-        padding: 45px 20px;
-    }
-
-
-    .memory-actions {
+    .bottom-actions {
         flex-direction: column;
+        align-items: stretch;
     }
 
-
-    .memory-actions .lens-button {
-        width: 100%;
+    .return-link {
+        margin: 12px 0 0;
+        text-align: center;
     }
-
-
-    .memory-footer {
-        flex-direction: column;
-        gap: 10px;
-
-        margin-top: 70px;
-    }
-
 }
-
-
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
 
-    .memory-map-point::after {
-        animation: none;
+    *,
+    *::before,
+    *::after {
+        animation-duration: .001ms !important;
+        transition-duration: .001ms !important;
     }
-
-
-    .memory-record,
-    .lens-button {
-        transition: none;
-    }
-
 }
