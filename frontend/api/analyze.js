@@ -267,8 +267,8 @@ Do not claim structural danger from an image alone.
         */
 
         const endpoint =
-            "https://generativelanguage.googleapis.com/v1beta/models/" +
-            "gemini-3.6-flash:generateContent";
+    "https://generativelanguage.googleapis.com/v1beta/models/" +
+    "gemini-3.7-flash:generateContent";
 
 
         const response =
