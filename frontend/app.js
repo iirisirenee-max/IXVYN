@@ -3569,3 +3569,35 @@ window.addEventListener("pageshow", () => {
         updateRail(currentState);
     }
 })();
+// =========================================================
+// IXVYN SYSTEM RAIL — STATE LINK
+// =========================================================
+
+(() => {
+    const rail = document.querySelector(".ixvyn-system-rail");
+
+    if (!rail) return;
+
+    const stateToSystem = {
+        see: "lens",
+        understand: "pathfinder",
+        respond: "civic",
+        adapt: "echo",
+        remember: "memory"
+    };
+
+    function updateRail(state) {
+        const system = stateToSystem[state];
+
+        rail.querySelectorAll("a[data-system]").forEach(link => {
+            link.classList.toggle(
+                "is-active",
+                link.dataset.system === system
+            );
+        });
+    }
+
+    window.addEventListener("ixvyn:statechange", event => {
+        updateRail(event.detail?.state);
+    });
+})();
