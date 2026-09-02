@@ -79,6 +79,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let records =
         loadMemory();
 
+   /* =====================================================
+   ECHO — INGEST FIELD FEEDBACK
+   ===================================================== */
+
+ingestEchoFeedback();
+
 
     /* =====================================================
        INITIALIZE
