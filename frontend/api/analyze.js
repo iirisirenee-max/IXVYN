@@ -268,8 +268,7 @@ Do not claim structural danger from an image alone.
 
         const endpoint =
     "https://generativelanguage.googleapis.com/v1beta/models/" +
-    "gemini-3.7-flash:generateContent";
-
+    "gemini-3.1-flash-lite:generateContent";
 
         const response =
             await fetch(endpoint, {
