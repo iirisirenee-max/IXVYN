@@ -1839,3 +1839,12 @@ if (directionSection && directionTitle) {
         requestAnimationFrame(frame);
 
 })();
+/* ============================================================
+   IXVYN — PASS 02.1
+   SPECTRAL FIELD VISIBILITY BOOST
+   ============================================================ */
+
+.ixvyn-intelligence-field {
+    opacity: 1.85;
+    mix-blend-mode: screen;
+}
