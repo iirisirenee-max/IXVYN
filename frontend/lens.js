@@ -722,136 +722,313 @@ document.addEventListener("DOMContentLoaded", () => {
 }
 
    
-    /* =====================================================
-       REAL GEMINI REQUEST
-    ===================================================== */
 
-    async function analyzeImageWithGemini() {
+        
+            /* =====================================================
+   REAL GEMINI REQUEST
+===================================================== */
 
-        console.log(
-            "IXVYN LENS: Preparing image for AI..."
+async function analyzeImageWithGemini() {
+
+    console.log(
+        "IXVYN LENS: Preparing image for AI..."
+    );
+
+    /*
+     * Prepare the image once.
+     * Retries reuse the same prepared image.
+     */
+    const preparedImage =
+        await prepareImageForAI(
+            selectedFile
         );
 
+    const MAX_ATTEMPTS = 3;
+    const REQUEST_TIMEOUT = 35000;
 
-        /*
-         * Resize/compress the image before sending it.
-         */
+    function isRetryableStatus(status) {
 
-        const preparedImage =
-            await prepareImageForAI(
-                selectedFile
-            );
-
-
-        console.log(
-            "IXVYN LENS: Sending frame to /api/analyze..."
+        return (
+            status === 408 ||
+            status === 425 ||
+            status === 429 ||
+            status === 500 ||
+            status === 502 ||
+            status === 503 ||
+            status === 504
         );
+    }
 
+    for (
+        let attempt = 1;
+        attempt <= MAX_ATTEMPTS;
+        attempt++
+    ) {
 
-        const response =
-            await fetch(
-                "/api/analyze",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-
-                        image:
-                            preparedImage.data,
-
-                        mimeType:
-                            preparedImage.mimeType
-
-                    })
-                }
-            );
-
-
-        /*
-         * Read response as text first.
-         */
-
-        let data = null;
-
-        const responseText =
-            await response.text();
-
+        let controller = null;
+        let timeoutId = null;
 
         try {
 
-            data =
-                responseText
-                    ? JSON.parse(responseText)
-                    : null;
-
-        } catch (parseError) {
-
-            console.error(
-                "IXVYN: /api/analyze returned non-JSON:",
-                responseText
+            console.log(
+                `IXVYN LENS: AI request attempt ${attempt}/${MAX_ATTEMPTS}`
             );
 
-            throw new Error(
-                `Analysis server returned HTTP ${response.status}.`
+            controller =
+                new AbortController();
+
+            timeoutId =
+                setTimeout(
+                    () => {
+                        controller.abort();
+                    },
+                    REQUEST_TIMEOUT
+                );
+
+            if (attempt > 1) {
+
+                analysisStatus.textContent =
+                    `RETRYING AI REQUEST // ${attempt}/${MAX_ATTEMPTS}`;
+
+            }
+
+            console.log(
+                "IXVYN LENS: Sending frame to /api/analyze..."
             );
-        }
 
+            const response =
+                await fetch(
+                    "/api/analyze",
+                    {
+                        method: "POST",
 
-        /* =================================================
-           HTTP ERROR
-        ================================================= */
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
 
-        if (!response.ok) {
+                        body: JSON.stringify({
+                            image:
+                                preparedImage.data,
 
-            console.error(
-                "IXVYN: Analysis API error:",
-                response.status,
+                            mimeType:
+                                preparedImage.mimeType
+                        }),
+
+                        signal:
+                            controller.signal
+                    }
+                );
+
+            clearTimeout(
+                timeoutId
+            );
+
+            let data = null;
+
+            const responseText =
+                await response.text();
+
+            try {
+
+                data =
+                    responseText
+                        ? JSON.parse(
+                            responseText
+                        )
+                        : null;
+
+            } catch (parseError) {
+
+                console.error(
+                    "IXVYN: /api/analyze returned non-JSON:",
+                    responseText
+                );
+
+                if (
+                    isRetryableStatus(
+                        response.status
+                    ) &&
+                    attempt < MAX_ATTEMPTS
+                ) {
+
+                    console.warn(
+                        `IXVYN: Retrying after HTTP ${response.status}.`
+                    );
+
+                    analysisStatus.textContent =
+                        `RETRYING // HTTP ${response.status}`;
+
+                    await sleep(
+                        attempt === 1
+                            ? 1200
+                            : 2500
+                    );
+
+                    continue;
+                }
+
+                throw new Error(
+                    `Analysis server returned HTTP ${response.status}.`
+                );
+            }
+
+            /*
+             * HTTP ERROR
+             */
+            if (!response.ok) {
+
+                console.error(
+                    "IXVYN: Analysis API error:",
+                    response.status,
+                    data
+                );
+
+                const serverMessage =
+                    data?.details ||
+                    data?.error ||
+                    data?.message ||
+                    `Gemini analysis failed with HTTP ${response.status}.`;
+
+                if (
+                    isRetryableStatus(
+                        response.status
+                    ) &&
+                    attempt < MAX_ATTEMPTS
+                ) {
+
+                    console.warn(
+                        `IXVYN: Temporary API failure (${response.status}). ` +
+                        `Retrying attempt ${attempt + 1}/${MAX_ATTEMPTS}.`
+                    );
+
+                    analysisStatus.textContent =
+                        `RETRYING // HTTP ${response.status}`;
+
+                    await sleep(
+                        attempt === 1
+                            ? 1200
+                            : 2500
+                    );
+
+                    continue;
+                }
+
+                throw new Error(
+                    serverMessage
+                );
+            }
+
+            /*
+             * INVALID APPLICATION RESPONSE
+             */
+            if (
+                !data ||
+                data.success === false
+            ) {
+
+                const applicationMessage =
+                    data?.details ||
+                    data?.error ||
+                    data?.message ||
+                    "No valid analysis result was returned.";
+
+                if (
+                    attempt < MAX_ATTEMPTS
+                ) {
+
+                    console.warn(
+                        "IXVYN: Invalid analysis response. " +
+                        `Retrying attempt ${attempt + 1}/${MAX_ATTEMPTS}.`
+                    );
+
+                    analysisStatus.textContent =
+                        "RETRYING // INVALID AI RESPONSE";
+
+                    await sleep(
+                        attempt === 1
+                            ? 1200
+                            : 2500
+                    );
+
+                    continue;
+                }
+
+                throw new Error(
+                    applicationMessage
+                );
+            }
+
+            /*
+             * SUCCESS
+             */
+            console.log(
+                "IXVYN LENS: Gemini analysis received:",
                 data
             );
 
+            return data;
 
-            throw new Error(
-                data?.details ||
-                data?.error ||
-                data?.message ||
-                `Gemini analysis failed with HTTP ${response.status}.`
+        } catch (error) {
+
+            if (timeoutId) {
+
+                clearTimeout(
+                    timeoutId
+                );
+
+            }
+
+            const wasTimeout =
+                error?.name === "AbortError";
+
+            const wasNetworkError =
+                error?.name === "TypeError";
+
+            /*
+             * Retry temporary network failures
+             * and request timeouts.
+             */
+            if (
+                (
+                    wasTimeout ||
+                    wasNetworkError
+                ) &&
+                attempt < MAX_ATTEMPTS
+            ) {
+
+                console.warn(
+                    "IXVYN: Temporary network/request failure.",
+                    error
+                );
+
+                analysisStatus.textContent =
+                    wasTimeout
+                        ? "RETRYING // REQUEST TIMEOUT"
+                        : "RETRYING // NETWORK FAILURE";
+
+                await sleep(
+                    attempt === 1
+                        ? 1200
+                        : 2500
+                );
+
+                continue;
+            }
+
+            console.error(
+                `IXVYN: AI request failed on attempt ${attempt}/${MAX_ATTEMPTS}:`,
+                error
             );
+
+            throw error;
         }
-
-
-        /* =================================================
-           INVALID APPLICATION RESPONSE
-        ================================================= */
-
-        if (
-            !data ||
-            data.success === false
-        ) {
-
-            throw new Error(
-                data?.details ||
-                data?.error ||
-                data?.message ||
-                "No valid analysis result was returned."
-            );
-        }
-
-
-        console.log(
-            "IXVYN LENS: Gemini analysis received:",
-            data
-        );
-
-
-        return data;
     }
 
-
+    throw new Error(
+        "AI analysis failed after all retry attempts."
+    );
+                       }
     /* =====================================================
        PREPARE IMAGE
     ===================================================== */
