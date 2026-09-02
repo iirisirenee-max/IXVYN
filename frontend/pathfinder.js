@@ -776,6 +776,43 @@ document.addEventListener("DOMContentLoaded", () => {
         summarySection.classList.add(
             "is-generated"
         );
+       /* -------------------------------------------------
+   CIVIC HANDOFF
+   ------------------------------------------------- */
+
+sessionStorage.setItem(
+    "pathfinder_complete",
+    "true"
+);
+
+sessionStorage.setItem(
+    "pathfinder_route",
+    route.route
+);
+
+sessionStorage.setItem(
+    "pathfinder_risk",
+    route.risk
+);
+
+sessionStorage.setItem(
+    "pathfinder_priority",
+    route.priority
+);
+
+sessionStorage.setItem(
+    "pathfinder_condition",
+    route.condition
+);
+
+sessionStorage.setItem(
+    "pathfinder_response",
+    `${route.response.step1} → ${route.response.step2} → ${route.response.step3}`
+);
+
+console.log(
+    "[PATHFINDER] Evidence forwarded to CIVIC."
+);
 
 
         systemState.textContent =
