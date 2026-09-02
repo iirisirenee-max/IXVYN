@@ -1,0 +1,1037 @@
+/* =========================================================
+   IXVYN / CIVIC
+   MUNICIPAL ACTION SYSTEM
+   ========================================================= */
+
+:root {
+    --bg: #080a0f;
+    --surface: #0d1016;
+    --surface-2: #11151d;
+    --text: #f2f1ec;
+    --muted: #858b95;
+    --line: rgba(242, 241, 236, 0.12);
+    --line-strong: rgba(242, 241, 236, 0.22);
+    --lime: #c8ff3d;
+    --lime-soft: rgba(200, 255, 61, 0.12);
+
+    --mono: "DM Mono", monospace;
+    --sans: "Inter", sans-serif;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow-x: hidden;
+}
+
+button,
+a {
+    font: inherit;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.civic-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+
+    height: 82px;
+    padding: 0 6vw;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid var(--line);
+
+    background: rgba(8, 10, 15, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.civic-brand {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+}
+
+.civic-system {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: var(--muted);
+
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+}
+
+.system-dot,
+.action-dot {
+    width: 7px;
+    height: 7px;
+
+    display: inline-block;
+
+    border-radius: 50%;
+    background: var(--lime);
+
+    box-shadow: 0 0 14px rgba(200, 255, 61, 0.65);
+}
+
+.civic-nav {
+    display: flex;
+    gap: 28px;
+
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+
+    color: var(--muted);
+}
+
+.civic-nav a {
+    position: relative;
+    transition: color 0.25s ease;
+}
+
+.civic-nav a:hover {
+    color: var(--text);
+}
+
+
+/* =========================================================
+   EXPERIENCE
+   ========================================================= */
+
+.civic-experience {
+    position: relative;
+
+    min-height: 100vh;
+
+    padding: 170px 6vw 90px;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   GEOMETRY
+   ========================================================= */
+
+.civic-geometry {
+    position: fixed;
+    inset: 0;
+
+    z-index: 0;
+    pointer-events: none;
+
+    overflow: hidden;
+
+    opacity: 0.5;
+}
+
+.geometry-ring {
+    position: absolute;
+
+    border: 1px solid rgba(242, 241, 236, 0.055);
+
+    border-radius: 50%;
+}
+
+.ring-one {
+    width: 55vw;
+    height: 55vw;
+
+    right: -18vw;
+    top: 15vh;
+
+    animation: civicRotate 38s linear infinite;
+}
+
+.ring-two {
+    width: 31vw;
+    height: 31vw;
+
+    right: -5vw;
+    top: 29vh;
+
+    border-color: rgba(200, 255, 61, 0.08);
+
+    animation: civicRotateReverse 28s linear infinite;
+}
+
+.geometry-axis {
+    position: absolute;
+
+    height: 1px;
+    width: 100vw;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(242, 241, 236, 0.07),
+        transparent
+    );
+}
+
+.axis-one {
+    top: 42%;
+    left: 0;
+
+    transform: rotate(-18deg);
+}
+
+.axis-two {
+    top: 65%;
+    left: 0;
+
+    transform: rotate(12deg);
+
+    opacity: 0.45;
+}
+
+@keyframes civicRotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes civicRotateReverse {
+    from {
+        transform: rotate(360deg);
+    }
+
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+
+/* =========================================================
+   CONTENT LAYER
+   ========================================================= */
+
+.civic-hero,
+.civic-section,
+.civic-footer {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.civic-hero {
+    max-width: 1200px;
+    margin-bottom: 150px;
+}
+
+.civic-eyebrow,
+.section-label,
+.case-label,
+.confirmed-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.civic-eyebrow {
+    margin-bottom: 32px;
+    color: var(--lime);
+}
+
+.civic-hero h1 {
+    max-width: 1000px;
+
+    font-size: clamp(64px, 10vw, 150px);
+    line-height: 0.86;
+    letter-spacing: -0.075em;
+    font-weight: 600;
+}
+
+.civic-lead {
+    max-width: 600px;
+    margin-top: 42px;
+
+    color: var(--muted);
+
+    font-size: clamp(17px, 1.7vw, 23px);
+    line-height: 1.55;
+}
+
+.civic-source {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-top: 48px;
+
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+
+    color: var(--muted);
+}
+
+.source-line {
+    width: 36px;
+    height: 1px;
+
+    background: var(--lime);
+
+    box-shadow: 0 0 12px rgba(200, 255, 61, 0.45);
+}
+
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.civic-section {
+    max-width: 1200px;
+    margin: 0 auto 120px;
+}
+
+.section-label {
+    margin-bottom: 20px;
+
+    color: var(--muted);
+}
+
+
+/* =========================================================
+   EVIDENCE PANEL
+   ========================================================= */
+
+.evidence-panel {
+    border: 1px solid var(--line);
+
+    background: rgba(13, 16, 22, 0.74);
+
+    transition:
+        border-color 0.3s ease,
+        transform 0.3s ease;
+}
+
+.evidence-panel:hover {
+    border-color: var(--line-strong);
+    transform: translateY(-2px);
+}
+
+.panel-top {
+    min-height: 62px;
+    padding: 0 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-bottom: 1px solid var(--line);
+
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+}
+
+.panel-top span {
+    color: var(--muted);
+}
+
+.panel-top strong {
+    color: var(--lime);
+    font-weight: 400;
+}
+
+.evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.evidence-cell {
+    min-height: 130px;
+    padding: 26px 28px;
+
+    border-right: 1px solid var(--line);
+}
+
+.evidence-cell:last-child {
+    border-right: 0;
+}
+
+.evidence-cell span,
+.evidence-location span,
+.evidence-description span,
+.case-field span,
+.case-priority span,
+.status-row span {
+    display: block;
+
+    margin-bottom: 14px;
+
+    color: var(--muted);
+
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.13em;
+}
+
+.evidence-cell strong {
+    display: block;
+
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 400;
+
+    line-height: 1.45;
+}
+
+.evidence-location {
+    padding: 25px 28px;
+
+    border-top: 1px solid var(--line);
+}
+
+.evidence-location strong {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.evidence-description {
+    padding: 25px 28px;
+
+    border-top: 1px solid var(--line);
+}
+
+.evidence-description p {
+    max-width: 800px;
+
+    color: var(--text);
+
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   CASE PANEL
+   ========================================================= */
+
+.case-panel {
+    border: 1px solid var(--line);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(200, 255, 61, 0.025),
+            transparent 35%
+        ),
+        rgba(13, 16, 22, 0.82);
+}
+
+.case-header {
+    padding: 36px 32px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    border-bottom: 1px solid var(--line);
+}
+
+.case-label {
+    color: var(--muted);
+}
+
+.case-header h2 {
+    margin-top: 14px;
+
+    font-size: clamp(28px, 4vw, 54px);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    font-weight: 500;
+}
+
+.case-priority {
+    min-width: 150px;
+    padding-left: 30px;
+
+    border-left: 1px solid var(--line);
+}
+
+.case-priority strong {
+    display: block;
+
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 400;
+
+    color: var(--lime);
+}
+
+.case-body {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.case-field {
+    min-height: 115px;
+    padding: 26px 32px;
+
+    border-bottom: 1px solid var(--line);
+}
+
+.case-field:nth-child(odd) {
+    border-right: 1px solid var(--line);
+}
+
+.case-field strong {
+    display: block;
+
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 400;
+
+    line-height: 1.5;
+}
+
+.action-block {
+    padding: 34px 32px;
+
+    border-bottom: 1px solid var(--line);
+}
+
+.action-heading {
+    margin-bottom: 18px;
+
+    color: var(--lime);
+
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+}
+
+.action-block p {
+    max-width: 850px;
+
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.status-row {
+    padding: 24px 32px;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.status-row > div {
+    flex: 1;
+}
+
+.status-row strong {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 400;
+}
+
+
+/* =========================================================
+   ACTION PANEL
+   ========================================================= */
+
+.action-panel {
+    position: relative;
+
+    padding: 54px 46px;
+
+    border: 1px solid var(--line);
+
+    background: var(--surface);
+
+    overflow: hidden;
+}
+
+.action-panel::after {
+    content: "";
+
+    position: absolute;
+
+    width: 360px;
+    height: 360px;
+
+    right: -180px;
+    bottom: -220px;
+
+    border: 1px solid rgba(200, 255, 61, 0.12);
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+.action-status {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    color: var(--muted);
+
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.13em;
+}
+
+.action-panel h2 {
+    margin-top: 32px;
+
+    max-width: 800px;
+
+    font-size: clamp(38px, 6vw, 82px);
+    line-height: 0.92;
+    letter-spacing: -0.06em;
+    font-weight: 500;
+}
+
+.action-panel p {
+    max-width: 620px;
+    margin-top: 28px;
+
+    color: var(--muted);
+
+    font-size: 16px;
+    line-height: 1.65;
+}
+
+.civic-button {
+    position: relative;
+
+    margin-top: 34px;
+    padding: 15px 20px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 30px;
+
+    border: 1px solid var(--lime);
+
+    background: var(--lime);
+    color: #080a0f;
+
+    cursor: pointer;
+
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        opacity 0.25s ease;
+}
+
+.civic-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 0 0 1px rgba(200, 255, 61, 0.18),
+        0 10px 40px rgba(200, 255, 61, 0.12);
+}
+
+.civic-button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.civic-button.secondary {
+    margin-top: 0;
+
+    border-color: var(--line-strong);
+
+    background: transparent;
+    color: var(--text);
+}
+
+.civic-button.secondary:hover {
+    border-color: var(--lime);
+    color: var(--lime);
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   CONFIRMED RESULT
+   ========================================================= */
+
+.case-result {
+    animation: civicReveal 0.7s ease both;
+}
+
+.confirmed-panel {
+    padding: 38px 40px;
+
+    display: flex;
+    align-items: center;
+    gap: 30px;
+
+    border: 1px solid rgba(200, 255, 61, 0.3);
+
+    background:
+        linear-gradient(
+            110deg,
+            rgba(200, 255, 61, 0.08),
+            transparent 50%
+        ),
+        var(--surface);
+}
+
+.confirmed-mark {
+    width: 54px;
+    height: 54px;
+
+    flex: 0 0 54px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid var(--lime);
+
+    color: var(--lime);
+
+    font-family: var(--mono);
+    font-size: 24px;
+}
+
+.confirmed-label {
+    color: var(--lime);
+}
+
+.confirmed-panel h2 {
+    margin-top: 10px;
+
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 400;
+}
+
+.confirmed-panel p {
+    margin-top: 12px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+@keyframes civicReveal {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.civic-footer {
+    max-width: 1200px;
+    margin: 30px auto 0;
+
+    padding-top: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-top: 1px solid var(--line);
+}
+
+.footer-state {
+    color: var(--muted);
+
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+}
+
+
+/* =========================================================
+   READY STATE
+   ========================================================= */
+
+.civic-page[data-ready="true"] .source-line {
+    animation: civicPulse 1.6s ease-in-out infinite;
+}
+
+.civic-page[data-ready="true"] .action-dot {
+    animation: civicPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes civicPulse {
+    0%,
+    100% {
+        opacity: 0.45;
+        box-shadow: 0 0 7px rgba(200, 255, 61, 0.25);
+    }
+
+    50% {
+        opacity: 1;
+        box-shadow: 0 0 18px rgba(200, 255, 61, 0.8);
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .civic-header {
+        height: 70px;
+        padding: 0 5vw;
+    }
+
+    .civic-system {
+        display: none;
+    }
+
+    .civic-nav {
+        gap: 16px;
+        font-size: 9px;
+    }
+
+    .civic-experience {
+        padding: 130px 5vw 60px;
+    }
+
+    .civic-hero {
+        margin-bottom: 100px;
+    }
+
+    .civic-hero h1 {
+        font-size: clamp(54px, 16vw, 100px);
+    }
+
+    .civic-section {
+        margin-bottom: 85px;
+    }
+
+    .evidence-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .evidence-cell:nth-child(2) {
+        border-right: 0;
+    }
+
+    .evidence-cell:nth-child(3),
+    .evidence-cell:nth-child(4) {
+        border-top: 1px solid var(--line);
+    }
+
+    .case-header {
+        padding: 28px 24px;
+    }
+
+    .case-priority {
+        min-width: 110px;
+        padding-left: 20px;
+    }
+
+    .case-body {
+        grid-template-columns: 1fr;
+    }
+
+    .case-field:nth-child(odd) {
+        border-right: 0;
+    }
+
+    .action-panel {
+        padding: 38px 28px;
+    }
+
+    .confirmed-panel {
+        padding: 30px 25px;
+    }
+
+    .civic-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 22px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+    .civic-brand {
+        font-size: 16px;
+    }
+
+    .civic-nav {
+        gap: 12px;
+    }
+
+    .civic-hero h1 {
+        font-size: 50px;
+    }
+
+    .civic-lead {
+        font-size: 15px;
+    }
+
+    .evidence-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .evidence-cell,
+    .evidence-cell:nth-child(3),
+    .evidence-cell:nth-child(4) {
+        border-right: 0;
+        border-top: 1px solid var(--line);
+    }
+
+    .evidence-cell:first-child {
+        border-top: 0;
+    }
+
+    .panel-top {
+        padding: 0 20px;
+        gap: 20px;
+    }
+
+    .panel-top strong {
+        text-align: right;
+    }
+
+    .evidence-cell,
+    .evidence-location,
+    .evidence-description {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .case-header {
+        flex-direction: column;
+        gap: 28px;
+    }
+
+    .case-priority {
+        padding-left: 0;
+        border-left: 0;
+    }
+
+    .case-field,
+    .action-block,
+    .status-row {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .status-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .action-panel {
+        padding: 32px 20px;
+    }
+
+    .action-panel h2 {
+        font-size: 44px;
+    }
+
+    .civic-button {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .confirmed-panel {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .ring-one {
+        width: 90vw;
+        height: 90vw;
+    }
+
+    .ring-two {
+        width: 55vw;
+        height: 55vw;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+      }
