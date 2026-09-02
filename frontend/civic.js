@@ -1,659 +1,495 @@
-/* =========================================================
-   IXVYN / CIVIC
-   MUNICIPAL ACTION SYSTEM
-   ========================================================= */
-
-"use strict";
-
-
-/* =========================================================
-   STATE
-   ========================================================= */
-
-let civicEvidence = null;
-
-
-/* =========================================================
-   DOM
-   ========================================================= */
-
-const sourceStatus = document.getElementById("source-status");
-const sourceSystem = document.getElementById("source-system");
-
-const condition = document.getElementById("condition");
-const priority = document.getElementById("priority");
-const risk = document.getElementById("risk");
-const route = document.getElementById("route");
-
-const locationValue = document.getElementById("location");
-const observation = document.getElementById("observation");
-
-const caseTitle = document.getElementById("case-title");
-const casePriority = document.getElementById("case-priority");
-const caseIssue = document.getElementById("case-issue");
-const caseDestination = document.getElementById("case-destination");
-const caseResponse = document.getElementById("case-response");
-const caseLocation = document.getElementById("case-location");
-
-const recommendedAction = document.getElementById("recommended-action");
-const caseStatus = document.getElementById("case-status");
-const caseId = document.getElementById("case-id");
-
-const actionStatus = document.getElementById("action-status");
-const actionTitle = document.getElementById("action-title");
-const actionDescription = document.getElementById("action-description");
-
-const createCaseButton = document.getElementById("create-case");
-
-const caseResult = document.getElementById("case-result");
-const confirmedId = document.getElementById("confirmed-id");
-
-
-/* =========================================================
-   INITIALISE
-   ========================================================= */
-
 document.addEventListener("DOMContentLoaded", () => {
 
-    loadPathfinderEvidence();
+    const decisionStatus =
+        document.getElementById("decision-status");
 
-});
+    const decisionValue =
+        document.getElementById("decision-value");
+
+    const interventionTitle =
+        document.getElementById("intervention-title");
+
+    const interventionRationale =
+        document.getElementById("intervention-rationale");
+
+    const actionType =
+        document.getElementById("action-type");
+
+    const locationInput =
+        document.getElementById("location");
+
+    const summaryInput =
+        document.getElementById("summary");
+
+    const evidenceInput =
+        document.getElementById("evidence");
+
+    const previewId =
+        document.getElementById("preview-id");
+
+    const previewAction =
+        document.getElementById("preview-action");
+
+    const previewLocation =
+        document.getElementById("preview-location");
+
+    const previewRisk =
+        document.getElementById("preview-risk");
+
+    const previewRationale =
+        document.getElementById("preview-rationale");
+
+    const submitBtn =
+        document.getElementById("submit-btn");
+
+    const resetBtn =
+        document.getElementById("reset-btn");
+
+    const memoryBtn =
+        document.getElementById("memory-btn");
+
+    const submittedPanel =
+        document.getElementById("submitted-panel");
+
+    const recordId =
+        document.getElementById("record-id");
+
+    const processing =
+        document.getElementById("processing");
+
+    const processingStage =
+        document.getElementById("processing-stage");
 
 
-/* =========================================================
-   LOAD PATHFINDER EVIDENCE
-   ========================================================= */
-
-function loadPathfinderEvidence() {
-
-    /*
-     * PATHFINDER receives the original LENS evidence.
-     * We read the same session state here so the systems
-     * remain connected without introducing a backend.
-     */
-
-    const defect = sessionStorage.getItem("sih_defect");
-    const severity = sessionStorage.getItem("sih_severity");
-
-    const latitude = sessionStorage.getItem("sih_lat");
-    const longitude = sessionStorage.getItem("sih_lon");
-
-    const routeDestination =
-        sessionStorage.getItem("sih_route") ||
-        sessionStorage.getItem("pathfinder_route");
-
-    const routeRisk =
-        sessionStorage.getItem("sih_risk") ||
-        sessionStorage.getItem("pathfinder_risk");
-
-    const routePriority =
-        sessionStorage.getItem("sih_priority") ||
-        sessionStorage.getItem("pathfinder_priority");
-
-    const pathfinderReady =
-        sessionStorage.getItem("pathfinder_complete") === "true";
+    let decision = null;
+    let assessment = null;
+    let observation = null;
+    let civicRecord = null;
 
 
-    /*
-     * If PATHFINDER has not completed a route yet,
-     * CIVIC remains in its waiting state.
-     */
-
-    if (
-        !defect ||
-        !severity ||
-        !pathfinderReady
-    ) {
-
-        showWaitingState();
-
-        return;
+    function parse(value) {
+        try {
+            return JSON.parse(value);
+        } catch {
+            return null;
+        }
     }
 
 
-    civicEvidence = {
+    function loadContext() {
 
-        defect: defect,
-
-        severity: severity,
-
-        latitude: latitude
-            ? Number(latitude)
-            : null,
-
-        longitude: longitude
-            ? Number(longitude)
-            : null,
-
-        route: routeDestination || null,
-
-        risk: routeRisk || null,
-
-        priority: routePriority || derivePriority(severity),
-
-        observation:
-            "Operational infrastructure evidence forwarded from PATHFINDER."
-
-    };
-
-
-    console.log(
-        "[CIVIC] PATHFINDER evidence received:",
-        civicEvidence
-    );
-
-
-    populateEvidence(civicEvidence);
-
-    prepareMunicipalCase(civicEvidence);
-
-}
-
-
-/* =========================================================
-   WAITING STATE
-   ========================================================= */
-
-function showWaitingState() {
-
-    document.body.dataset.ready = "false";
-
-    sourceStatus.textContent =
-        "AWAITING PATHFINDER EVIDENCE";
-
-    sourceSystem.textContent =
-        "PATHFINDER / WAITING";
-
-    actionStatus.textContent =
-        "CASE NOT READY";
-
-    actionTitle.innerHTML =
-        "WAITING FOR<br>PATHFINDER.";
-
-    actionDescription.textContent =
-        "Complete an operational response in PATHFINDER first. CIVIC will then convert that response into a municipal case.";
-
-    createCaseButton.disabled = true;
-
-}
-
-
-/* =========================================================
-   POPULATE EVIDENCE
-   ========================================================= */
-
-function populateEvidence(data) {
-
-    document.body.dataset.ready = "true";
-
-
-    sourceStatus.textContent =
-        "PATHFINDER EVIDENCE RECEIVED";
-
-    sourceSystem.textContent =
-        "PATHFINDER / RECEIVED";
-
-
-    condition.textContent =
-        formatCondition(data.defect);
-
-    priority.textContent =
-        data.priority || "—";
-
-    risk.textContent =
-        data.risk || "—";
-
-    route.textContent =
-        data.route || "—";
-
-
-    locationValue.textContent =
-        formatLocation(
-            data.latitude,
-            data.longitude
+        decision = parse(
+            sessionStorage.getItem("ixvyn_human_decision")
         );
 
-
-    observation.textContent =
-        data.observation;
-
-
-    actionStatus.textContent =
-        "CASE READY";
-
-    actionTitle.innerHTML =
-        "READY FOR<br>MUNICIPAL ACTION.";
-
-    actionDescription.textContent =
-        "PATHFINDER has supplied a verified operational route. CIVIC can now convert the evidence into a structured municipal case.";
-
-    createCaseButton.disabled = false;
-
-}
-
-
-/* =========================================================
-   PREPARE MUNICIPAL CASE
-   ========================================================= */
-
-function prepareMunicipalCase(data) {
-
-    const title =
-        formatCondition(data.defect);
-
-
-    const destination =
-        data.route ||
-        deriveDestination(data.defect);
-
-
-    const response =
-        deriveResponse(data.defect);
-
-
-    caseTitle.textContent =
-        title;
-
-
-    casePriority.textContent =
-        data.priority ||
-        derivePriority(data.severity);
-
-
-    caseIssue.textContent =
-        title;
-
-
-    caseDestination.textContent =
-        destination;
-
-
-    caseResponse.textContent =
-        response;
-
-
-    caseLocation.textContent =
-        formatLocation(
-            data.latitude,
-            data.longitude
+        assessment = parse(
+            sessionStorage.getItem("ixvyn_signal_assessment")
         );
 
-
-    recommendedAction.textContent =
-        deriveMunicipalAction(
-            data.defect,
-            data.priority,
-            destination
+        observation = parse(
+            sessionStorage.getItem("ixvyn_lens_observation")
         );
 
-
-    caseStatus.textContent =
-        "READY";
-
-
-    caseId.textContent =
-        "NOT YET CREATED";
-
-}
-
-
-/* =========================================================
-   CREATE CASE
-   ========================================================= */
-
-createCaseButton.addEventListener(
-    "click",
-    createMunicipalCase
-);
-
-
-function createMunicipalCase() {
-
-    if (!civicEvidence) {
-        return;
-    }
-
-
-    const generatedId =
-        generateCaseId();
-
-
-    caseId.textContent =
-        generatedId;
-
-
-    caseStatus.textContent =
-        "OPEN";
-
-
-    actionStatus.textContent =
-        "CASE CREATED";
-
-
-    actionTitle.innerHTML =
-        "MUNICIPAL CASE<br>IS ACTIVE.";
-
-
-    actionDescription.textContent =
-        "The operational response has been converted into an actionable civic record.";
-
-
-    createCaseButton.disabled = true;
-
-    createCaseButton.textContent =
-        "CASE CREATED";
-
-
-    confirmedId.textContent =
-        "CIVIC / " + generatedId;
-
-
-    caseResult.hidden = false;
-
-
-    /*
-     * Persist the civic record so MEMORY can use it later.
-     */
-
-    sessionStorage.setItem(
-        "civic_case_created",
-        "true"
-    );
-
-    sessionStorage.setItem(
-        "civic_case_id",
-        generatedId
-    );
-
-    sessionStorage.setItem(
-        "civic_case_status",
-        "OPEN"
-    );
-
-    sessionStorage.setItem(
-        "civic_case_timestamp",
-        new Date().toISOString()
-    );
-
-
-    sessionStorage.setItem(
-        "civic_case_condition",
-        civicEvidence.defect || ""
-    );
-
-    sessionStorage.setItem(
-        "civic_case_priority",
-        civicEvidence.priority || ""
-    );
-
-    sessionStorage.setItem(
-        "civic_case_risk",
-        civicEvidence.risk || ""
-    );
-
-    sessionStorage.setItem(
-        "civic_case_route",
-        civicEvidence.route || ""
-    );
-
-    sessionStorage.setItem(
-        "civic_case_lat",
-        civicEvidence.latitude ?? ""
-    );
-
-    sessionStorage.setItem(
-        "civic_case_lon",
-        civicEvidence.longitude ?? ""
-    );
-
-
-    caseResult.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-    });
-
-
-    console.log(
-        "[CIVIC] Municipal case created:",
-        generatedId
-    );
-
-}
-
-
-/* =========================================================
-   PRIORITY
-   ========================================================= */
-
-function derivePriority(severity) {
-
-    const value =
-        String(severity || "")
-            .toUpperCase();
-
-
-    if (
-        value.includes("CRITICAL") ||
-        value.includes("HIGH")
-    ) {
-        return "HIGH";
-    }
-
-
-    if (
-        value.includes("MEDIUM") ||
-        value.includes("MODERATE")
-    ) {
-        return "MEDIUM";
-    }
-
-
-    if (
-        value.includes("LOW") ||
-        value.includes("MINOR")
-    ) {
-        return "LOW";
-    }
-
-
-    return "MEDIUM";
-
-}
-
-
-/* =========================================================
-   DESTINATION
-   ========================================================= */
-
-function deriveDestination(defect) {
-
-    const value =
-        String(defect || "")
-            .toUpperCase();
-
-
-    if (
-        value.includes("WASTE") ||
-        value.includes("OBSTRUCTION") ||
-        value.includes("DEBRIS")
-    ) {
-        return "SANITATION / CLEARANCE";
-    }
-
-
-    return "ROAD MAINTENANCE";
-
-}
-
-
-/* =========================================================
-   RESPONSE
-   ========================================================= */
-
-function deriveResponse(defect) {
-
-    const value =
-        String(defect || "")
-            .toUpperCase();
-
-
-    if (
-        value.includes("WASTE") ||
-        value.includes("OBSTRUCTION") ||
-        value.includes("DEBRIS")
-    ) {
-        return "INSPECT → CLEAR → VERIFY";
-    }
-
-
-    return "INSPECT → REPAIR → VERIFY";
-
-}
-
-
-/* =========================================================
-   MUNICIPAL ACTION
-   ========================================================= */
-
-function deriveMunicipalAction(
-    defect,
-    priority,
-    destination
-) {
-
-    const value =
-        String(defect || "")
-            .toUpperCase();
-
-
-    const level =
-        String(priority || "")
-            .toUpperCase();
-
-
-    if (
-        value.includes("WASTE") ||
-        value.includes("OBSTRUCTION") ||
-        value.includes("DEBRIS")
-    ) {
-
-        if (level === "HIGH") {
-            return "Dispatch an immediate clearance and sanitation response. Verify that the obstruction has been removed and access restored.";
+        if (!decision) {
+            decisionStatus.textContent = "NO DECISION";
+            decisionValue.textContent = "—";
+            return;
         }
 
-        return "Assign the location for inspection and clearance. Verify that the obstruction has been removed.";
+        decisionStatus.textContent = "DECISION RECEIVED";
 
+        decisionValue.textContent =
+            decision.decision || "UNKNOWN";
+
+        const scenario =
+            decision.scenario || {};
+
+        interventionTitle.textContent =
+            scenario.title ||
+            "Intervention scenario";
+
+        interventionRationale.textContent =
+            scenario.rationale ||
+            scenario.description ||
+            "No rationale supplied.";
+
+        previewRisk.textContent =
+            assessment?.riskLevel ||
+            "UNKNOWN";
+
+        previewRationale.textContent =
+            scenario.rationale ||
+            scenario.description ||
+            "Evidence-backed action.";
+
+        const location =
+            observation?.location ||
+            {};
+
+        if (
+            location.lat !== null &&
+            location.lat !== undefined &&
+            location.lon !== null &&
+            location.lon !== undefined
+        ) {
+            locationInput.value =
+                `${location.lat}, ${location.lon}`;
+        }
+
+        summaryInput.value =
+            scenario.description ||
+            "";
+
+        evidenceInput.value =
+            buildEvidenceSummary();
+
+        updatePreview();
     }
 
 
-    if (level === "HIGH") {
+    function buildEvidenceSummary() {
 
-        return "Dispatch an urgent road-maintenance inspection. Assess structural risk, secure the affected area if necessary, complete repairs, and verify the result.";
+        const parts = [];
 
+        if (observation?.sceneSummary) {
+            parts.push(
+                `SCENE: ${observation.sceneSummary}`
+            );
+        }
+
+        if (assessment?.headline) {
+            parts.push(
+                `SIGNAL: ${assessment.headline}`
+            );
+        }
+
+        if (assessment?.reasoning) {
+            parts.push(
+                `ASSESSMENT: ${assessment.reasoning}`
+            );
+        }
+
+        if (
+            Array.isArray(assessment?.contributingFactors)
+        ) {
+            parts.push(
+                "CONTRIBUTING FACTORS: " +
+                assessment.contributingFactors.join("; ")
+            );
+        }
+
+        if (
+            Array.isArray(assessment?.conflictIndicators)
+        ) {
+            parts.push(
+                "CONFLICT INDICATORS: " +
+                assessment.conflictIndicators.join("; ")
+            );
+        }
+
+        return parts.join("\n\n");
     }
 
 
-    return "Assign the location for road-maintenance inspection, complete the required repair, and verify the result.";
+    function updatePreview() {
 
-}
+        previewAction.textContent =
+            actionType.value;
 
-
-/* =========================================================
-   CONDITION FORMAT
-   ========================================================= */
-
-function formatCondition(value) {
-
-    if (!value) {
-        return "—";
+        previewLocation.textContent =
+            locationInput.value.trim() ||
+            "NOT SPECIFIED";
     }
 
 
-    return String(value)
-        .replace(/_/g, " ")
-        .replace(/\s+/g, " ")
-        .trim()
-        .toUpperCase();
-
-}
-
-
-/* =========================================================
-   LOCATION FORMAT
-   ========================================================= */
-
-function formatLocation(
-    latitude,
-    longitude
-) {
-
-    if (
-        latitude === null ||
-        latitude === undefined ||
-        longitude === null ||
-        longitude === undefined ||
-        Number.isNaN(latitude) ||
-        Number.isNaN(longitude)
-    ) {
-
-        return "NO COORDINATES";
-
+    function setProcessing(active) {
+        processing.classList.toggle(
+            "hidden",
+            !active
+        );
     }
 
 
-    return (
-        Number(latitude).toFixed(5) +
-        ", " +
-        Number(longitude).toFixed(5)
+    function stage(text) {
+        processingStage.textContent = text;
+    }
+
+
+    function delay(ms) {
+        return new Promise(
+            resolve => setTimeout(resolve, ms)
+        );
+    }
+
+
+    async function submitAction() {
+
+        if (!decision) {
+            alert(
+                "No human decision found. Complete TRAJECTORY first."
+            );
+            return;
+        }
+
+        if (
+            String(decision.decision).toUpperCase() !==
+            "APPROVED"
+        ) {
+            alert(
+                "CIVIC action requires an APPROVED trajectory."
+            );
+            return;
+        }
+
+        if (!summaryInput.value.trim()) {
+            alert(
+                "Add a public-facing summary before submitting."
+            );
+            return;
+        }
+
+        setProcessing(true);
+
+        try {
+
+            stage("VALIDATING DECISION");
+            await delay(450);
+
+            stage("ASSEMBLING EVIDENCE");
+            await delay(450);
+
+            stage("CREATING CIVIC RECORD");
+            await delay(450);
+
+            const response = await fetch(
+                "/api/civic",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body: JSON.stringify({
+                        decision,
+                        assessment,
+                        observation,
+                        action: {
+                            type: actionType.value,
+                            location:
+                                locationInput.value.trim(),
+                            summary:
+                                summaryInput.value.trim(),
+                            evidence:
+                                evidenceInput.value.trim()
+                        }
+                    })
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    `Civic request failed: ${response.status}`
+                );
+            }
+
+            const data =
+                await response.json();
+
+            civicRecord = {
+                ...data,
+                schema:
+                    "IXVYN_CIVIC_ACTION_V1",
+                createdAt:
+                    new Date().toISOString(),
+                status:
+                    data.status || "SUBMITTED",
+                decision,
+                assessment,
+                observation,
+                action: {
+                    type: actionType.value,
+                    location:
+                        locationInput.value.trim(),
+                    summary:
+                        summaryInput.value.trim(),
+                    evidence:
+                        evidenceInput.value.trim()
+                }
+            };
+
+            localStorage.setItem(
+                "ixvyn_civic_record",
+                JSON.stringify(civicRecord)
+            );
+
+            sessionStorage.setItem(
+                "ixvyn_civic_record",
+                JSON.stringify(civicRecord)
+            );
+
+            setProcessing(false);
+
+            recordId.textContent =
+                civicRecord.id ||
+                `IXVYN-${Date.now()}`;
+
+            submittedPanel.classList.remove(
+                "hidden"
+            );
+
+            submitBtn.textContent =
+                "ACTION SUBMITTED";
+
+        } catch (error) {
+
+            console.error(error);
+
+            setProcessing(false);
+
+            alert(
+                error.message ||
+                "Unable to create civic action."
+            );
+        }
+    }
+
+
+    function saveToMemory() {
+
+        if (!civicRecord) {
+            civicRecord = parse(
+                sessionStorage.getItem(
+                    "ixvyn_civic_record"
+                )
+            );
+        }
+
+        if (!civicRecord) {
+            alert(
+                "No civic record is available to save."
+            );
+            return;
+        }
+
+        const memoryRecord = {
+            id:
+                civicRecord.id ||
+                `IX-${Date.now()}`,
+
+            schema:
+                "IXVYN_SAFETY_MEMORY_V1",
+
+            timestamp:
+                new Date().toISOString(),
+
+            status:
+                "intervention_recorded",
+
+            observation:
+                observation || null,
+
+            riskAssessment:
+                assessment || null,
+
+            humanDecision:
+                decision || null,
+
+            intervention:
+                civicRecord.action || null,
+
+            outcome:
+                null
+        };
+
+        const existing =
+            parse(
+                localStorage.getItem(
+                    "ixvyn_memory_records"
+                )
+            ) || [];
+
+        const filtered =
+            existing.filter(
+                item =>
+                    item.id !== memoryRecord.id
+            );
+
+        filtered.push(memoryRecord);
+
+        localStorage.setItem(
+            "ixvyn_memory_records",
+            JSON.stringify(filtered)
+        );
+
+        sessionStorage.setItem(
+            "ixvyn_memory_latest",
+            JSON.stringify(memoryRecord)
+        );
+
+        memoryBtn.textContent =
+            "SAVED TO MEMORY";
+
+        memoryBtn.disabled = true;
+    }
+
+
+    function reset() {
+
+        submittedPanel.classList.add(
+            "hidden"
+        );
+
+        civicRecord = null;
+
+        submitBtn.disabled = false;
+
+        submitBtn.textContent =
+            "SUBMIT CIVIC ACTION";
+
+        memoryBtn.disabled = false;
+
+        memoryBtn.textContent =
+            "SAVE TO MEMORY";
+
+        actionType.value =
+            "SAFETY REVIEW";
+
+        summaryInput.value =
+            decision?.scenario?.description ||
+            "";
+
+        evidenceInput.value =
+            buildEvidenceSummary();
+
+        updatePreview();
+    }
+
+
+    actionType.addEventListener(
+        "change",
+        updatePreview
     );
 
-}
-
-
-/* =========================================================
-   CASE ID
-   ========================================================= */
-
-function generateCaseId() {
-
-    const now =
-        new Date();
-
-
-    const date =
-        now.toISOString()
-            .slice(0, 10)
-            .replace(/-/g, "");
-
-
-    const random =
-        Math.random()
-            .toString(36)
-            .slice(2, 6)
-            .toUpperCase();
-
-
-    return (
-        date +
-        "-" +
-        random
+    locationInput.addEventListener(
+        "input",
+        updatePreview
     );
 
-}
+    submitBtn.addEventListener(
+        "click",
+        submitAction
+    );
 
+    memoryBtn.addEventListener(
+        "click",
+        saveToMemory
+    );
 
-/* =========================================================
-   DEBUG
-   ========================================================= */
+    resetBtn.addEventListener(
+        "click",
+        reset
+    );
 
-window.IXVYN_CIVIC = {
+    loadContext();
 
-    getEvidence() {
-        return civicEvidence;
-    },
-
-    createCase() {
-        createMunicipalCase();
-    }
-
-};
+});
