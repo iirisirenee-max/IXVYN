@@ -3324,3 +3324,193 @@ if (directionSection && directionTitle) {
     visibility.observe(section);
 
 })();
+/* ============================================================
+   IXVYN — PASS 08
+   MEMORY CONVERGENCE
+   ============================================================ */
+
+(() => {
+    "use strict";
+
+    const about = document.querySelector(".about");
+    if (!about) return;
+
+    const content = about.querySelector(".about-content");
+    const heading = about.querySelector("h2");
+
+    if (!content || !heading) return;
+
+    /* ---------------------------------------------------------
+       MEMORY FIELD
+       --------------------------------------------------------- */
+
+    const field = document.createElement("div");
+    field.className = "ixvyn-memory-field";
+    field.setAttribute("aria-hidden", "true");
+
+    field.innerHTML = `
+        <div class="memory-orbit memory-orbit-a"></div>
+        <div class="memory-orbit memory-orbit-b"></div>
+
+        <svg class="memory-traces"
+             viewBox="0 0 1000 700"
+             preserveAspectRatio="none">
+            <path class="memory-trace"
+                d="M0 110 C180 90 260 210 410 260 S700 250 1000 350"/>
+            <path class="memory-trace"
+                d="M0 590 C190 570 270 440 430 410 S730 470 1000 350"/>
+            <path class="memory-trace memory-trace-faint"
+                d="M40 350 C230 350 300 160 500 170 S760 300 960 350"/>
+        </svg>
+
+        <div class="memory-core">
+            <span class="memory-core-ring"></span>
+            <span class="memory-core-point"></span>
+        </div>
+
+        <div class="memory-status">
+            <span>MEMORY /</span>
+            <strong>STABLE</strong>
+        </div>
+    `;
+
+    about.insertBefore(field, about.firstChild);
+
+    const traces =
+        [...field.querySelectorAll(".memory-trace")];
+
+    const core =
+        field.querySelector(".memory-core");
+
+    const status =
+        field.querySelector(".memory-status");
+
+    /* ---------------------------------------------------------
+       TRACE DRAW
+       --------------------------------------------------------- */
+
+    traces.forEach(trace => {
+        const length = trace.getTotalLength();
+
+        trace.style.strokeDasharray = length;
+        trace.style.strokeDashoffset = length;
+
+        trace.dataset.length = length;
+    });
+
+    /* ---------------------------------------------------------
+       SCROLL CONVERGENCE
+       --------------------------------------------------------- */
+
+    let progress = 0;
+    let target = 0;
+    let raf = 0;
+
+    function measure() {
+        const rect = about.getBoundingClientRect();
+        const vh = window.innerHeight;
+
+        const range =
+            Math.max(
+                about.offsetHeight - vh * 0.45,
+                1
+            );
+
+        target = Math.max(
+            0,
+            Math.min(
+                1,
+                (vh * 0.72 - rect.top) / range
+            )
+        );
+
+        if (!raf) {
+            raf = requestAnimationFrame(render);
+        }
+    }
+
+    function render() {
+        raf = 0;
+
+        progress +=
+            (target - progress) * 0.075;
+
+        const eased =
+            progress * progress *
+            (3 - 2 * progress);
+
+        traces.forEach((trace, index) => {
+            const length =
+                Number(trace.dataset.length);
+
+            const offset =
+                length * (1 - eased);
+
+            trace.style.strokeDashoffset =
+                offset;
+        });
+
+        /*
+         * The farther into MEMORY we travel,
+         * the more the system settles.
+         */
+
+        const scale =
+            0.72 + eased * 0.28;
+
+        const glow =
+            0.15 + eased * 0.45;
+
+        core.style.transform =
+            `translate(-50%, -50%) scale(${scale})`;
+
+        core.style.setProperty(
+            "--memory-glow",
+            glow
+        );
+
+        field.style.setProperty(
+            "--memory-progress",
+            eased
+        );
+
+        if (eased > 0.78) {
+            status.classList.add("memory-stable");
+        } else {
+            status.classList.remove("memory-stable");
+        }
+    }
+
+    window.addEventListener(
+        "scroll",
+        measure,
+        { passive: true }
+    );
+
+    window.addEventListener(
+        "resize",
+        measure
+    );
+
+    measure();
+
+    /* ---------------------------------------------------------
+       VISIBILITY
+       --------------------------------------------------------- */
+
+    const observer =
+        new IntersectionObserver(
+            entries => {
+                entries.forEach(entry => {
+                    field.classList.toggle(
+                        "memory-visible",
+                        entry.isIntersecting
+                    );
+                });
+            },
+            { threshold: 0.05 }
+        );
+
+    observer.observe(about);
+
+})();
