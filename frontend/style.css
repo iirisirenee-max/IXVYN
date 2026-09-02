@@ -4474,3 +4474,279 @@ body {
     }
 
 }
+/* ============================================================
+   IXVYN — PASS 06
+   CINEMATIC PAGE STATE LANGUAGE
+   ============================================================ */
+
+/*
+ * The page is still predominantly monochrome.
+ *
+ * State changes are atmospheric rather than decorative.
+ */
+
+body {
+    --ixvyn-state-energy:
+        rgba(184,255,61,.035);
+
+    --ixvyn-state-secondary:
+        rgba(53,231,238,.018);
+
+    transition:
+        background-color 1.2s ease;
+}
+
+/* ------------------------------------------------------------
+   SEE
+   Exploration / perception
+   ------------------------------------------------------------ */
+
+html[data-ixvyn-state="see"] {
+    --ixvyn-state-energy:
+        rgba(184,255,61,.045);
+
+    --ixvyn-state-secondary:
+        rgba(53,231,238,.025);
+}
+
+/* ------------------------------------------------------------
+   UNDERSTAND
+   Violet enters very quietly.
+   ------------------------------------------------------------ */
+
+html[data-ixvyn-state="understand"] {
+    --ixvyn-state-energy:
+        rgba(143,114,255,.045);
+
+    --ixvyn-state-secondary:
+        rgba(53,231,238,.028);
+}
+
+/* ------------------------------------------------------------
+   RESPOND
+   Amber appears only as a secondary energy.
+   ------------------------------------------------------------ */
+
+html[data-ixvyn-state="respond"] {
+    --ixvyn-state-energy:
+        rgba(255,189,90,.045);
+
+    --ixvyn-state-secondary:
+        rgba(184,255,61,.028);
+}
+
+/* ------------------------------------------------------------
+   ADAPT
+   Cyan and green recombine.
+   ------------------------------------------------------------ */
+
+html[data-ixvyn-state="adapt"] {
+    --ixvyn-state-energy:
+        rgba(53,231,238,.042);
+
+    --ixvyn-state-secondary:
+        rgba(184,255,61,.035);
+}
+
+/* ------------------------------------------------------------
+   REMEMBER
+   Colour recedes.
+   ------------------------------------------------------------ */
+
+html[data-ixvyn-state="remember"] {
+    --ixvyn-state-energy:
+        rgba(184,255,61,.022);
+
+    --ixvyn-state-secondary:
+        rgba(242,241,235,.018);
+}
+
+/* ------------------------------------------------------------
+   SYSTEM NETWORK STATE
+   ------------------------------------------------------------ */
+
+html[data-ixvyn-state="understand"]
+.ixvyn-civic-network {
+
+    --network-energy:
+        rgba(143,114,255,.16);
+}
+
+html[data-ixvyn-state="respond"]
+.ixvyn-civic-network {
+
+    --network-energy:
+        rgba(255,189,90,.16);
+}
+
+html[data-ixvyn-state="adapt"]
+.ixvyn-civic-network {
+
+    --network-energy:
+        rgba(53,231,238,.15);
+}
+
+html[data-ixvyn-state="remember"]
+.ixvyn-civic-network {
+
+    opacity: .48;
+}
+
+/* ------------------------------------------------------------
+   NETWORK AXIS
+   ------------------------------------------------------------ */
+
+.network-axis {
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            var(
+                --network-energy,
+                rgba(184,255,61,.12)
+            ) 25%,
+            rgba(242,241,235,.16) 50%,
+            var(
+                --network-energy,
+                rgba(184,255,61,.08)
+            ) 75%,
+            transparent
+        );
+
+    transition:
+        background 1.2s ease;
+}
+
+/* ------------------------------------------------------------
+   SYSTEM CARDS
+   ------------------------------------------------------------ */
+
+.system-card {
+
+    transition:
+        opacity .8s ease,
+        transform .8s cubic-bezier(.16,1,.3,1);
+}
+
+/*
+ * During UNDERSTAND, cards feel slightly more organised.
+ */
+
+html[data-ixvyn-state="understand"]
+.system-card {
+
+    transform:
+        translateY(-2px);
+}
+
+/*
+ * During RESPOND, the active network becomes
+ * slightly more prominent.
+ */
+
+html[data-ixvyn-state="respond"]
+.system-card:hover {
+
+    transform:
+        translateY(-5px);
+}
+
+/*
+ * During REMEMBER, the page becomes quieter.
+ */
+
+html[data-ixvyn-state="remember"]
+.system-card {
+
+    opacity: .72;
+}
+
+/* ------------------------------------------------------------
+   DIRECTION SECTION
+   ------------------------------------------------------------ */
+
+html[data-ixvyn-state="respond"]
+.direction {
+
+    --direction-energy:
+        rgba(255,189,90,.06);
+}
+
+html[data-ixvyn-state="adapt"]
+.direction {
+
+    --direction-energy:
+        rgba(53,231,238,.06);
+}
+
+html[data-ixvyn-state="remember"]
+.direction {
+
+    --direction-energy:
+        rgba(184,255,61,.025);
+}
+
+/* ------------------------------------------------------------
+   SUBTLE ATMOSPHERIC LAYER
+   ------------------------------------------------------------ */
+
+.direction::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            var(
+                --direction-energy,
+                rgba(184,255,61,.025)
+            ),
+            transparent 48%
+        );
+
+    opacity: .8;
+
+    transition:
+        background 1.4s ease;
+}
+
+/* ------------------------------------------------------------
+   MEMORY — QUIETER, NOT DARKER
+   ------------------------------------------------------------ */
+
+html[data-ixvyn-state="remember"]
+.about {
+
+    opacity: .88;
+
+    transition:
+        opacity 1.2s ease;
+}
+
+/* ------------------------------------------------------------
+   MOBILE
+   ------------------------------------------------------------ */
+
+@media (max-width: 700px) {
+
+    html[data-ixvyn-state="remember"]
+    .system-card {
+
+        opacity: .82;
+    }
+
+    html[data-ixvyn-state="understand"]
+    .system-card {
+
+        transform:
+            translateY(-1px);
+    }
+
+}
