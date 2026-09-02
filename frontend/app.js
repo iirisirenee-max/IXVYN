@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
             lens: "lens.html",
             pathfinder: "pathfinder.html",
             civic: "civic.html",
-            echo: "systems.html",
+            echo: "echo.html",
             memory: "memory.html"
         };
 
