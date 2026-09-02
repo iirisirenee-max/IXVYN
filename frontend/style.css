@@ -5753,3 +5753,140 @@ html[data-ixvyn-state="remember"]
     }
 
 }
+/* =========================================================
+   IXVYN SYSTEM RAIL
+   ========================================================= */
+
+.ixvyn-system-rail {
+    position: fixed;
+    left: 50%;
+    bottom: 22px;
+    transform: translateX(-50%);
+
+    display: flex;
+    align-items: center;
+    gap: 0;
+
+    z-index: 900;
+
+    padding: 7px;
+
+    background: rgba(5, 5, 5, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+    opacity: 0.82;
+
+    transition:
+        opacity 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+.ixvyn-system-rail:hover {
+    opacity: 1;
+    border-color: rgba(184, 255, 61, 0.18);
+
+    box-shadow:
+        0 12px 50px rgba(0, 0, 0, 0.42),
+        0 0 35px rgba(184, 255, 61, 0.045),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.ixvyn-system-rail a {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    min-width: 76px;
+    padding: 9px 12px;
+
+    color: rgba(255, 255, 255, 0.42);
+    text-decoration: none;
+
+    font-family: var(--font-mono, monospace);
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+
+    border-radius: 999px;
+
+    transition:
+        color 0.3s ease,
+        background 0.3s ease,
+        transform 0.3s ease;
+}
+
+.ixvyn-system-rail a:hover {
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.045);
+    transform: translateY(-1px);
+}
+
+.ixvyn-system-rail .rail-index {
+    font-size: 7px;
+    letter-spacing: 0.08em;
+    opacity: 0.38;
+
+    transition:
+        opacity 0.3s ease,
+        color 0.3s ease;
+}
+
+.ixvyn-system-rail a:hover .rail-index {
+    opacity: 0.85;
+    color: #b8ff3d;
+}
+
+.ixvyn-system-rail .rail-name {
+    white-space: nowrap;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    .ixvyn-system-rail {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+
+        transform: none;
+
+        justify-content: space-between;
+
+        padding: 5px;
+
+        border-radius: 18px;
+    }
+
+    .ixvyn-system-rail a {
+        min-width: 0;
+        flex: 1;
+
+        justify-content: center;
+
+        padding: 9px 5px;
+    }
+
+    .ixvyn-system-rail .rail-index {
+        display: none;
+    }
+
+    .ixvyn-system-rail .rail-name {
+        font-size: 7px;
+        letter-spacing: 0.1em;
+    }
+}
