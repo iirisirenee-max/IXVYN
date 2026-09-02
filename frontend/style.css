@@ -6095,3 +6095,25 @@ html[data-ixvyn-state="remember"]
         letter-spacing: 0.1em;
     }
 }
+/* =========================================================
+   RAIL — SYSTEM STATE
+   ========================================================= */
+
+.ixvyn-system-rail a.is-active {
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(184, 255, 61, 0.055);
+}
+
+.ixvyn-system-rail a.is-active .rail-index {
+    opacity: 1;
+    color: #b8ff3d;
+}
+
+.ixvyn-system-rail a.is-active::after {
+    opacity: 1;
+    transform: translateX(-50%) scaleX(1);
+
+    box-shadow:
+        0 0 8px rgba(184, 255, 61, 0.8),
+        0 0 18px rgba(184, 255, 61, 0.35);
+}
