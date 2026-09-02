@@ -134,6 +134,150 @@ ingestEchoFeedback();
         }
     }
 
+   /* =====================================================
+   ECHO — FIELD FEEDBACK INTO MEMORY
+   ===================================================== */
+
+function ingestEchoFeedback() {
+
+    const submitted =
+        sessionStorage.getItem(
+            "echo_feedback_submitted"
+        );
+
+    const feedback =
+        sessionStorage.getItem(
+            "echo_feedback_text"
+        );
+
+    const caseId =
+        sessionStorage.getItem(
+            "echo_feedback_case_id"
+        );
+
+
+    if (
+        submitted !== "true" ||
+        !feedback ||
+        !caseId
+    ) {
+        return;
+    }
+
+
+    /*
+     * Prevent the same ECHO report from being
+     * written into MEMORY more than once.
+     */
+
+    const memoryId =
+        `ECHO-${caseId}`;
+
+
+    const alreadyStored =
+        records.some(
+            record =>
+                record.id === memoryId
+        );
+
+
+    if (alreadyStored) {
+        return;
+    }
+
+
+    const latitude =
+        Number(
+            sessionStorage.getItem(
+                "civic_case_lat"
+            )
+        );
+
+
+    const longitude =
+        Number(
+            sessionStorage.getItem(
+                "civic_case_lon"
+            )
+        );
+
+
+    const echoRecord = {
+
+        id:
+            memoryId,
+
+        source:
+            "ECHO",
+
+        caseId:
+            caseId,
+
+        defect:
+            sessionStorage.getItem(
+                "echo_feedback_condition"
+            ) ||
+            "FIELD OBSERVATION",
+
+        confidence:
+            "",
+
+        severity:
+            "FIELD UPDATE",
+
+        priority:
+            sessionStorage.getItem(
+                "echo_feedback_priority"
+            ) ||
+            "—",
+
+        route:
+            sessionStorage.getItem(
+                "echo_feedback_route"
+            ) ||
+            "—",
+
+        description:
+            feedback,
+
+        action:
+            "FIELD FEEDBACK RECEIVED",
+
+        latitude:
+            Number.isFinite(latitude)
+                ? latitude
+                : null,
+
+        longitude:
+            Number.isFinite(longitude)
+                ? longitude
+                : null,
+
+        timestamp:
+            sessionStorage.getItem(
+                "echo_feedback_timestamp"
+            ) ||
+            new Date().toISOString(),
+
+        status:
+            "active"
+    };
+
+
+    records.push(
+        echoRecord
+    );
+
+
+    saveMemory();
+
+
+    console.log(
+        "IXVYN MEMORY: ECHO field feedback remembered.",
+        echoRecord
+    );
+}
+
 
     /* =====================================================
        SAVE MEMORY
