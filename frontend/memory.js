@@ -1,1196 +1,570 @@
-/* =========================================================
-   IXVYN — MEMORY INTERACTION
-   INFRASTRUCTURE MEMORY / SPATIAL RECORD
-   ========================================================= */
-
 document.addEventListener("DOMContentLoaded", () => {
 
-    console.log(
-        "IXVYN MEMORY: Initializing infrastructure memory."
-    );
+    const status =
+        document.getElementById("memory-status");
+
+    const historyState =
+        document.getElementById("history-state");
+
+    const recordCount =
+        document.getElementById("record-count");
+
+    const interventionCount =
+        document.getElementById("intervention-count");
+
+    const outcomeCount =
+        document.getElementById("outcome-count");
+
+    const locationCount =
+        document.getElementById("location-count");
+
+    const timeline =
+        document.getElementById("timeline");
+
+    const latestPanel =
+        document.getElementById("latest-panel");
+
+    const latestStatus =
+        document.getElementById("latest-status");
+
+    const latestTitle =
+        document.getElementById("latest-title");
+
+    const latestSummary =
+        document.getElementById("latest-summary");
+
+    const latestRisk =
+        document.getElementById("latest-risk");
+
+    const latestIntervention =
+        document.getElementById("latest-intervention");
+
+    const latestOutcome =
+        document.getElementById("latest-outcome");
+
+    const reobserveBtn =
+        document.getElementById("reobserve-btn");
+
+    const clearBtn =
+        document.getElementById("clear-btn");
 
 
-    /* =====================================================
-       CONFIGURATION
-       ===================================================== */
-
-    const STORAGE_KEY =
-        "ixvyn_infrastructure_memory";
-
-
-    /* =====================================================
-       ELEMENTS
-       ===================================================== */
-
-    const memoryState =
-        document.getElementById("memory-state");
-
-    const memoryTotal =
-        document.getElementById("memory-total");
-
-    const memoryActive =
-        document.getElementById("memory-active");
-
-    const memoryLast =
-        document.getElementById("memory-last");
-
-    const memoryRecordCount =
-        document.getElementById("memory-record-count");
-
-    const memoryEmpty =
-        document.getElementById("memory-empty");
-
-    const memoryRecords =
-        document.getElementById("memory-records");
-
-    const memoryMapPoints =
-        document.getElementById("memory-map-points");
-
-    const clearMemoryButton =
-        document.getElementById("clear-memory");
-
-
-    /* =====================================================
-       SAFETY CHECK
-       ===================================================== */
-
-    if (
-        !memoryTotal ||
-        !memoryActive ||
-        !memoryLast ||
-        !memoryRecordCount ||
-        !memoryEmpty ||
-        !memoryRecords ||
-        !memoryMapPoints
-    ) {
-
-        console.warn(
-            "IXVYN MEMORY: Required interface elements missing."
-        );
-
-        return;
-    }
-
-
-    /* =====================================================
-       LOAD MEMORY
-       ===================================================== */
-
-    let records =
-        loadMemory();
-
-   /* =====================================================
-   ECHO — INGEST FIELD FEEDBACK
-   ===================================================== */
-
-ingestEchoFeedback();
-
-
-    /* =====================================================
-       INITIALIZE
-       ===================================================== */
-
-    renderMemory();
-
-
-    /* =====================================================
-       STORAGE
-       ===================================================== */
-
-    function loadMemory() {
+    function parse(value) {
 
         try {
+            return JSON.parse(value);
+        } catch {
+            return null;
+        }
 
-            const stored =
+    }
+
+
+    function getRecords() {
+
+        const stored =
+            parse(
                 localStorage.getItem(
-                    STORAGE_KEY
-                );
-
-
-            if (!stored) {
-                return [];
-            }
-
-
-            const parsed =
-                JSON.parse(stored);
-
-
-            if (!Array.isArray(parsed)) {
-                return [];
-            }
-
-
-            return parsed;
-
-        } catch (error) {
-
-            console.warn(
-                "IXVYN MEMORY: Could not load memory.",
-                error
+                    "ixvyn_memory_records"
+                )
             );
 
+        if (!Array.isArray(stored)) {
             return [];
         }
+
+        return stored;
+
     }
 
-   /* =====================================================
-   ECHO — FIELD FEEDBACK INTO MEMORY
-   ===================================================== */
 
-function ingestEchoFeedback() {
+    function formatDate(timestamp) {
 
-    const submitted =
-        sessionStorage.getItem(
-            "echo_feedback_submitted"
+        if (!timestamp) {
+            return "TIME UNKNOWN";
+        }
+
+        const date =
+            new Date(timestamp);
+
+        if (Number.isNaN(date.getTime())) {
+            return "TIME UNKNOWN";
+        }
+
+        return date.toLocaleString(
+            undefined,
+            {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        ).toUpperCase();
+
+    }
+
+
+    function getLocation(record) {
+
+        const location =
+            record?.observation?.location ||
+            record?.location;
+
+        if (!location) {
+            return "LOCATION UNKNOWN";
+        }
+
+        if (
+            location.lat !== null &&
+            location.lat !== undefined &&
+            location.lon !== null &&
+            location.lon !== undefined
+        ) {
+            return `${location.lat}, ${location.lon}`;
+        }
+
+        if (typeof location === "string") {
+            return location;
+        }
+
+        return "LOCATION UNKNOWN";
+
+    }
+
+
+    function getRisk(record) {
+
+        const risk =
+            record?.riskAssessment;
+
+        if (!risk) {
+            return "UNKNOWN";
+        }
+
+        if (
+            risk.riskLevel &&
+            risk.riskScore !== undefined
+        ) {
+            return `${risk.riskLevel} / ${risk.riskScore}`;
+        }
+
+        return risk.riskLevel ||
+            "UNKNOWN";
+
+    }
+
+
+    function getIntervention(record) {
+
+        const intervention =
+            record?.intervention;
+
+        if (!intervention) {
+            return "NONE";
+        }
+
+        if (typeof intervention === "string") {
+            return intervention;
+        }
+
+        return (
+            intervention.type ||
+            intervention.title ||
+            "RECORDED"
         );
 
-    const feedback =
-        sessionStorage.getItem(
-            "echo_feedback_text"
+    }
+
+
+    function getSummary(record) {
+
+        return (
+            record?.observation?.sceneSummary ||
+            record?.intervention?.summary ||
+            record?.action?.summary ||
+            "No summary available."
         );
 
-    const caseId =
-        sessionStorage.getItem(
-            "echo_feedback_case_id"
+    }
+
+
+    function render(records) {
+
+        recordCount.textContent =
+            records.length;
+
+        interventionCount.textContent =
+            records.filter(
+                item =>
+                    item.intervention
+            ).length;
+
+        outcomeCount.textContent =
+            records.filter(
+                item =>
+                    item.outcome
+            ).length;
+
+        const locations =
+            new Set(
+                records
+                    .map(getLocation)
+                    .filter(
+                        value =>
+                            value !==
+                            "LOCATION UNKNOWN"
+                    )
+            );
+
+        locationCount.textContent =
+            locations.size;
+
+        if (!records.length) {
+
+            status.textContent =
+                "EMPTY";
+
+            historyState.textContent =
+                "NO RECORDS";
+
+            timeline.innerHTML = `
+                <div class="empty-state">
+
+                    <div class="empty-number">
+                        00
+                    </div>
+
+                    <div>
+                        <h2>
+                            MEMORY IS EMPTY.
+                        </h2>
+
+                        <p>
+                            Complete an observation,
+                            assessment, decision, and
+                            civic action to begin building
+                            the safety record.
+                        </p>
+                    </div>
+
+                </div>
+            `;
+
+            latestPanel.classList.add(
+                "hidden"
+            );
+
+            return;
+        }
+
+        status.textContent =
+            "ACTIVE";
+
+        historyState.textContent =
+            `${records.length} RECORD${
+                records.length === 1 ? "" : "S"
+            }`;
+
+        const ordered =
+            [...records].sort(
+                (a, b) =>
+                    new Date(b.timestamp || 0) -
+                    new Date(a.timestamp || 0)
+            );
+
+        timeline.innerHTML =
+            ordered.map(
+                (record, index) =>
+                    renderRecord(
+                        record,
+                        index,
+                        ordered.length
+                    )
+            ).join("");
+
+        renderLatest(
+            ordered[0]
         );
 
+    }
 
-    if (
-        submitted !== "true" ||
-        !feedback ||
-        !caseId
+
+    function renderRecord(
+        record,
+        index,
+        total
     ) {
-        return;
+
+        const statusText =
+            record.status ||
+            "RECORDED";
+
+        const intervention =
+            getIntervention(record);
+
+        const outcome =
+            record.outcome
+                ? "OUTCOME RECORDED"
+                : "OUTCOME PENDING";
+
+        return `
+            <article class="memory-record">
+
+                <div class="record-index">
+                    ${String(index + 1).padStart(2, "0")}
+                </div>
+
+                ${
+                    index < total - 1
+                        ? `<div class="record-line"></div>`
+                        : ""
+                }
+
+                <div class="record-node"></div>
+
+                <div class="record-main">
+
+                    <h3>
+                        ${escapeHTML(
+                            getSummary(record)
+                        )}
+                    </h3>
+
+                    <p>
+                        ${
+                            escapeHTML(
+                                formatDate(
+                                    record.timestamp
+                                )
+                            )
+                        }
+                    </p>
+
+                    <div class="record-meta">
+
+                        <span>
+                            STATE //
+                            ${escapeHTML(
+                                statusText
+                            )}
+                        </span>
+
+                        <span>
+                            RISK //
+                            ${escapeHTML(
+                                getRisk(record)
+                            )}
+                        </span>
+
+                        <span>
+                            ACTION //
+                            ${escapeHTML(
+                                intervention
+                            )}
+                        </span>
+
+                        <span>
+                            ${
+                                escapeHTML(
+                                    getLocation(record)
+                                )
+                            }
+                        </span>
+
+                        <span>
+                            ${
+                                escapeHTML(outcome)
+                            }
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </article>
+        `;
+
     }
+
+
+    function renderLatest(record) {
+
+        latestPanel.classList.remove(
+            "hidden"
+        );
+
+        latestStatus.textContent =
+            record.status ||
+            "RECORDED";
+
+        latestTitle.textContent =
+            getLocation(record);
+
+        latestSummary.textContent =
+            getSummary(record);
+
+        latestRisk.textContent =
+            getRisk(record);
+
+        latestIntervention.textContent =
+            getIntervention(record);
+
+        latestOutcome.textContent =
+            record.outcome
+                ? getOutcomeText(record.outcome)
+                : "PENDING";
+
+    }
+
+
+    function getOutcomeText(outcome) {
+
+        if (!outcome) {
+            return "PENDING";
+        }
+
+        if (typeof outcome === "string") {
+            return outcome;
+        }
+
+        return (
+            outcome.result ||
+            outcome.status ||
+            "RECORDED"
+        );
+
+    }
+
+
+    function escapeHTML(value) {
+
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+
+    }
+
+
+    function startReobservation() {
+
+        const latest =
+            getRecords()
+                .sort(
+                    (a, b) =>
+                        new Date(b.timestamp || 0) -
+                        new Date(a.timestamp || 0)
+                )[0];
+
+        if (!latest) {
+
+            alert(
+                "There is no location in memory to re-observe yet."
+            );
+
+            return;
+        }
+
+        sessionStorage.setItem(
+            "ixvyn_reobserve_context",
+            JSON.stringify(latest)
+        );
+
+        /*
+         * Return to LENS with the memory context.
+         * LENS remains responsible for observing.
+         */
+
+        window.location.href =
+            "lens.html";
+
+    }
+
+
+    function clearMemory() {
+
+        const confirmed =
+            confirm(
+                "Clear all locally stored IXVYN memory records?"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        localStorage.removeItem(
+            "ixvyn_memory_records"
+        );
+
+        localStorage.removeItem(
+            "ixvyn_civic_record"
+        );
+
+        sessionStorage.removeItem(
+            "ixvyn_memory_latest"
+        );
+
+        render([]);
+
+    }
+
+
+    reobserveBtn.addEventListener(
+        "click",
+        startReobservation
+    );
+
+    clearBtn.addEventListener(
+        "click",
+        clearMemory
+    );
 
 
     /*
-     * Prevent the same ECHO report from being
-     * written into MEMORY more than once.
+     * Import the latest CIVIC memory record if
+     * CIVIC has just completed an action.
      */
 
-    const memoryId =
-        `ECHO-${caseId}`;
-
-
-    const alreadyStored =
-        records.some(
-            record =>
-                record.id === memoryId
-        );
-
-
-    if (alreadyStored) {
-        return;
-    }
-
-
-    const latitude =
-        Number(
+    const latestCivic =
+        parse(
             sessionStorage.getItem(
-                "civic_case_lat"
+                "ixvyn_memory_latest"
             )
         );
 
+    if (latestCivic) {
 
-    const longitude =
-        Number(
-            sessionStorage.getItem(
-                "civic_case_lon"
-            )
-        );
+        const existing =
+            getRecords();
 
+        const exists =
+            existing.some(
+                record =>
+                    record.id ===
+                    latestCivic.id
+            );
 
-    const echoRecord = {
+        if (!exists) {
 
-        id:
-            memoryId,
-
-        source:
-            "ECHO",
-
-        caseId:
-            caseId,
-
-        defect:
-            sessionStorage.getItem(
-                "echo_feedback_condition"
-            ) ||
-            "FIELD OBSERVATION",
-
-        confidence:
-            "",
-
-        severity:
-            "FIELD UPDATE",
-
-        priority:
-            sessionStorage.getItem(
-                "echo_feedback_priority"
-            ) ||
-            "—",
-
-        route:
-            sessionStorage.getItem(
-                "echo_feedback_route"
-            ) ||
-            "—",
-
-        description:
-            feedback,
-
-        action:
-            "FIELD FEEDBACK RECEIVED",
-
-        latitude:
-            Number.isFinite(latitude)
-                ? latitude
-                : null,
-
-        longitude:
-            Number.isFinite(longitude)
-                ? longitude
-                : null,
-
-        timestamp:
-            sessionStorage.getItem(
-                "echo_feedback_timestamp"
-            ) ||
-            new Date().toISOString(),
-
-        status:
-            "active"
-    };
-
-
-    records.push(
-        echoRecord
-    );
-
-
-    saveMemory();
-
-
-    console.log(
-        "IXVYN MEMORY: ECHO field feedback remembered.",
-        echoRecord
-    );
-}
-
-
-    /* =====================================================
-       SAVE MEMORY
-       ===================================================== */
-
-    function saveMemory() {
-
-        try {
+            existing.push(
+                latestCivic
+            );
 
             localStorage.setItem(
-                STORAGE_KEY,
-                JSON.stringify(records)
+                "ixvyn_memory_records",
+                JSON.stringify(existing)
             );
 
-
-            console.log(
-                "IXVYN MEMORY: Records persisted.",
-                records.length
-            );
-
-
-            return true;
-
-        } catch (error) {
-
-            console.error(
-                "IXVYN MEMORY: Could not save records.",
-                error
-            );
-
-
-            return false;
-        }
-    }/* =====================================================
-       RENDER EVERYTHING
-       ===================================================== */
-
-    function renderMemory() {
-
-        updateSummary();
-
-        renderRecords();
-
-        renderMap();
-
-        updateState();
-
-    }
-
-
-    /* =====================================================
-       SUMMARY
-       ===================================================== */
-
-    function updateSummary() {
-
-        const total =
-            records.length;
-
-
-        const active =
-            records.filter(
-                isActiveRecord
-            ).length;
-
-
-        memoryTotal.textContent =
-            String(total).padStart(2, "0");
-
-
-        memoryActive.textContent =
-            String(active).padStart(2, "0");
-
-
-        if (!records.length) {
-
-            memoryLast.textContent =
-                "—";
-
-        } else {
-
-            const latest =
-                getLatestRecord();
-
-
-            memoryLast.textContent =
-                formatShortDate(
-                    latest.timestamp
-                );
         }
 
-
-        memoryRecordCount.textContent =
-            `${String(total).padStart(2, "0")} RECORD${total === 1 ? "" : "S"}`;
     }
 
 
-    /* =====================================================
-       ACTIVE RECORD
-       ===================================================== */
+    render(
+        getRecords()
+    );
 
-    function isActiveRecord(record) {
-
-        /*
-         * A saved inspection is considered active
-         * unless explicitly marked resolved.
-         */
-
-        return (
-            record.status !== "resolved"
-        );
-    }
-
-
-    /* =====================================================
-       LATEST RECORD
-       ===================================================== */
-
-    function getLatestRecord() {
-
-        return [...records].sort(
-            (a, b) => {
-
-                return (
-                    new Date(b.timestamp) -
-                    new Date(a.timestamp)
-                );
-
-            }
-        )[0];
-    }
-
-
-    /* =====================================================
-       RECORDS
-       ===================================================== */
-
-    function renderRecords() {
-
-        memoryRecords.innerHTML =
-            "";
-
-
-        if (!records.length) {
-
-            memoryEmpty.hidden =
-                false;
-
-            memoryRecords.hidden =
-                true;
-
-            return;
-        }
-
-
-        memoryEmpty.hidden =
-            true;
-
-        memoryRecords.hidden =
-            false;
-
-
-        const sortedRecords =
-            [...records].sort(
-                (a, b) => {
-
-                    return (
-                        new Date(b.timestamp) -
-                        new Date(a.timestamp)
-                    );
-
-                }
-            );
-
-
-        sortedRecords.forEach(
-            (record, index) => {
-
-                const element =
-                    createRecordElement(
-                        record,
-                        index
-                    );
-
-
-                memoryRecords.appendChild(
-                    element
-                );
-
-            }
-        );
-    }/* =====================================================
-       CREATE RECORD
-       ===================================================== */
-
-    function createRecordElement(
-        record,
-        index
-    ) {
-
-        const article =
-            document.createElement(
-                "article"
-            );
-
-
-        article.className =
-            "memory-record";
-
-
-        const defect =
-            cleanText(
-                record.defect ||
-                "UNKNOWN ANOMALY"
-            ).toUpperCase();
-
-
-        const severity =
-            cleanText(
-                record.severity ||
-                "UNKNOWN"
-            ).toUpperCase();
-
-
-        const priority =
-            cleanText(
-                record.priority ||
-                "—"
-            ).toUpperCase();
-
-
-        const latitude =
-            formatCoordinate(
-                record.latitude ??
-                record.lat
-            );
-
-
-        const longitude =
-            formatCoordinate(
-                record.longitude ??
-                record.lon
-            );
-
-
-        const timestamp =
-            formatDate(
-                record.timestamp
-            );
-
-
-        const recordNumber =
-            String(
-                record.sequence ||
-                records.length - index
-            ).padStart(
-                5,
-                "0"
-            );
-
-
-        const indexElement =
-            document.createElement(
-                "div"
-            );
-
-        indexElement.className =
-            "memory-record-index";
-
-        indexElement.textContent =
-            `#${recordNumber}`;
-
-
-        const defectElement =
-            document.createElement(
-                "div"
-            );
-
-        defectElement.className =
-            "memory-record-defect";
-
-        defectElement.textContent =
-            defect;
-
-
-        const metaElement =
-            document.createElement(
-                "div"
-            );
-
-        metaElement.className =
-            "memory-record-meta";
-
-
-        const severityElement =
-            document.createElement(
-                "span"
-            );
-
-        severityElement.textContent =
-            `${severity} / ${priority}`;
-
-
-        applySeverityClass(
-            severityElement,
-            severity
-        );
-
-
-        const confidenceElement =
-            document.createElement(
-                "span"
-            );
-
-        confidenceElement.textContent =
-            formatConfidence(
-                record.confidence
-            );
-
-
-        metaElement.appendChild(
-            severityElement
-        );
-
-        metaElement.appendChild(
-            confidenceElement
-        );
-
-
-        const locationElement =
-            document.createElement(
-                "div"
-            );
-
-        locationElement.className =
-            "memory-record-location";
-
-
-        const latElement =
-            document.createElement(
-                "span"
-            );
-
-        latElement.textContent =
-            `LAT ${latitude}`;
-
-
-        const lonElement =
-            document.createElement(
-                "span"
-            );
-
-        lonElement.textContent =
-            `LON ${longitude}`;
-
-
-        locationElement.appendChild(
-            latElement
-        );
-
-        locationElement.appendChild(
-            lonElement
-        );
-
-
-        const dateElement =
-            document.createElement(
-                "div"
-            );
-
-        dateElement.className =
-            "memory-record-date";
-
-        dateElement.textContent =
-            timestamp;
-
-
-        article.appendChild(
-            indexElement
-        );
-
-        article.appendChild(
-            defectElement
-        );
-
-        article.appendChild(
-            metaElement
-        );
-
-        article.appendChild(
-            locationElement
-        );
-
-        article.appendChild(
-            dateElement
-        );
-
-
-        /*
-         * Clicking a record highlights its
-         * corresponding spatial point.
-         */
-
-        article.addEventListener(
-            "click",
-            () => {
-
-                highlightMapPoint(
-                    record.id
-                );
-
-            }
-        );
-
-
-        return article;
-    }
-
-
-    /* =====================================================
-       SEVERITY CLASS
-       ===================================================== */
-
-    function applySeverityClass(
-        element,
-        severity
-    ) {
-
-        element.classList.remove(
-            "memory-severity-high",
-            "memory-severity-medium",
-            "memory-severity-low"
-        );
-
-
-        if (
-            severity.includes("HIGH") ||
-            severity.includes("CRITICAL")
-        ) {
-
-            element.classList.add(
-                "memory-severity-high"
-            );
-
-        } else if (
-            severity.includes("MEDIUM")
-        ) {
-
-            element.classList.add(
-                "memory-severity-medium"
-            );
-
-        } else {
-
-            element.classList.add(
-                "memory-severity-low"
-            );
-        }
-    }/* =====================================================
-       MAP
-       ===================================================== */
-
-    function renderMap() {
-
-        memoryMapPoints.innerHTML =
-            "";
-
-
-        if (!records.length) {
-            return;
-        }
-
-
-        const validRecords =
-            records.filter(
-                hasCoordinates
-            );
-
-
-        if (!validRecords.length) {
-            return;
-        }
-
-
-        /*
-         * Build a relative spatial distribution
-         * from the saved coordinates.
-         *
-         * This is intentionally lightweight:
-         * no external map service is required.
-         */
-
-        const latitudes =
-            validRecords.map(
-                record =>
-                    Number(
-                        record.latitude ??
-                        record.lat
-                    )
-            );
-
-
-        const longitudes =
-            validRecords.map(
-                record =>
-                    Number(
-                        record.longitude ??
-                        record.lon
-                    )
-            );
-
-
-        const minLat =
-            Math.min(...latitudes);
-
-        const maxLat =
-            Math.max(...latitudes);
-
-        const minLon =
-            Math.min(...longitudes);
-
-        const maxLon =
-            Math.max(...longitudes);
-
-
-        validRecords.forEach(
-            (record, index) => {
-
-                const latitude =
-                    Number(
-                        record.latitude ??
-                        record.lat
-                    );
-
-
-                const longitude =
-                    Number(
-                        record.longitude ??
-                        record.lon
-                    );
-
-
-                let x;
-                let y;
-
-
-                /*
-                 * If all records are at almost exactly
-                 * the same location, place them around
-                 * the center instead of dividing by zero.
-                 */
-
-                if (
-                    Math.abs(
-                        maxLon - minLon
-                    ) < 0.000001
-                ) {
-
-                    x =
-                        50 +
-                        ((index % 5) - 2) * 7;
-
-                } else {
-
-                    x =
-                        15 +
-                        (
-                            (longitude - minLon) /
-                            (maxLon - minLon)
-                        ) * 70;
-                }
-
-
-                if (
-                    Math.abs(
-                        maxLat - minLat
-                    ) < 0.000001
-                ) {
-
-                    y =
-                        50 +
-                        ((index % 5) - 2) * 7;
-
-                } else {
-
-                    /*
-                     * Latitude increases upward,
-                     * therefore invert Y for screen space.
-                     */
-
-                    y =
-                        85 -
-                        (
-                            (latitude - minLat) /
-                            (maxLat - minLat)
-                        ) * 70;
-                }
-
-
-                x =
-                    clamp(
-                        x,
-                        8,
-                        92
-                    );
-
-
-                y =
-                    clamp(
-                        y,
-                        8,
-                        92
-                    );
-
-
-                const point =
-                    document.createElement(
-                        "button"
-                    );
-
-
-                point.type =
-                    "button";
-
-
-                point.className =
-                    "memory-map-point";
-
-
-                point.style.left =
-                    `${x}%`;
-
-
-                point.style.top =
-                    `${y}%`;
-
-
-                point.dataset.recordId =
-                    record.id;
-
-
-                point.title =
-                    `${cleanText(record.defect || "ANOMALY")} — ${formatShortDate(record.timestamp)}`;
-
-
-                point.setAttribute(
-                    "aria-label",
-                    `Inspection ${record.id || index + 1}`
-                );
-
-
-                point.addEventListener(
-                    "click",
-                    (event) => {
-
-                        event.stopPropagation();
-
-                        highlightMapPoint(
-                            record.id
-                        );
-
-                    }
-                );
-
-
-                memoryMapPoints.appendChild(
-                    point
-                );
-
-            }
-        );
-    }
-
-
-    /* =====================================================
-       MAP HIGHLIGHT
-       ===================================================== */
-
-    function highlightMapPoint(
-        recordId
-    ) {
-
-        const points =
-            memoryMapPoints.querySelectorAll(
-                ".memory-map-point"
-            );
-
-
-        points.forEach(
-            point => {
-
-                point.classList.remove(
-                    "is-selected"
-                );
-
-            }
-        );
-
-
-        const target =
-            [...points].find(
-                point =>
-                    point.dataset.recordId ===
-                    String(recordId)
-            );
-
-
-        if (!target) {
-            return;
-        }
-
-
-        target.classList.add(
-            "is-selected"
-        );
-
-
-        target.scrollIntoView({
-            behavior: "smooth",
-            block: "nearest"
-        });
-
-
-        setTimeout(
-            () => {
-
-                target.classList.remove(
-                    "is-selected"
-                );
-
-            },
-            1800
-        );
-    }
-
-
-    /* =====================================================
-       CLEAR MEMORY
-       ===================================================== */
-
-    if (clearMemoryButton) {
-
-        clearMemoryButton.addEventListener(
-            "click",
-            () => {
-
-                if (!records.length) {
-                    return;
-                }
-
-
-                const confirmed =
-                    window.confirm(
-                        "Clear all IXVYN infrastructure memory records?"
-                    );
-
-
-                if (!confirmed) {
-                    return;
-                }
-
-
-                records =
-                    [];
-
-
-                saveMemory();
-
-                renderMemory();
-
-
-                memoryState.textContent =
-                    "MEMORY CLEARED";
-
-
-                setTimeout(
-                    () => {
-
-                        updateState();
-
-                    },
-                    1600
-                );
-
-            }
-        );
-    }
-
-
-    /* =====================================================
-       STATE
-       ===================================================== */
-
-    function updateState() {
-
-        if (!memoryState) {
-            return;
-        }
-
-
-        if (records.length) {
-
-            memoryState.textContent =
-                "ONLINE / RECORDING";
-
-        } else {
-
-            memoryState.textContent =
-                "ONLINE";
-        }
-    }
-
-
-    /* =====================================================
-       COORDINATE VALIDATION
-       ===================================================== */
-
-    function hasCoordinates(record) {
-
-        const latitude =
-            Number(
-                record.latitude ??
-                record.lat
-            );
-
-
-        const longitude =
-            Number(
-                record.longitude ??
-                record.lon
-            );
-
-
-        return (
-            Number.isFinite(latitude) &&
-            Number.isFinite(longitude)
-        );
-    }
-
-
-    /* =====================================================
-       FORMAT COORDINATES
-       ===================================================== */
-
-    function formatCoordinate(
-        value
-    ) {
-
-        const number =
-            Number(value);
-
-
-        if (!Number.isFinite(number)) {
-            return "UNAVAILABLE";
-        }
-
-
-        return number.toFixed(5);
-    }
-
-
-    /* =====================================================
-       UTILITIES & DATA FORMATTERS
-       ===================================================== */
-
-    function clamp(value, minimum, maximum) {
-        return Math.min(Math.max(value, minimum), maximum);
-    }
-
-    function cleanText(text) {
-        if (typeof text !== "string") return "";
-        return text.replace(/[<>]/g, "").trim();
-    }
-
-    function formatConfidence(value) {
-        if (value === null || value === undefined || value === "—") return "—";
-        const num = parseFloat(value);
-        if (Number.isFinite(num)) {
-            return num <= 1 ? `${(num * 100).toFixed(1)}%` : `${num.toFixed(1)}%`;
-        }
-        return String(value);
-    }
-
-    function formatDate(isoString) {
-        if (!isoString) return "—";
-        try {
-            const date = new Date(isoString);
-            if (isNaN(date.getTime())) return "—";
-            return date.toLocaleString("en-US", {
-                year: "numeric",
-                month: "short",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: false
-            }).toUpperCase();
-        } catch (e) {
-            return "—";
-        }
-    }
-
-    function formatShortDate(isoString) {
-        if (!isoString) return "—";
-        try {
-            const date = new Date(isoString);
-            if (isNaN(date.getTime())) return "—";
-            return date.toLocaleDateString("en-US", {
-                month: "short",
-                day: "2-digit"
-            }).toUpperCase();
-        } catch (e) {
-            return "—";
-        }
-    }
 });
