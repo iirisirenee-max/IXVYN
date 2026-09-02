@@ -26,7 +26,235 @@ body {
     font-family: "Inter", sans-serif;
     overflow-x: hidden;
 }
+/* ============================================================
+   IXVYN — PASS 04
+   MOBILE CINEMATIC HERO
+   Same world. Different composition.
+   ============================================================ */
 
+@media (max-width: 700px) {
+
+    /* --------------------------------------------------------
+       HERO — GIVE THE VISUAL ROOM
+       -------------------------------------------------------- */
+
+    .hero {
+        min-height: 100svh;
+        min-height: 100dvh;
+
+        overflow: hidden;
+
+        position: relative;
+    }
+
+    /*
+     * The geometry becomes a vertical composition instead
+     * of trying to behave like the desktop layout.
+     */
+
+    .hero-geometry {
+        position: absolute;
+
+        width: 125vw;
+        height: 125vw;
+
+        max-width: none;
+        max-height: none;
+
+        right: auto;
+        left: 50%;
+
+        top: 43%;
+
+        transform:
+            translate3d(
+                -50%,
+                -50%,
+                0
+            );
+
+        opacity: .92;
+
+        pointer-events: none;
+
+        z-index: 0;
+    }
+
+    /*
+     * Keep the field behind the actual geometry.
+     */
+
+    .ixvyn-intelligence-field {
+        inset: -4%;
+
+        width: 108%;
+        height: 108%;
+
+        opacity: 2;
+
+        pointer-events: none;
+    }
+
+    /* --------------------------------------------------------
+       ATMOSPHERE
+       -------------------------------------------------------- */
+
+    .hero-geometry::before {
+        opacity: 1;
+
+        background:
+            radial-gradient(
+                circle at 50% 48%,
+                rgba(184,255,61,.065),
+                transparent 25%
+            ),
+            radial-gradient(
+                circle at 28% 32%,
+                rgba(53,231,238,.045),
+                transparent 24%
+            ),
+            radial-gradient(
+                circle at 72% 68%,
+                rgba(143,114,255,.035),
+                transparent 24%
+            );
+    }
+
+    /* --------------------------------------------------------
+       RINGS — MORE LEGIBLE ON SMALL SCREEN
+       -------------------------------------------------------- */
+
+    .geometry-ring {
+        border-width: 1px;
+    }
+
+    .ring-one {
+        border-color:
+            rgba(184,255,61,.34);
+    }
+
+    .ring-two {
+        border-color:
+            rgba(53,231,238,.25);
+    }
+
+    .ring-three {
+        border-color:
+            rgba(143,114,255,.22);
+    }
+
+    /* --------------------------------------------------------
+       NODES
+       -------------------------------------------------------- */
+
+    .geometry-node {
+        width: 8px;
+        height: 8px;
+
+        box-shadow:
+            0 0 9px
+            rgba(184,255,61,.18);
+    }
+
+    .geometry-node.network-pulse {
+        transform:
+            scale(1.9);
+
+        box-shadow:
+            0 0 11px
+            rgba(184,255,61,.85),
+            0 0 28px
+            rgba(184,255,61,.32);
+    }
+
+    /* --------------------------------------------------------
+       CORE
+       -------------------------------------------------------- */
+
+    .geometry-core {
+        /*
+         * Keep the core unmistakable.
+         */
+
+        box-shadow:
+            0 0 18px
+            rgba(184,255,61,.20),
+
+            0 0 50px
+            rgba(184,255,61,.10);
+    }
+
+    /* --------------------------------------------------------
+       HERO CONTENT
+       -------------------------------------------------------- */
+
+    .hero-main,
+    .hero-content {
+        position: relative;
+
+        z-index: 2;
+
+        /*
+         * Text stays above the field, but the field remains
+         * visible around it.
+         */
+    }
+
+    .hero-index {
+        position: relative;
+        z-index: 3;
+    }
+
+    .hero h1,
+    .hero-main h1 {
+        position: relative;
+        z-index: 3;
+
+        text-shadow:
+            0 1px 18px
+            rgba(0,0,0,.55);
+    }
+
+    .hero-description {
+        position: relative;
+        z-index: 3;
+
+        text-shadow:
+            0 1px 12px
+            rgba(0,0,0,.7);
+    }
+
+    /* --------------------------------------------------------
+       SIGNAL — MORE VISIBLE ON PHONE
+       -------------------------------------------------------- */
+
+    .hero-signal {
+        width: 8px;
+        height: 8px;
+
+        box-shadow:
+            0 0 10px
+            rgba(184,255,61,1),
+
+            0 0 28px
+            rgba(184,255,61,.45);
+    }
+
+    /* --------------------------------------------------------
+       TOUCH LANGUAGE
+       -------------------------------------------------------- */
+
+    /*
+     * Phones don't have a cursor.
+     *
+     * The visual system therefore shouldn't pretend they do.
+     */
+
+    .hero-geometry {
+        touch-action: pan-y;
+    }
+
+}
 body::before {
     content: "";
     position: fixed;
