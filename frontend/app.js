@@ -2804,3 +2804,193 @@ if (directionSection && directionTitle) {
     );
 
 })();
+/* ============================================================
+   IXVYN — PASS 06
+   CINEMATIC PAGE STATES
+
+   SEE
+      ↓
+   UNDERSTAND
+      ↓
+   RESPOND
+      ↓
+   ADAPT
+      ↓
+   REMEMBER
+
+   The page itself changes state as you travel through it.
+   ============================================================ */
+
+(() => {
+    "use strict";
+
+    const root =
+        document.documentElement;
+
+    const systems =
+        document.querySelector(".systems");
+
+    const direction =
+        document.querySelector(".direction");
+
+    const about =
+        document.querySelector(".about");
+
+    if (!systems || !direction) return;
+
+    /* ---------------------------------------------------------
+       STATE DEFINITIONS
+       --------------------------------------------------------- */
+
+    const states = [
+        "see",
+        "understand",
+        "respond",
+        "adapt",
+        "remember"
+    ];
+
+    let currentState = "";
+    let ticking = false;
+
+    /* ---------------------------------------------------------
+       FIND PAGE PROGRESS
+       --------------------------------------------------------- */
+
+    function calculateState() {
+
+        const viewport =
+            window.innerHeight;
+
+        const systemsRect =
+            systems.getBoundingClientRect();
+
+        const directionRect =
+            direction.getBoundingClientRect();
+
+        let state =
+            "see";
+
+        /*
+         * HERO / TOP
+         * ----------------------------------------------------
+         */
+
+        if (
+            systemsRect.top >
+            viewport * 0.72
+        ) {
+            state = "see";
+        }
+
+        /*
+         * SYSTEMS
+         * ----------------------------------------------------
+         */
+
+        else if (
+            systemsRect.top >
+            viewport * 0.18
+        ) {
+            state = "understand";
+        }
+
+        /*
+         * LOWER SYSTEMS
+         * ----------------------------------------------------
+         */
+
+        else if (
+            directionRect.top >
+            viewport * 0.62
+        ) {
+            state = "respond";
+        }
+
+        /*
+         * DIRECTION
+         * ----------------------------------------------------
+         */
+
+        else if (
+            directionRect.top >
+            viewport * 0.18
+        ) {
+            state = "adapt";
+        }
+
+        /*
+         * AFTER DIRECTION
+         * ----------------------------------------------------
+         */
+
+        else {
+            state = "remember";
+        }
+
+        if (state === currentState)
+            return;
+
+        currentState = state;
+
+        root.dataset.ixvynState =
+            state;
+
+        /*
+         * Broadcast the state to any future
+         * IXVYN subsystem.
+         */
+
+        window.dispatchEvent(
+            new CustomEvent(
+                "ixvyn:statechange",
+                {
+                    detail: {
+                        state
+                    }
+                }
+            )
+        );
+    }
+
+    /* ---------------------------------------------------------
+       SCROLL LOOP
+       --------------------------------------------------------- */
+
+    function requestUpdate() {
+
+        if (ticking)
+            return;
+
+        ticking = true;
+
+        requestAnimationFrame(
+            () => {
+
+                calculateState();
+
+                ticking = false;
+
+            }
+        );
+    }
+
+    window.addEventListener(
+        "scroll",
+        requestUpdate,
+        { passive: true }
+    );
+
+    window.addEventListener(
+        "resize",
+        requestUpdate,
+        { passive: true }
+    );
+
+    /* ---------------------------------------------------------
+       INITIAL STATE
+       --------------------------------------------------------- */
+
+    calculateState();
+
+})();
