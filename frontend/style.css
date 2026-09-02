@@ -2894,3 +2894,581 @@ body {
     }
 
 }
+/* =========================================================
+   IXVYN — LIVING CORE / PASS 01
+   THE FIELD AWAKENS
+   ========================================================= */
+
+:root {
+    --ixvyn-core: #b8ff3d;
+    --ixvyn-core-soft: rgba(184, 255, 61, 0.16);
+    --ixvyn-core-faint: rgba(184, 255, 61, 0.055);
+}
+
+/* ---------------------------------------------------------
+   ATMOSPHERIC FIELD
+   --------------------------------------------------------- */
+
+.hero-geometry {
+    isolation: isolate;
+    transform:
+        translate3d(var(--network-x), var(--network-y), 0);
+    will-change: transform;
+}
+
+/*
+   Large invisible field surrounding the geometry.
+   Multiple gradients create depth without additional DOM.
+*/
+.hero-geometry::before {
+    content: "";
+    position: absolute;
+    inset: -18%;
+    z-index: -3;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(184, 255, 61, 0.075) 0%,
+            rgba(184, 255, 61, 0.025) 16%,
+            transparent 43%
+        ),
+        radial-gradient(
+            circle at 50% 50%,
+            transparent 0%,
+            rgba(244, 244, 240, 0.018) 34%,
+            transparent 66%
+        );
+
+    filter: blur(10px);
+    animation: ixvynFieldBreath 7s ease-in-out infinite;
+}
+
+/* Second, much fainter atmospheric layer */
+.hero-geometry::after {
+    content: "";
+    position: absolute;
+    inset: -5%;
+    z-index: -2;
+    pointer-events: none;
+
+    background:
+        repeating-radial-gradient(
+            circle at 50% 50%,
+            transparent 0 7.5%,
+            rgba(184, 255, 61, 0.018) 7.6%,
+            transparent 7.8%
+        );
+
+    opacity: 0.7;
+    animation: ixvynFieldRotate 42s linear infinite;
+}
+
+/* ---------------------------------------------------------
+   CORE ATMOSPHERE
+   --------------------------------------------------------- */
+
+.geometry-core {
+    z-index: 8;
+
+    border-color: rgba(244, 244, 240, 0.75);
+
+    box-shadow:
+        0 0 0 1px rgba(184, 255, 61, 0.06),
+        0 0 22px rgba(184, 255, 61, 0.08),
+        0 0 70px rgba(184, 255, 61, 0.035);
+
+    animation:
+        ixvynCoreBreath 4.5s ease-in-out infinite;
+}
+
+/* Inner energy point */
+.geometry-core::after {
+    content: "";
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    background: var(--ixvyn-core);
+
+    box-shadow:
+        0 0 8px var(--ixvyn-core),
+        0 0 22px rgba(184, 255, 61, 0.65),
+        0 0 48px rgba(184, 255, 61, 0.2);
+
+    animation: ixvynCorePoint 2.8s ease-in-out infinite;
+}
+
+/* ---------------------------------------------------------
+   CORE ENERGY RINGS
+   --------------------------------------------------------- */
+
+.geometry-core::before {
+    content: "";
+    position: absolute;
+    inset: -18px;
+
+    border: 1px solid rgba(184, 255, 61, 0.16);
+    border-radius: 50%;
+
+    animation:
+        ixvynCoreRing 3.8s ease-out infinite;
+
+    pointer-events: none;
+}
+
+/* ---------------------------------------------------------
+   EXISTING RINGS — MAKE THEM FEEL LESS PERFECT
+   --------------------------------------------------------- */
+
+.geometry-ring {
+    will-change: transform;
+    transform-origin: center;
+}
+
+.ring-one {
+    border-color: rgba(244, 244, 240, 0.13);
+
+    animation:
+        ixvynRingOne 26s linear infinite;
+}
+
+.ring-two {
+    border-color: rgba(184, 255, 61, 0.10);
+
+    animation:
+        ixvynRingTwo 19s linear infinite;
+}
+
+.ring-three {
+    border-color: rgba(244, 244, 240, 0.09);
+
+    animation:
+        ixvynRingThree 13s linear infinite;
+}
+
+/* ---------------------------------------------------------
+   SCAN ARC
+   --------------------------------------------------------- */
+
+.ring-one::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+
+    border-radius: inherit;
+
+    background:
+        conic-gradient(
+            from 0deg,
+            transparent 0deg,
+            transparent 315deg,
+            rgba(184, 255, 61, 0) 326deg,
+            rgba(184, 255, 61, 0.8) 340deg,
+            rgba(184, 255, 61, 0) 355deg,
+            transparent 360deg
+        );
+
+    -webkit-mask:
+        radial-gradient(
+            farthest-side,
+            transparent calc(100% - 1px),
+            #000 calc(100% - 1px)
+        );
+
+    mask:
+        radial-gradient(
+            farthest-side,
+            transparent calc(100% - 1px),
+            #000 calc(100% - 1px)
+        );
+
+    animation: ixvynScan 6s linear infinite;
+
+    pointer-events: none;
+}
+
+/* ---------------------------------------------------------
+   RADIAL PULSE
+   --------------------------------------------------------- */
+
+.hero-geometry {
+    --pulse-scale: 1;
+}
+
+.hero-geometry .geometry-core {
+    position: absolute;
+}
+
+/* ---------------------------------------------------------
+   NODES — SIGNAL LOCK
+   --------------------------------------------------------- */
+
+.geometry-node {
+    transition:
+        transform 0.45s cubic-bezier(.16, 1, .3, 1),
+        background 0.45s ease,
+        border-color 0.45s ease,
+        box-shadow 0.45s ease;
+
+    will-change: transform;
+}
+
+.geometry-node:nth-of-type(1) {
+    animation: ixvynNodeFloatA 5.2s ease-in-out infinite;
+}
+
+.geometry-node:nth-of-type(2) {
+    animation: ixvynNodeFloatB 6.1s ease-in-out infinite;
+}
+
+.geometry-node:nth-of-type(3) {
+    animation: ixvynNodeFloatC 4.7s ease-in-out infinite;
+}
+
+.geometry-node.network-pulse {
+    background: var(--ixvyn-core);
+
+    border-color: var(--ixvyn-core);
+
+    box-shadow:
+        0 0 7px var(--ixvyn-core),
+        0 0 20px rgba(184, 255, 61, 0.45),
+        0 0 42px rgba(184, 255, 61, 0.15);
+}
+
+/* ---------------------------------------------------------
+   TRAJECTORY LINES
+   --------------------------------------------------------- */
+
+.geometry-line {
+    transform-origin: 50% 50%;
+    opacity: 0.65;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(244, 244, 240, 0.02) 20%,
+            rgba(244, 244, 240, 0.18) 50%,
+            rgba(244, 244, 240, 0.02) 80%,
+            transparent 100%
+        );
+
+    overflow: visible;
+}
+
+.geometry-line::after {
+    content: "";
+    position: absolute;
+
+    width: 90px;
+    height: 1px;
+
+    left: -90px;
+    top: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--ixvyn-core)
+        );
+
+    box-shadow:
+        0 0 8px rgba(184, 255, 61, 0.65);
+
+    animation: ixvynSignalRun 4.8s cubic-bezier(.22,.61,.36,1) infinite;
+}
+
+/* Offset second trajectory */
+.line-two::after {
+    animation-delay: 2.3s;
+}
+
+/* ---------------------------------------------------------
+   FIELD BREATHING
+   --------------------------------------------------------- */
+
+@keyframes ixvynFieldBreath {
+    0%,
+    100% {
+        opacity: 0.55;
+        transform: scale(0.97);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.025);
+    }
+}
+
+@keyframes ixvynFieldRotate {
+    from {
+        transform: rotate(0deg) scale(1);
+    }
+
+    to {
+        transform: rotate(360deg) scale(1);
+    }
+}
+
+/* ---------------------------------------------------------
+   CORE BREATH
+   --------------------------------------------------------- */
+
+@keyframes ixvynCoreBreath {
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow:
+            0 0 0 1px rgba(184, 255, 61, 0.05),
+            0 0 22px rgba(184, 255, 61, 0.08),
+            0 0 70px rgba(184, 255, 61, 0.035);
+    }
+
+    50% {
+        transform: scale(1.045);
+        box-shadow:
+            0 0 0 1px rgba(184, 255, 61, 0.09),
+            0 0 30px rgba(184, 255, 61, 0.13),
+            0 0 90px rgba(184, 255, 61, 0.06);
+    }
+}
+
+@keyframes ixvynCorePoint {
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(0.7);
+        opacity: 0.7;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.6);
+        opacity: 1;
+    }
+}
+
+@keyframes ixvynCoreRing {
+    0% {
+        opacity: 0;
+        transform: scale(0.55);
+    }
+
+    18% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.9);
+    }
+}
+
+/* ---------------------------------------------------------
+   RING MOVEMENT
+   --------------------------------------------------------- */
+
+@keyframes ixvynRingOne {
+    from {
+        transform: rotate(0deg) scale(1);
+    }
+
+    50% {
+        transform: rotate(180deg) scale(1.015);
+    }
+
+    to {
+        transform: rotate(360deg) scale(1);
+    }
+}
+
+@keyframes ixvynRingTwo {
+    from {
+        transform: rotate(360deg) scale(0.99);
+    }
+
+    50% {
+        transform: rotate(180deg) scale(1.025);
+    }
+
+    to {
+        transform: rotate(0deg) scale(0.99);
+    }
+}
+
+@keyframes ixvynRingThree {
+    from {
+        transform: rotate(0deg) scale(1);
+    }
+
+    50% {
+        transform: rotate(180deg) scale(0.94);
+    }
+
+    to {
+        transform: rotate(360deg) scale(1);
+    }
+}
+
+/* ---------------------------------------------------------
+   SCAN
+   --------------------------------------------------------- */
+
+@keyframes ixvynScan {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ---------------------------------------------------------
+   NODE MOVEMENT
+   --------------------------------------------------------- */
+
+@keyframes ixvynNodeFloatA {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(4px, -7px) scale(1.15);
+    }
+}
+
+@keyframes ixvynNodeFloatB {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(-6px, 4px) scale(1.2);
+    }
+}
+
+@keyframes ixvynNodeFloatC {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    50% {
+        transform: translate(5px, 6px) scale(1.12);
+    }
+}
+
+/* ---------------------------------------------------------
+   SIGNAL TRAVEL
+   --------------------------------------------------------- */
+
+@keyframes ixvynSignalRun {
+    0% {
+        left: -90px;
+        opacity: 0;
+    }
+
+    8% {
+        opacity: 0.9;
+    }
+
+    48% {
+        opacity: 1;
+    }
+
+    85% {
+        opacity: 0.7;
+    }
+
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
+}
+
+/* ---------------------------------------------------------
+   POINTER — SUBTLE FIELD RESPONSE
+   --------------------------------------------------------- */
+
+@media (pointer: fine) {
+
+    .hero-geometry {
+        transition:
+            transform 0.18s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .hero-geometry:hover .geometry-core {
+        border-color: rgba(184, 255, 61, 0.9);
+    }
+
+}
+
+/* ---------------------------------------------------------
+   PERFORMANCE / REDUCED MOTION
+   --------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .hero-geometry *,
+    .hero-geometry::before,
+    .hero-geometry::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+
+}
+
+/* ---------------------------------------------------------
+   MOBILE — KEEP THE EFFECT, CUT THE COST
+   --------------------------------------------------------- */
+
+@media (max-width: 800px) {
+
+    .hero-geometry::before {
+        filter: blur(6px);
+        opacity: 0.65;
+    }
+
+    .hero-geometry::after {
+        opacity: 0.35;
+    }
+
+    .geometry-line::after {
+        display: none;
+    }
+
+    .geometry-core {
+        animation-duration: 6s;
+    }
+
+    .ring-one::before {
+        opacity: 0.55;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .hero-geometry::after {
+        display: none;
+    }
+
+    .hero-geometry::before {
+        filter: blur(4px);
+    }
+
+    .ring-one::before {
+        display: none;
+    }
+
+}
