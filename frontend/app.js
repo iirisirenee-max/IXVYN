@@ -2131,3 +2131,240 @@ if (directionSection && directionTitle) {
         );
 
 })();
+/* ============================================================
+   IXVYN — PASS 04
+   MOBILE TOUCH FIELD
+   Finger becomes the interaction point.
+   ============================================================ */
+
+(() => {
+    "use strict";
+
+    const isMobile =
+        window.matchMedia(
+            "(max-width: 700px)"
+        ).matches;
+
+    if (!isMobile) return;
+
+    const geometry =
+        document.querySelector(
+            ".hero-geometry"
+        );
+
+    if (!geometry) return;
+
+    const nodes =
+        [
+            ...geometry.querySelectorAll(
+                ".geometry-node"
+            )
+        ];
+
+    const core =
+        geometry.querySelector(
+            ".geometry-core"
+        );
+
+    if (!nodes.length) return;
+
+    let touchX = 0;
+    let touchY = 0;
+
+    let active = false;
+
+    /* ---------------------------------------------------------
+       TOUCH START
+       --------------------------------------------------------- */
+
+    geometry.addEventListener(
+        "touchstart",
+        event => {
+
+            const touch =
+                event.touches[0];
+
+            if (!touch) return;
+
+            const rect =
+                geometry.getBoundingClientRect();
+
+            touchX =
+                touch.clientX -
+                rect.left;
+
+            touchY =
+                touch.clientY -
+                rect.top;
+
+            active = true;
+
+            geometry.classList.add(
+                "touch-active"
+            );
+
+        },
+        { passive: true }
+    );
+
+    /* ---------------------------------------------------------
+       TOUCH MOVE
+       --------------------------------------------------------- */
+
+    geometry.addEventListener(
+        "touchmove",
+        event => {
+
+            const touch =
+                event.touches[0];
+
+            if (!touch) return;
+
+            const rect =
+                geometry.getBoundingClientRect();
+
+            touchX =
+                touch.clientX -
+                rect.left;
+
+            touchY =
+                touch.clientY -
+                rect.top;
+
+            const maxDistance =
+                Math.min(
+                    rect.width,
+                    rect.height
+                ) * .24;
+
+            let nearest = null;
+            let nearestDistance =
+                Infinity;
+
+            nodes.forEach(node => {
+
+                const nodeRect =
+                    node.getBoundingClientRect();
+
+                const nodeX =
+                    nodeRect.left -
+                    rect.left +
+                    nodeRect.width / 2;
+
+                const nodeY =
+                    nodeRect.top -
+                    rect.top +
+                    nodeRect.height / 2;
+
+                const dx =
+                    nodeX - touchX;
+
+                const dy =
+                    nodeY - touchY;
+
+                const distance =
+                    Math.sqrt(
+                        dx * dx +
+                        dy * dy
+                    );
+
+                if (
+                    distance <
+                    nearestDistance
+                ) {
+                    nearest =
+                        node;
+
+                    nearestDistance =
+                        distance;
+                }
+
+            });
+
+            if (
+                nearest &&
+                nearestDistance <
+                    maxDistance
+            ) {
+
+                nearest.classList.add(
+                    "touch-awake"
+                );
+
+                setTimeout(
+                    () => {
+                        nearest.classList.remove(
+                            "touch-awake"
+                        );
+                    },
+                    420
+                );
+
+            }
+
+            if (core) {
+
+                const cx =
+                    rect.width / 2;
+
+                const cy =
+                    rect.height / 2;
+
+                const dx =
+                    touchX - cx;
+
+                const dy =
+                    touchY - cy;
+
+                const distance =
+                    Math.sqrt(
+                        dx * dx +
+                        dy * dy
+                    );
+
+                const influence =
+                    Math.max(
+                        0,
+                        1 -
+                            distance /
+                                (rect.width * .45)
+                    );
+
+                core.style.setProperty(
+                    "--touch-scale",
+                    1 +
+                        influence * .035
+                );
+
+            }
+
+        },
+        { passive: true }
+    );
+
+    /* ---------------------------------------------------------
+       TOUCH END
+       --------------------------------------------------------- */
+
+    geometry.addEventListener(
+        "touchend",
+        () => {
+
+            active = false;
+
+            geometry.classList.remove(
+                "touch-active"
+            );
+
+            if (core) {
+                core.style.setProperty(
+                    "--touch-scale",
+                    "1"
+                );
+            }
+
+        },
+        { passive: true }
+    );
+
+})();
