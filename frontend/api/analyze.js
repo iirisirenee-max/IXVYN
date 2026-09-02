@@ -1,52 +1,47 @@
 /*
 =========================================================
-IXVYN — LENS / AI ANALYSIS API
+IXVYN — LENS / ROAD-SCENE OBSERVATION API
 =========================================================
 
-Vercel Serverless Function
+LENS = OBSERVE
 
-LENS = OBSERVE.
+This endpoint:
+1. receives a road-scene image
+2. sends it to Gemini
+3. extracts visible evidence
+4. returns structured scene observations
 
-This endpoint receives a road-scene image from IXVYN LENS
-and asks Gemini to describe only what is visibly observable.
-
-LENS does NOT:
+LENS DOES NOT:
 - calculate risk
 - assign severity
 - assign priority
-- prescribe interventions
-- make municipal decisions
+- recommend interventions
+- decide what a municipality should do
 
-Those belong to downstream IXVYN systems.
-
-GEMINI_API_KEY must remain server-side in Vercel
-Environment Variables.
+Those responsibilities belong to SIGNAL / TRAJECTORY / CIVIC.
 =========================================================
 */
 
 export default async function handler(req, res) {
 
-    /*
-    =====================================================
-    METHOD CHECK
-    =====================================================
-    */
+    /* =====================================================
+       METHOD
+    ===================================================== */
 
     if (req.method !== "POST") {
 
         return res.status(405).json({
-            success: false,
-            error: "METHOD_NOT_ALLOWED"
-        });
 
+            success: false,
+
+            error:
+                "METHOD_NOT_ALLOWED"
+        });
     }
 
-
-    /*
-    =====================================================
-    API KEY
-    =====================================================
-    */
+    /* =====================================================
+       API KEY
+    ===================================================== */
 
     const apiKey =
         process.env.GEMINI_API_KEY;
@@ -58,28 +53,22 @@ export default async function handler(req, res) {
         );
 
         return res.status(500).json({
+
             success: false,
-            error: "GEMINI_API_KEY_MISSING"
+
+            error:
+                "GEMINI_API_KEY_MISSING"
         });
-
     }
-
-
-    /*
-    =====================================================
-    READ REQUEST
-    =====================================================
-    */
 
     try {
 
+        /* =================================================
+           READ REQUEST
+        ================================================= */
+
         const body =
             req.body || {};
-
-
-        /*
-        Accept several possible image field names.
-        */
 
         let image =
             body.image ||
@@ -87,40 +76,25 @@ export default async function handler(req, res) {
             body.dataUrl ||
             body.base64;
 
-
         let mimeType =
             body.mimeType ||
             body.mime_type ||
             "image/jpeg";
 
-
-        /*
-        =================================================
-        IMAGE VALIDATION
-        =================================================
-        */
-
         if (!image) {
 
             return res.status(400).json({
-                success: false,
-                error: "NO_IMAGE_PROVIDED"
-            });
 
+                success: false,
+
+                error:
+                    "NO_IMAGE_PROVIDED"
+            });
         }
 
-
-        /*
-        =================================================
-        DATA URL CLEANUP
-        =================================================
-
-        If the frontend sends:
-
-        data:image/jpeg;base64,AAAA...
-
-        remove the prefix.
-        */
+        /* =================================================
+           DATA URL CLEANUP
+        ================================================= */
 
         if (
             typeof image === "string" &&
@@ -132,7 +106,6 @@ export default async function handler(req, res) {
                     /^data:([^;]+);base64,(.+)$/
                 );
 
-
             if (match) {
 
                 mimeType =
@@ -140,42 +113,32 @@ export default async function handler(req, res) {
 
                 image =
                     match[2];
-
             }
-
         }
 
-
-        /*
-        Remove accidental whitespace.
-        */
-
         image =
-            String(image)
-                .replace(/\s/g, "");
+            image.replace(
+                /\s/g,
+                ""
+            );
 
-
-        /*
-        =====================================================
-        GEMINI PROMPT
-        =====================================================
-        */
+        /* =================================================
+           LENS PROMPT
+        ================================================= */
 
         const prompt = `
 
 You are IXVYN LENS.
 
-IXVYN LENS is the OBSERVE layer of a Vision Zero
-road-safety intelligence system.
+LENS is the OBSERVE layer of a road-safety intelligence system.
 
-Your job is to observe a submitted road-scene image
-and produce structured visual evidence.
+Your job is to observe and describe visible evidence in the submitted road scene.
 
 You are NOT the risk assessment system.
 
-You are NOT the intervention system.
+You are NOT the decision system.
 
-You are NOT the municipal decision-maker.
+You are NOT the intervention system.
 
 Therefore:
 
@@ -187,226 +150,123 @@ DO NOT assign priority.
 
 DO NOT recommend an intervention.
 
-DO NOT decide what a city should do.
+DO NOT decide who is responsible.
 
-DO NOT infer facts that cannot be supported by the image.
+DO NOT prescribe what a municipality should do.
 
-Only describe information that is visually observable
-in the submitted frame.
+DO NOT fabricate information that cannot be supported by the image.
 
-=========================================================
-WHAT TO OBSERVE
-=========================================================
+Your output will be passed to another system called SIGNAL.
 
-Observe the complete visible road scene.
+SIGNAL will use your observations to perform safety assessment.
 
-Consider:
+---------------------------------------------------------
+OBSERVE THE WHOLE SCENE
+---------------------------------------------------------
 
-1. ROAD
+Look for visible evidence involving:
 
-- scene type
-- approximate visible lane count when reasonably observable
+ROAD:
+- road type
+- lane structure
+- lane count when reasonably observable
 - intersection presence
 - crossing presence
-- road geometry
+- geometry
 - lane markings
-- road edges
-- road surface condition
 
-2. PEOPLE
+PEOPLE:
+- pedestrian presence
+- approximate pedestrian density category
+- vulnerable road users such as pedestrians, cyclists, children, wheelchair users, etc. when visibly supported
+- accessibility-related observations
 
-Observe:
-
-- whether people are present
-- approximate visible presence level
-- pedestrians
-- cyclists
-- wheelchair users or other visibly identifiable
-  vulnerable/accessibility-related road users
-- visible accessibility observations
-
-Do NOT invent exact people counts when the frame
-does not support reliable counting.
-
-3. VEHICLES
-
-Observe:
-
-- whether vehicles are present
-- approximate traffic presence
+VEHICLES:
+- vehicle presence
+- broad traffic density category
 - visible vehicle types
 - motorcycles
-- cars
 - buses
 - trucks
-- other clearly visible vehicle categories
+- cars
+- bicycles
 
-Do NOT claim vehicle speed unless speed is genuinely
-observable from the provided frame.
-
-A single still image normally cannot establish speed.
-
-4. INFRASTRUCTURE
-
-Observe visible infrastructure such as:
-
+INFRASTRUCTURE:
 - road surface
-- sidewalks
-- crossings
+- sidewalk
+- crossing infrastructure
 - lane markings
-- curbs
-- road edges
+- road edge
 - lighting
-- signs
 - barriers
-- traffic-control elements
-- other relevant visible infrastructure
+- signs
+- traffic-control infrastructure
+- other visible infrastructure
 
-5. OBSTRUCTIONS
+OBSTRUCTIONS:
+- parked vehicles
+- construction
+- objects
+- vegetation
+- damaged infrastructure
+- anything visibly obstructing movement or sight lines
 
-Describe visible objects or conditions that obstruct:
+VISIBILITY:
+- clear
+- partially obstructed
+- obstructed
+- unknown
+- visible factors causing obstruction
 
-- pedestrian movement
-- cycling movement
-- vehicle movement
-- visibility
-
-Only report an obstruction when visually supported.
-
-6. VISIBILITY
-
-Describe whether the visible scene appears:
-
-- CLEAR
-- PARTIAL
-- OBSTRUCTED
-- UNKNOWN
-
-Also identify visible factors affecting visibility.
-
-Do not infer weather, lighting conditions, or visibility
-outside what the image actually shows.
-
-7. INTERACTIONS
-
-Describe visible relationships between road users
-and infrastructure.
+INTERACTIONS:
+Describe visible relationships between road users and infrastructure.
 
 Examples:
 
-- pedestrian near vehicle movement
-- cyclist near vehicle movement
-- pedestrian using crossing
-- vehicle approaching crossing
-- obstruction near pedestrian path
-- unclear separation between road users
+"pedestrians are present near a marked crossing"
 
-Use careful language.
+"vehicles are present near the crossing"
 
-A still image does NOT prove future trajectory,
-collision probability, or actual conflict.
+"parked vehicles partially obstruct the sidewalk"
 
-If an interaction is ambiguous, say so.
+"motorcycles are visible alongside general traffic"
 
-8. GENERAL OBSERVATIONS
+Do NOT invent trajectories, speed, collision probability, or intent.
 
-Include other useful visual observations that may matter
-to a later safety assessment.
-
-These are observations, NOT risk judgments.
-
-=========================================================
+---------------------------------------------------------
 EVIDENCE DISCIPLINE
-=========================================================
+---------------------------------------------------------
 
-Separate evidence into:
+If something is visible, report it.
 
-clear:
-Things clearly visible in the image.
+If something is uncertain, put it under "uncertain".
 
-uncertain:
-Things that may be present but cannot be established
-with confidence.
+If something cannot be determined from the frame, put it under "notObservable".
 
-notObservable:
-Things that cannot be determined from this frame.
+Use:
 
-When something cannot be determined, explicitly use:
-
-UNKNOWN
+"UNKNOWN"
 
 or
 
-NOT OBSERVABLE FROM FRAME
+"NOT OBSERVABLE FROM FRAME"
 
-Do NOT fabricate:
+rather than inventing precision.
 
-- exact GPS coordinates
-- exact traffic counts
+Do not fabricate:
+
 - exact pedestrian counts
-- vehicle speeds
-- future trajectories
-- collision probability
+- exact vehicle counts
+- vehicle speed
+- time-to-collision
+- trajectory prediction
+- GPS coordinates
 - hidden infrastructure
-- historical information
-- weather outside the visible frame
-- risk scores
-- severity
-- priority
-- intervention recommendations
+- causality that cannot be visually established
 
-=========================================================
-LOCATION
-=========================================================
-
-Do NOT fabricate GPS coordinates.
-
-This endpoint should not derive coordinates from the
-visual scene.
-
-Return null for latitude and longitude unless reliable
-location metadata has explicitly been supplied to the
-request.
-
-=========================================================
-BOUNDING BOX
-=========================================================
-
-A bounding box is OPTIONAL.
-
-Only provide one when there is a clearly identifiable
-visual observation that benefits from localization.
-
-Coordinates must be normalized from 0 to 1000.
-
-x = left
-y = top
-width = width
-height = height
-
-If no useful bounding box can be established, return:
-
-null
-
-=========================================================
-IMPORTANT ARCHITECTURAL RULE
-=========================================================
-
-LENS observes.
-
-SIGNAL assesses.
-
-TRAJECTORY decides.
-
-CIVIC acts.
-
-MEMORY measures and learns.
-
-Never collapse these responsibilities.
-
-=========================================================
+---------------------------------------------------------
 OUTPUT
-=========================================================
+---------------------------------------------------------
 
 Return ONLY valid JSON.
 
@@ -466,37 +326,22 @@ Use exactly this structure:
     "notObservable": []
   },
 
-  "boundingBox": null,
-
   "sceneSummary": ""
 }
 
-=========================================================
+---------------------------------------------------------
 FIELD RULES
-=========================================================
+---------------------------------------------------------
 
 confidence:
 
-A number from 0 to 100 representing confidence in the
-overall visual observation.
+A number from 0 to 100 representing confidence in the visual scene interpretation.
 
-sceneType:
-
-A concise description such as:
-
-"URBAN INTERSECTION"
-
-"RESIDENTIAL STREET"
-
-"MARKED PEDESTRIAN CROSSING"
-
-"ROADWAY"
-
-"UNKNOWN"
+Do NOT interpret confidence as safety risk.
 
 laneCount:
 
-Use a number only when reasonably observable.
+Use a number only when the visible road geometry supports it.
 
 Otherwise:
 
@@ -504,23 +349,15 @@ null
 
 intersection:
 
-Only:
-
-YES
-NO
-UNKNOWN
+YES, NO, or UNKNOWN.
 
 crossing:
 
-Only:
-
-YES
-NO
-UNKNOWN
+YES, NO, or UNKNOWN.
 
 people.presence:
 
-Only:
+Use only:
 
 NONE
 LOW
@@ -530,7 +367,7 @@ UNKNOWN
 
 vehicles.presence:
 
-Only:
+Use only:
 
 NONE
 LOW
@@ -538,58 +375,51 @@ MODERATE
 HIGH
 UNKNOWN
 
-visibility.state:
-
-Only:
-
-CLEAR
-PARTIAL
-OBSTRUCTED
-UNKNOWN
-
-Arrays:
-
-Use concise factual observations.
-
-Do not turn observations into recommendations.
-
 sceneSummary:
 
-Provide a short factual summary of what is visibly
-present in the frame.
+Provide a concise factual description of the visible road scene.
 
-=========================================================
-FINAL SAFETY RULE
-=========================================================
+Do not include risk scores.
 
-If the image does not provide enough evidence for a field,
-use UNKNOWN, null, an empty array, or
-"NOT OBSERVABLE FROM FRAME".
+Do not include severity.
 
-It is better to report uncertainty than to invent precision.
+Do not include priorities.
+
+Do not recommend interventions.
+
+---------------------------------------------------------
+SAFETY OF THE OBSERVATION LAYER
+---------------------------------------------------------
+
+The purpose of LENS is to preserve evidence.
+
+It should be better to say:
+
+"NOT OBSERVABLE FROM FRAME"
+
+than to invent an apparently precise answer.
 
 Return ONLY JSON.
 `;
 
-
-        /*
-        =====================================================
-        GOOGLE GEMINI REQUEST
-        =====================================================
-        */
+        /* =================================================
+           GEMINI REQUEST
+        ================================================= */
 
         const endpoint =
             "https://generativelanguage.googleapis.com/v1beta/models/" +
-            "gemini-3.1-flash-lite:generateContent";
-
+            "gemini-3.7-flash:generateContent";
 
         const response =
             await fetch(
                 endpoint,
                 {
-                    method: "POST",
+
+                    method:
+                        "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json",
 
@@ -597,69 +427,61 @@ Return ONLY JSON.
                             apiKey
                     },
 
-                    body: JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                        contents: [
+                            contents: [
 
-                            {
+                                {
 
-                                role: "user",
+                                    role:
+                                        "user",
 
-                                parts: [
+                                    parts: [
 
-                                    {
-                                        text: prompt
-                                    },
+                                        {
 
-                                    {
+                                            text:
+                                                prompt
+                                        },
 
-                                        inline_data: {
+                                        {
 
-                                            mime_type:
-                                                mimeType,
+                                            inline_data: {
 
-                                            data:
-                                                image
+                                                mime_type:
+                                                    mimeType,
+
+                                                data:
+                                                    image
+                                            }
                                         }
+                                    ]
+                                }
+                            ],
 
-                                    }
+                            generationConfig: {
 
-                                ]
-
+                                responseMimeType:
+                                    "application/json"
                             }
-
-                        ],
-
-                        generationConfig: {
-
-                            responseMimeType:
-                                "application/json"
-
-                        }
-
-                    })
-
+                        })
                 }
             );
 
-
-        /*
-        =====================================================
-        GEMINI ERROR
-        =====================================================
-        */
+        /* =================================================
+           GEMINI ERROR
+        ================================================= */
 
         if (!response.ok) {
 
             const errorText =
                 await response.text();
 
-
             console.error(
                 "IXVYN Gemini error:",
                 errorText
             );
-
 
             return res.status(
                 response.status
@@ -675,28 +497,21 @@ Return ONLY JSON.
 
                 status:
                     response.status
-
             });
-
         }
 
-
-        /*
-        =====================================================
-        READ GEMINI RESPONSE
-        =====================================================
-        */
+        /* =================================================
+           GEMINI RESPONSE
+        ================================================= */
 
         const data =
             await response.json();
-
 
         const text =
             data
                 ?.candidates?.[0]
                 ?.content?.parts?.[0]
                 ?.text;
-
 
         if (!text) {
 
@@ -705,39 +520,27 @@ Return ONLY JSON.
                 data
             );
 
-
             return res.status(502).json({
 
                 success: false,
 
                 error:
                     "EMPTY_GEMINI_RESPONSE"
-
             });
-
         }
 
-
-        /*
-        =====================================================
-        PARSE JSON
-        =====================================================
-        */
+        /* =================================================
+           PARSE JSON
+        ================================================= */
 
         let analysis;
-
 
         try {
 
             analysis =
                 JSON.parse(text);
 
-        } catch (parseError) {
-
-            /*
-            Gemini can occasionally return markdown
-            fences despite the JSON response configuration.
-            */
+        } catch {
 
             const cleaned =
                 text
@@ -751,19 +554,17 @@ Return ONLY JSON.
                     )
                     .trim();
 
-
             try {
 
                 analysis =
                     JSON.parse(cleaned);
 
-            } catch (secondError) {
+            } catch (error) {
 
                 console.error(
-                    "IXVYN: Could not parse Gemini JSON.",
+                    "IXVYN: invalid Gemini JSON.",
                     text
                 );
-
 
                 return res.status(502).json({
 
@@ -774,61 +575,18 @@ Return ONLY JSON.
 
                     raw:
                         text
-
                 });
-
             }
-
         }
 
+        /* =================================================
+           NORMALIZE OBSERVATION
+        ================================================= */
 
-        /*
-        =====================================================
-        NORMALIZE RESPONSE
-        =====================================================
-        */
-
-        const safeArray = (value) => {
-
-            return Array.isArray(value)
-                ? value
-                : [];
-
-        };
-
-
-        const safeObject = (value) => {
-
-            return (
-                value &&
-                typeof value === "object" &&
-                !Array.isArray(value)
-            )
-                ? value
-                : {};
-
-        };
-
-
-        const rawConfidence =
+        const confidence =
             Number(
                 analysis.confidence
             );
-
-
-        const confidence =
-            Number.isFinite(
-                rawConfidence
-            )
-                ? Math.max(
-                    0,
-                    Math.min(
-                        100,
-                        rawConfidence
-                    )
-                )
-                : 0;
-
 
         const result = {
 
@@ -841,165 +599,101 @@ Return ONLY JSON.
             sceneType:
                 analysis.sceneType ||
                 analysis.road?.sceneType ||
-                "UNKNOWN",
+                "ROAD SCENE",
 
             confidence:
-
-
-                confidence,
-
+                Number.isFinite(confidence)
+                    ? Math.max(
+                        0,
+                        Math.min(
+                            100,
+                            confidence
+                        )
+                    )
+                    : 0,
 
             road:
-                safeObject(
-                    analysis.road
-                ),
-
+                analysis.road || {},
 
             people:
-                safeObject(
-                    analysis.people
-                ),
-
+                analysis.people || {},
 
             vehicles:
-                safeObject(
-                    analysis.vehicles
-                ),
-
+                analysis.vehicles || {},
 
             infrastructure:
-                safeObject(
-                    analysis.infrastructure
-                ),
-
+                analysis.infrastructure || {},
 
             obstructions:
-                safeArray(
+                Array.isArray(
                     analysis.obstructions
-                ),
-
+                )
+                    ? analysis.obstructions
+                    : [],
 
             visibility:
-                safeObject(
-                    analysis.visibility
-                ),
-
+                analysis.visibility || {},
 
             interactions:
-                safeArray(
+                Array.isArray(
                     analysis.interactions
-                ),
-
+                )
+                    ? analysis.interactions
+                    : [],
 
             observations:
-                safeArray(
+                Array.isArray(
                     analysis.observations
-                ),
-
+                )
+                    ? analysis.observations
+                    : [],
 
             evidence:
-                safeObject(
-                    analysis.evidence
-                ),
+                analysis.evidence || {
 
+                    clear: [],
 
-            boundingBox:
-                analysis.boundingBox &&
-                typeof analysis.boundingBox === "object"
-                    ? analysis.boundingBox
-                    : null,
+                    uncertain: [],
 
+                    notObservable: []
+                },
 
             sceneSummary:
                 analysis.sceneSummary ||
                 "Scene observed."
         };
 
-
-        /*
-        =====================================================
-        LOCATION
-        =====================================================
-
-        LENS does not visually invent coordinates.
-
-        The frontend already maintains the inspection
-        location separately.
-        */
-
-        result.location = {
-
-            lat: null,
-
-            lon: null
-
-        };
-
-
-        /*
-        =====================================================
-        LOG
-        =====================================================
-        */
+        /* =================================================
+           IMPORTANT:
+           NO RISK / SEVERITY / PRIORITY HERE.
+        ================================================= */
 
         console.log(
-            "IXVYN LENS scene observation:",
-            {
-                sceneType:
-                    result.sceneType,
-
-                confidence:
-                    result.confidence,
-
-                people:
-                    result.people?.presence,
-
-                vehicles:
-                    result.vehicles?.presence,
-
-                interactions:
-                    result.interactions?.length || 0
-            }
+            "IXVYN LENS observation:",
+            result
         );
-
-
-        /*
-        =====================================================
-        RETURN RESULT
-        =====================================================
-        */
 
         return res.status(200).json(
             result
         );
 
-
     } catch (error) {
-
-        /*
-        =====================================================
-        UNEXPECTED ERROR
-        =====================================================
-        */
 
         console.error(
             "IXVYN ANALYSIS ERROR:",
             error
         );
 
-
         return res.status(500).json({
 
-            success: false,
+            success:
+                false,
 
             error:
                 "INTERNAL_ANALYSIS_ERROR",
 
             message:
                 error.message
-
         });
-
     }
-
 }
