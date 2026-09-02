@@ -1,1073 +1,770 @@
 /* =========================================================
-   IXVYN / PATHFINDER
-   Operational Response Routing
-   ========================================================= */
+   IXVYN / SIGNAL
+   ASSESSMENT LAYER
+
+   LENS observes.
+   SIGNAL assesses.
+   SIGNAL does NOT choose interventions.
+========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    /* =====================================================
-       DOM
-       ===================================================== */
+    const assessButton =
+        document.getElementById("assess-button");
 
-    const systemState =
-        document.getElementById("system-state");
+    const trajectoryButton =
+        document.getElementById("trajectory-button");
 
-    const evidenceCard =
-        document.getElementById("evidence-card");
+    const reassessButton =
+        document.getElementById("reassess-button");
 
-    const evidenceState =
-        document.getElementById("evidence-state");
+    const processing =
+        document.getElementById("processing");
 
-    const condition =
-        document.getElementById("condition");
+    const signalResult =
+        document.getElementById("signal-result");
 
-    const evidenceSeverity =
-        document.getElementById("evidence-severity");
+    const systemStatus =
+        document.getElementById("system-status");
 
-    const evidenceConfidence =
-        document.getElementById("evidence-confidence");
+    const inputState =
+        document.getElementById("input-state");
 
-    const locationValue =
-        document.getElementById("location-value");
+    const actionNote =
+        document.getElementById("action-note");
 
-    const locationCoordinates =
-        document.getElementById("location-coordinates");
 
-    const evidenceDescription =
-        document.getElementById("evidence-description");
-
-    const generateButton =
-        document.getElementById("generate-button");
-
-    const routingSection =
-        document.getElementById("routing-section");
-
-    const routeCondition =
-        document.getElementById("route-condition");
-
-    const priorityFill =
-        document.getElementById("priority-fill");
-
-    const routePriority =
-        document.getElementById("route-priority");
-
-    const priorityReason =
-        document.getElementById("priority-reason");
-
-    const routeRisk =
-        document.getElementById("route-risk");
-
-    const riskDescription =
-        document.getElementById("risk-description");
-
-    const routeDestination =
-        document.getElementById("route-destination");
-
-    const routeDescription =
-        document.getElementById("route-description");
-
-    const responseStep1 =
-        document.getElementById("response-step-1");
-
-    const responseStep2 =
-        document.getElementById("response-step-2");
-
-    const responseStep3 =
-        document.getElementById("response-step-3");
-
-    const responseDescription =
-        document.getElementById("response-description");
-
-    const summarySection =
-        document.getElementById("summary-section");
-
-    const summaryTitle =
-        document.getElementById("summary-title");
-
-    const summaryText =
-        document.getElementById("summary-text");
-
-    const summaryPriority =
-        document.getElementById("summary-priority");
-
-    const summaryRoute =
-        document.getElementById("summary-route");
-
-    const summaryStatus =
-        document.getElementById("summary-status");
-
-    const newRouteButton =
-        document.getElementById("new-route");
+    let lensObservation = null;
+    let signalAssessment = null;
 
 
     /* =====================================================
-       STATE
-       ===================================================== */
+       SAFE TEXT
+    ===================================================== */
 
-    let lensEvidence = null;
-    let routeGenerated = false;
-
-
-    /* =====================================================
-       HELPERS
-       ===================================================== */
-
-    function sleep(milliseconds) {
-        return new Promise(resolve => {
-            setTimeout(resolve, milliseconds);
-        });
-    }
-
-
-    function safeText(value, fallback = "—") {
+    function text(value, fallback = "NOT OBSERVABLE") {
 
         if (
-            value === undefined ||
             value === null ||
+            value === undefined ||
             value === ""
         ) {
             return fallback;
+        }
+
+        if (Array.isArray(value)) {
+            return value.length
+                ? value.join(" · ")
+                : fallback;
+        }
+
+        if (typeof value === "object") {
+
+            return Object.entries(value)
+                .map(([key, value]) => {
+
+                    if (
+                        value === null ||
+                        value === undefined ||
+                        value === ""
+                    ) {
+                        return `${key.toUpperCase()}: ${fallback}`;
+                    }
+
+                    return `${key.toUpperCase()}: ${value}`;
+                })
+                .join(" · ");
         }
 
         return String(value);
     }
 
 
-    function normalize(value) {
+    /* =====================================================
+       ARRAY NORMALIZER
+    ===================================================== */
 
-        return String(value || "")
-            .trim()
-            .toUpperCase();
+    function array(value) {
+
+        if (!Array.isArray(value) || !value.length) {
+            return [];
+        }
+
+        return value.map(item => {
+
+            if (typeof item === "string") {
+                return item;
+            }
+
+            if (!item || typeof item !== "object") {
+                return String(item);
+            }
+
+            return (
+                item.label ||
+                item.type ||
+                item.description ||
+                item.factor ||
+                item.reason ||
+                JSON.stringify(item)
+            );
+
+        });
     }
 
 
     /* =====================================================
-       LOAD LENS EVIDENCE
-       ===================================================== */
+       LOAD LENS OBSERVATION
+    ===================================================== */
 
-    function loadLensEvidence() {
+    function loadLensObservation() {
 
-        /*
-         * These are the REAL keys currently written
-         * by LENS.
-         */
+        const raw =
+            sessionStorage.getItem(
+                "ixvyn_lens_observation"
+            );
 
-        const defect =
-            sessionStorage.getItem("sih_defect");
+        if (!raw) {
 
-        const severity =
-            sessionStorage.getItem("sih_severity");
+            inputState.textContent =
+                "WAITING FOR LENS";
 
-        const trigger =
-            sessionStorage.getItem("sih_trigger");
+            systemStatus.textContent =
+                "STANDBY";
 
-        const latitude =
-            sessionStorage.getItem("sih_lat");
+            assessButton.disabled = true;
 
-        const longitude =
-            sessionStorage.getItem("sih_lon");
-
-
-        /*
-         * PATHFINDER activates only when LENS has
-         * actually produced an inspection.
-         */
-
-        if (
-            trigger !== "true" ||
-            !defect ||
-            !severity
-        ) {
-
-            showWaitingState();
-
-            return;
+            return false;
         }
 
 
-        lensEvidence = {
+        try {
 
-            defect: defect,
+            lensObservation =
+                JSON.parse(raw);
 
-            severity: severity,
+        } catch (error) {
 
-            latitude:
-                latitude
-                    ? Number(latitude)
-                    : null,
+            console.error(
+                "IXVYN SIGNAL: invalid LENS observation",
+                error
+            );
 
-            longitude:
-                longitude
-                    ? Number(longitude)
-                    : null,
+            inputState.textContent =
+                "INVALID OBSERVATION";
 
-            confidence: null,
+            assessButton.disabled = true;
 
-            description:
-                "Infrastructure evidence forwarded from LENS visual inspection."
-
-        };
+            return false;
+        }
 
 
-        console.log(
-            "[PATHFINDER] LENS evidence received:",
-            lensEvidence
+        renderObservation(
+            lensObservation
         );
 
+        inputState.textContent =
+            "LENS OBSERVATION READY";
 
-        populateEvidence(
-            lensEvidence
-        );
-    }
+        systemStatus.textContent =
+            "SIGNAL READY";
 
-
-    /* =====================================================
-       WAITING STATE
-       ===================================================== */
-
-    function showWaitingState() {
-
-        lensEvidence = null;
-
-        evidenceCard.classList.remove(
-            "is-loaded"
-        );
-
-        evidenceState.textContent =
-            "WAITING";
-
-        condition.textContent =
-            "—";
-
-        evidenceSeverity.textContent =
-            "SEVERITY —";
-
-        evidenceConfidence.textContent =
-            "CONFIDENCE —";
-
-        locationValue.textContent =
-            "—";
-
-        locationCoordinates.textContent =
-            "NO COORDINATES";
-
-        evidenceDescription.textContent =
-            "No LENS inspection has been forwarded yet.";
-
-        generateButton.disabled =
-            true;
-
-        systemState.textContent =
-            "AWAITING EVIDENCE";
-    }
-
-
-    /* =====================================================
-       POPULATE EVIDENCE
-       ===================================================== */
-
-    function populateEvidence(data) {
-
-        evidenceCard.classList.add(
-            "is-loaded"
-        );
-
-        evidenceState.textContent =
-            "RECEIVED";
-
-        systemState.textContent =
-            "EVIDENCE RECEIVED";
-
-        generateButton.disabled =
+        assessButton.disabled =
             false;
 
+        actionNote.textContent =
+            "Observation received. SIGNAL can now assess the safety signal.";
 
-        const defect =
-            data.defect ||
-            data.classification ||
-            data.condition ||
-            data.label ||
-            "UNKNOWN CONDITION";
+        return true;
+    }
 
 
-        const severity =
-            data.severity ||
-            "UNKNOWN";
+    /* =====================================================
+       RENDER OBSERVATION
+    ===================================================== */
+
+    function renderObservation(data) {
+
+        const road =
+            data.road || {};
+
+        const people =
+            data.people || {};
+
+        const vehicles =
+            data.vehicles || {};
+
+        const visibility =
+            data.visibility || {};
 
 
-        condition.textContent =
-            normalize(defect);
+        document.getElementById(
+            "scene-summary"
+        ).textContent =
+            data.sceneSummary ||
+            "Scene observed.";
 
 
-        evidenceSeverity.textContent =
-            `SEVERITY ${normalize(severity)}`;
+        document.getElementById(
+            "scene-road"
+        ).textContent =
+            text(
+                road.sceneType ||
+                road.geometry ||
+                data.sceneType
+            );
 
 
-        if (
-            data.confidence !== null &&
-            data.confidence !== undefined
-        ) {
+        document.getElementById(
+            "scene-people"
+        ).textContent =
+            text(
+                people.presence
+            );
 
-            const confidence =
-                parseFloat(data.confidence);
+
+        document.getElementById(
+            "scene-vehicles"
+        ).textContent =
+            text(
+                vehicles.presence
+            );
+
+
+        document.getElementById(
+            "scene-visibility"
+        ).textContent =
+            text(
+                visibility.state
+            );
+    }
+
+
+    /* =====================================================
+       PROCESSING
+    ===================================================== */
+
+    async function runAssessment() {
+
+        if (!lensObservation) {
+            return;
+        }
+
+        assessButton.disabled = true;
+
+        signalResult.hidden = true;
+
+        processing.hidden = false;
+
+        systemStatus.textContent =
+            "ASSESSING";
+
+        inputState.textContent =
+            "SIGNAL SYNTHESIS";
+
+
+        const processLines = [
+            document.getElementById("process-line-1"),
+            document.getElementById("process-line-2"),
+            document.getElementById("process-line-3"),
+            document.getElementById("process-line-4")
+        ];
+
+
+        processLines.forEach(
+            line => line.classList.remove("active")
+        );
+
+
+        try {
+
+            for (
+                let i = 0;
+                i < processLines.length;
+                i++
+            ) {
+
+                processLines[i]
+                    .classList.add("active");
+
+                await wait(500);
+            }
+
+
+            const response =
+                await fetch(
+                    "/api/signal",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            observation:
+                                lensObservation
+                        })
+                    }
+                );
+
+
+            const responseText =
+                await response.text();
+
+
+            let data = null;
+
+
+            try {
+
+                data =
+                    responseText
+                        ? JSON.parse(responseText)
+                        : null;
+
+            } catch {
+
+                throw new Error(
+                    `SIGNAL server returned HTTP ${response.status}.`
+                );
+            }
 
 
             if (
-                Number.isFinite(confidence)
+                !response.ok ||
+                !data
             ) {
 
-                const percentage =
-                    confidence <= 1
-                        ? Math.round(confidence * 100)
-                        : Math.round(confidence);
-
-                evidenceConfidence.textContent =
-                    `CONFIDENCE ${percentage}%`;
-
-            } else {
-
-                evidenceConfidence.textContent =
-                    "CONFIDENCE —";
+                throw new Error(
+                    data?.error ||
+                    `SIGNAL assessment failed (${response.status}).`
+                );
             }
 
-        } else {
 
-            evidenceConfidence.textContent =
-                "CONFIDENCE —";
-        }
+            signalAssessment =
+                data.assessment ||
+                data;
 
 
-        evidenceDescription.textContent =
-            safeText(
-                data.description,
-                "Infrastructure evidence forwarded from LENS visual inspection."
+            saveSignalAssessment(
+                signalAssessment
+            );
+
+            renderAssessment(
+                signalAssessment
             );
 
 
-        /* -------------------------------------------------
-           LOCATION
-           ------------------------------------------------- */
+            processing.hidden = true;
 
-        const latitude =
-            data.latitude;
+            signalResult.hidden = false;
 
-        const longitude =
-            data.longitude;
+            systemStatus.textContent =
+                "SIGNAL ASSESSED";
+
+            inputState.textContent =
+                "ASSESSMENT COMPLETE";
 
 
-        if (
-            Number.isFinite(latitude) &&
-            Number.isFinite(longitude)
-        ) {
+            signalResult.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
 
-            locationValue.textContent =
-                "GEOLOCATED";
 
-            locationCoordinates.textContent =
-                `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`;
+        } catch (error) {
 
-        } else {
+            console.error(
+                "IXVYN SIGNAL ERROR:",
+                error
+            );
 
-            locationValue.textContent =
-                "LOCATION PENDING";
+            processing.hidden = true;
 
-            locationCoordinates.textContent =
-                "NO COORDINATES";
+            assessButton.disabled = false;
+
+            systemStatus.textContent =
+                "ASSESSMENT ERROR";
+
+            inputState.textContent =
+                "FAILED";
+
+            actionNote.textContent =
+                error.message ||
+                "Unable to complete SIGNAL assessment.";
+
         }
+
     }
 
 
     /* =====================================================
-       DECISION ENGINE
-       ===================================================== */
+       RENDER ASSESSMENT
+    ===================================================== */
 
-    function deriveRoute(data) {
+    function renderAssessment(result) {
 
-        const defect =
-            normalize(
-                data.defect
-            );
+        const score =
+            Number(result.riskScore);
 
 
-        const severity =
-            normalize(
-                data.severity
-            );
+        document.getElementById(
+            "risk-score"
+        ).textContent =
+            Number.isFinite(score)
+                ? Math.round(score)
+                : "—";
 
 
-        /* =================================================
-           PRIORITY
-           ================================================= */
+        document.getElementById(
+            "risk-level"
+        ).textContent =
+            text(
+                result.riskLevel,
+                "UNASSESSED"
+            ).toUpperCase();
 
-        let priority =
-            "MEDIUM";
 
-        let priorityScore =
-            62;
+        document.getElementById(
+            "risk-headline"
+        ).textContent =
+            result.headline ||
+            "Safety signal assessed.";
 
 
-        if (
-            severity.includes("CRITICAL") ||
-            severity.includes("SEVERE") ||
-            severity.includes("HIGH")
-        ) {
+        document.getElementById(
+            "risk-reasoning"
+        ).textContent =
+            result.reasoning ||
+            "No reasoning was returned.";
 
-            priority =
-                "HIGH";
 
-            priorityScore =
-                92;
+        renderList(
+            "factors-list",
+            result.contributingFactors
+        );
 
-        } else if (
-            severity.includes("LOW") ||
-            severity.includes("MINOR")
-        ) {
 
-            priority =
-                "LOW";
+        renderList(
+            "conflicts-list",
+            result.conflictIndicators
+        );
 
-            priorityScore =
-                35;
-        }
 
+        renderList(
+            "exposure-list",
+            result.exposure
+        );
 
-        /* =================================================
-           RISK
-           ================================================= */
 
-        let risk =
-            "INFRASTRUCTURE HAZARD";
+        renderList(
+            "vulnerable-list",
+            result.vulnerableRoadUsers
+        );
 
 
-        let riskDescriptionText =
-            "Observed damage may affect safe use of public infrastructure.";
+        document.getElementById(
+            "evidence-strength"
+        ).textContent =
+            text(
+                result.evidenceStrength,
+                "UNKNOWN"
+            ).toUpperCase();
 
 
-        if (
-            defect.includes("POTHOLE")
-        ) {
+        renderBulletList(
+            "supported-list",
+            result.evidence?.supported
+        );
 
-            risk =
-                "VEHICLE / PEDESTRIAN HAZARD";
 
-            riskDescriptionText =
-                "Road-surface damage may create collision, vehicle-damage, or pedestrian safety risk.";
-
-        } else if (
-            defect.includes("CRACK") ||
-            defect.includes("ROAD DAMAGE") ||
-            defect.includes("DAMAGE")
-        ) {
-
-            risk =
-                "ROAD SAFETY HAZARD";
-
-            riskDescriptionText =
-                "Surface deterioration may worsen with traffic and environmental exposure.";
-
-        } else if (
-            defect.includes("WASTE") ||
-            defect.includes("OBSTRUCTION") ||
-            defect.includes("DEBRIS")
-        ) {
-
-            risk =
-                "ACCESS / SANITATION HAZARD";
-
-            riskDescriptionText =
-                "The obstruction may restrict access, mobility, or normal public-space use.";
-        }
-
-
-        /* =================================================
-           ROUTE
-           ================================================= */
-
-        let route =
-            "INFRASTRUCTURE MAINTENANCE";
-
-
-        let routeDescriptionText =
-            "Forward the observation to the appropriate municipal maintenance workflow.";
-
-
-        if (
-            defect.includes("POTHOLE") ||
-            defect.includes("ROAD") ||
-            defect.includes("CRACK") ||
-            defect.includes("DAMAGE")
-        ) {
-
-            route =
-                "ROAD MAINTENANCE";
-
-            routeDescriptionText =
-                "Route to road-maintenance inspection and repair workflow.";
-
-        } else if (
-            defect.includes("WASTE") ||
-            defect.includes("OBSTRUCTION") ||
-            defect.includes("DEBRIS")
-        ) {
-
-            route =
-                "SANITATION / CLEARANCE";
-
-            routeDescriptionText =
-                "Route to clearance or sanitation response workflow.";
-        }
-
-
-        /* =================================================
-           RESPONSE
-           ================================================= */
-
-        let response = {
-
-            step1:
-                "INSPECT",
-
-            step2:
-                "REPAIR",
-
-            step3:
-                "VERIFY",
-
-            description:
-                "Inspect the reported condition, execute the appropriate intervention, then verify the outcome."
-
-        };
-
-
-        if (
-            defect.includes("WASTE") ||
-            defect.includes("OBSTRUCTION") ||
-            defect.includes("DEBRIS")
-        ) {
-
-            response = {
-
-                step1:
-                    "INSPECT",
-
-                step2:
-                    "CLEAR",
-
-                step3:
-                    "VERIFY",
-
-                description:
-                    "Inspect the obstruction, clear the affected area, then verify that access has been restored."
-
-            };
-        }
-
-
-        return {
-
-            condition:
-                defect ||
-                "UNKNOWN CONDITION",
-
-            priority,
-
-            priorityScore,
-
-            priorityReason:
-                `Priority derived from observed severity: ${severity || "UNSPECIFIED"}.`,
-
-            risk,
-
-            riskDescription:
-                riskDescriptionText,
-
-            route,
-
-            routeDescription:
-                routeDescriptionText,
-
-            response
-        };
+        renderBulletList(
+            "unknown-list",
+            result.evidence?.unknowns
+        );
     }
 
 
     /* =====================================================
-       GENERATE ROUTE
-       ===================================================== */
+       RESULT LIST
+    ===================================================== */
 
-    async function generateRoute() {
+    function renderList(
+        elementId,
+        value
+    ) {
 
-        if (
-            !lensEvidence ||
-            routeGenerated
-        ) {
+        const container =
+            document.getElementById(
+                elementId
+            );
+
+        if (!container) {
             return;
         }
 
 
-        routeGenerated =
-            true;
+        const values =
+            array(value);
 
 
-        generateButton.disabled =
-            true;
+        if (!values.length) {
 
+            container.innerHTML =
+                `<div>NONE IDENTIFIED</div>`;
 
-        generateButton
-            .querySelector(
-                "span:first-child"
-            )
-            .textContent =
-                "ROUTING EVIDENCE";
-
-
-        systemState.textContent =
-            "ROUTING";
-
-
-        const header =
-            document.querySelector(
-                ".pf-header"
-            );
-
-
-        if (header) {
-            header.classList.add(
-                "is-active"
-            );
-        }
-
-
-        clearRouteState();
-
-
-        const route =
-            deriveRoute(
-                lensEvidence
-            );
-
-
-        /* -------------------------------------------------
-           CONDITION
-           ------------------------------------------------- */
-
-        await sleep(450);
-
-
-        routeCondition.textContent =
-            route.condition;
-
-
-        activateNode(
-            "condition"
-        );
-
-
-        /* -------------------------------------------------
-           PRIORITY
-           ------------------------------------------------- */
-
-        await sleep(350);
-
-
-        routePriority.textContent =
-            route.priority;
-
-
-        priorityReason.textContent =
-            route.priorityReason;
-
-
-        activateNode(
-            "priority"
-        );
-
-
-        requestAnimationFrame(() => {
-
-            priorityFill.style.width =
-                `${route.priorityScore}%`;
-
-        });
-
-
-        /* -------------------------------------------------
-           RISK
-           ------------------------------------------------- */
-
-        await sleep(350);
-
-
-        routeRisk.textContent =
-            route.risk;
-
-
-        riskDescription.textContent =
-            route.riskDescription;
-
-
-        activateNode(
-            "risk"
-        );
-
-
-        /* -------------------------------------------------
-           ROUTE
-           ------------------------------------------------- */
-
-        await sleep(350);
-
-
-        routeDestination.textContent =
-            route.route;
-
-
-        routeDescription.textContent =
-            route.routeDescription;
-
-
-        activateNode(
-            "route"
-        );
-
-
-        /* -------------------------------------------------
-           RESPONSE
-           ------------------------------------------------- */
-
-        await sleep(350);
-
-
-        responseStep1.textContent =
-            route.response.step1;
-
-        responseStep2.textContent =
-            route.response.step2;
-
-        responseStep3.textContent =
-            route.response.step3;
-
-        responseDescription.textContent =
-            route.response.description;
-
-
-        activateNode(
-            "response"
-        );
-
-
-        routingSection.classList.add(
-            "is-generated"
-        );
-
-
-        /* -------------------------------------------------
-           SUMMARY
-           ------------------------------------------------- */
-
-        await sleep(500);
-
-
-        renderSummary(
-            route
-        );
-
-
-        summarySection.classList.add(
-            "is-generated"
-        );
-       /* -------------------------------------------------
-   CIVIC HANDOFF
-   ------------------------------------------------- */
-
-sessionStorage.setItem(
-    "pathfinder_complete",
-    "true"
-);
-
-sessionStorage.setItem(
-    "pathfinder_route",
-    route.route
-);
-
-sessionStorage.setItem(
-    "pathfinder_risk",
-    route.risk
-);
-
-sessionStorage.setItem(
-    "pathfinder_priority",
-    route.priority
-);
-
-sessionStorage.setItem(
-    "pathfinder_condition",
-    route.condition
-);
-
-sessionStorage.setItem(
-    "pathfinder_response",
-    `${route.response.step1} → ${route.response.step2} → ${route.response.step3}`
-);
-
-console.log(
-    "[PATHFINDER] Evidence forwarded to CIVIC."
-);
-
-
-        systemState.textContent =
-            "ROUTE IDENTIFIED";
-
-
-        generateButton
-            .querySelector(
-                "span:first-child"
-            )
-            .textContent =
-                "ROUTE GENERATED";
-
-
-        if (header) {
-
-            header.classList.remove(
-                "is-active"
-            );
-        }
-    }
-
-
-    /* =====================================================
-       ACTIVATE NODE
-       ===================================================== */
-
-    function activateNode(
-        nodeName
-    ) {
-
-        const node =
-            document.querySelector(
-                `.pf-route-node[data-node="${nodeName}"]`
-            );
-
-
-        if (!node) {
             return;
         }
 
 
-        node.classList.add(
-            "is-active"
-        );
-
-
-        const previousLine =
-            node.previousElementSibling;
-
-
-        if (
-            previousLine &&
-            previousLine.classList.contains(
-                "pf-route-line"
-            )
-        ) {
-
-            previousLine.classList.add(
-                "is-active"
-            );
-        }
+        container.innerHTML =
+            values
+                .map(item =>
+                    `<div>${escapeHTML(item)}</div>`
+                )
+                .join("");
     }
 
 
     /* =====================================================
-       CLEAR ROUTE
-       ===================================================== */
+       BULLET LIST
+    ===================================================== */
 
-    function clearRouteState() {
-
-        document
-            .querySelectorAll(
-                ".pf-route-node"
-            )
-            .forEach(node => {
-
-                node.classList.remove(
-                    "is-active"
-                );
-
-            });
-
-
-        document
-            .querySelectorAll(
-                ".pf-route-line"
-            )
-            .forEach(line => {
-
-                line.classList.remove(
-                    "is-active"
-                );
-
-            });
-
-
-        routingSection.classList.remove(
-            "is-generated"
-        );
-
-
-        summarySection.classList.remove(
-            "is-generated"
-        );
-
-
-        priorityFill.style.width =
-            "0%";
-
-
-        routeCondition.textContent =
-            "—";
-
-        routePriority.textContent =
-            "—";
-
-        routeRisk.textContent =
-            "—";
-
-        routeDestination.textContent =
-            "—";
-
-
-        priorityReason.textContent =
-            "Priority will be derived from severity.";
-
-
-        riskDescription.textContent =
-            "Potential impact will be assessed from the observed condition.";
-
-
-        routeDescription.textContent =
-            "Operational destination will be selected from the condition.";
-
-
-        responseStep1.textContent =
-            "INSPECT";
-
-        responseStep2.textContent =
-            "REPAIR";
-
-        responseStep3.textContent =
-            "VERIFY";
-
-
-        responseDescription.textContent =
-            "No response route generated.";
-
-
-        summaryTitle.textContent =
-            "AWAITING ROUTE";
-
-
-        summaryText.textContent =
-            "Forward evidence from LENS to generate an operational response.";
-
-
-        summaryPriority.textContent =
-            "—";
-
-        summaryRoute.textContent =
-            "—";
-
-        summaryStatus.textContent =
-            "PENDING";
-    }
-
-
-    /* =====================================================
-       SUMMARY
-       ===================================================== */
-
-    function renderSummary(
-        route
+    function renderBulletList(
+        elementId,
+        value
     ) {
 
-        summaryTitle.textContent =
-            `${route.priority} RESPONSE`;
+        const container =
+            document.getElementById(
+                elementId
+            );
+
+        if (!container) {
+            return;
+        }
 
 
-        summaryText.textContent =
-            `PATHFINDER routed ${route.condition.toLowerCase()} through ${route.route.toLowerCase()} with a ${route.priority.toLowerCase()} operational priority.`;
+        const values =
+            array(value);
 
 
-        summaryPriority.textContent =
-            route.priority;
+        if (!values.length) {
+
+            container.innerHTML =
+                `<li>NONE IDENTIFIED</li>`;
+
+            return;
+        }
 
 
-        summaryRoute.textContent =
-            route.route;
-
-
-        summaryStatus.textContent =
-            "ROUTE CONFIRMED";
+        container.innerHTML =
+            values
+                .map(item =>
+                    `<li>${escapeHTML(item)}</li>`
+                )
+                .join("");
     }
 
 
     /* =====================================================
-       NEW ROUTE
-       ===================================================== */
+       SAVE SIGNAL
+    ===================================================== */
 
-    function resetRoute() {
+    function saveSignalAssessment(
+        assessment
+    ) {
 
-        routeGenerated =
-            false;
+        const record = {
+
+            schema:
+                "IXVYN_SAFETY_SIGNAL_V1",
+
+            source:
+                "SIGNAL",
+
+            timestamp:
+                new Date().toISOString(),
+
+            observation:
+                lensObservation,
+
+            assessment: {
+
+                riskScore:
+                    assessment.riskScore ??
+                    null,
+
+                riskLevel:
+                    assessment.riskLevel ??
+                    "UNKNOWN",
+
+                headline:
+                    assessment.headline ||
+                    "",
+
+                reasoning:
+                    assessment.reasoning ||
+                    "",
+
+                contributingFactors:
+                    assessment.contributingFactors ||
+                    [],
+
+                conflictIndicators:
+                    assessment.conflictIndicators ||
+                    [],
+
+                exposure:
+                    assessment.exposure ||
+                    [],
+
+                vulnerableRoadUsers:
+                    assessment.vulnerableRoadUsers ||
+                    [],
+
+                evidenceStrength:
+                    assessment.evidenceStrength ||
+                    "UNKNOWN",
+
+                evidence:
+                    assessment.evidence ||
+                    {
+                        supported: [],
+                        unknowns: []
+                    }
+            },
+
+            intervention:
+                null,
+
+            humanDecision:
+                null,
+
+            outcome:
+                null,
+
+            status:
+                "assessed"
+        };
 
 
-        clearRouteState();
-
-
-        generateButton.disabled =
-            !lensEvidence;
-
-
-        generateButton
-            .querySelector(
-                "span:first-child"
-            )
-            .textContent =
-                "GENERATE RESPONSE";
-
-
-        systemState.textContent =
-            lensEvidence
-                ? "EVIDENCE RECEIVED"
-                : "AWAITING EVIDENCE";
+        sessionStorage.setItem(
+            "ixvyn_signal_assessment",
+            JSON.stringify(record)
+        );
     }
 
 
     /* =====================================================
-       EVENTS
-       ===================================================== */
+       TRAJECTORY HANDOFF
+    ===================================================== */
 
-    generateButton.addEventListener(
+    trajectoryButton.addEventListener(
         "click",
-        generateRoute
-    );
+        () => {
+
+            if (!signalAssessment) {
+                return;
+            }
 
 
-    newRouteButton.addEventListener(
-        "click",
-        resetRoute
+            sessionStorage.setItem(
+                "ixvyn_trajectory_input",
+                JSON.stringify({
+                    source: "SIGNAL",
+
+                    observation:
+                        lensObservation,
+
+                    assessment:
+                        signalAssessment,
+
+                    timestamp:
+                        new Date().toISOString()
+                })
+            );
+
+
+            sessionStorage.setItem(
+                "ixvyn_trajectory_trigger",
+                "true"
+            );
+
+
+            /*
+             * Keep the existing route so the homepage
+             * does not need to change immediately.
+             *
+             * TRAJECTORY can replace this destination
+             * once its page is built.
+             */
+
+            window.location.href =
+                "trajectory.html";
+        }
     );
 
 
     /* =====================================================
-       INITIALIZE
-       ===================================================== */
+       REASSESS
+    ===================================================== */
 
-    loadLensEvidence();
+    reassessButton.addEventListener(
+        "click",
+        () => {
 
+            signalResult.hidden = true;
 
-    console.log(
-        "IXVYN PATHFINDER operational routing interface ready."
+            signalAssessment = null;
+
+            assessButton.disabled = false;
+
+            inputState.textContent =
+                "LENS OBSERVATION READY";
+
+            systemStatus.textContent =
+                "SIGNAL READY";
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
     );
+
+
+    /* =====================================================
+       HELPERS
+    ===================================================== */
+
+    function wait(ms) {
+
+        return new Promise(
+            resolve =>
+                setTimeout(resolve, ms)
+        );
+    }
+
+
+    function escapeHTML(value) {
+
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+
+    /* =====================================================
+       INIT
+    ===================================================== */
+
+    loadLensObservation();
 
 });
