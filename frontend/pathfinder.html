@@ -2,391 +2,560 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>PATHFINDER — IXVYN</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta
+        name="description"
+        content="SIGNAL — road safety risk assessment intelligence for Vision Zero."
+    >
+
+    <title>IXVYN / SIGNAL</title>
 
     <link rel="stylesheet" href="pathfinder.css">
 </head>
 
-<body class="pathfinder-page">
+<body>
 
-    <!-- ATMOSPHERE -->
-    <div class="pf-atmosphere" aria-hidden="true">
-        <div class="pf-grid"></div>
-        <div class="pf-orbit pf-orbit-a"></div>
-        <div class="pf-orbit pf-orbit-b"></div>
-        <div class="pf-crosshair"></div>
-    </div>
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
+    <header class="site-header">
 
-    <!-- TOP SYSTEM BAR -->
-    <header class="pf-header">
-
-        <a href="index.html" class="pf-brand">
-            <span class="pf-brand-mark">IXVYN</span>
-            <span class="pf-brand-divider"></span>
-            <span class="pf-brand-system">PATHFINDER</span>
+        <a href="index.html" class="wordmark">
+            IXVYN
         </a>
 
-        <div class="pf-header-status">
-            <span class="pf-status-dot"></span>
-            <span id="system-state">AWAITING EVIDENCE</span>
+        <div class="header-center">
+            <span class="header-kicker">
+                CIVIC INTELLIGENCE / 02
+            </span>
+
+            <span class="header-title">
+                SIGNAL
+            </span>
+        </div>
+
+        <div class="header-status">
+            <span class="status-dot"></span>
+            <span id="system-status">
+                STANDBY
+            </span>
         </div>
 
     </header>
 
 
-    <main class="pf-experience">
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main>
 
         <!-- HERO -->
-        <section class="pf-hero">
 
-            <div class="pf-eyebrow">
-                <span>IXVYN / PATHFINDER</span>
-                <span>02 / 05</span>
+        <section class="signal-hero">
+
+            <div class="hero-meta">
+                <span>MODULE / 02</span>
+                <span>ASSESS</span>
+                <span>VISION ZERO</span>
             </div>
 
-            <h1>
-                TURN EVIDENCE<br>
-                INTO <em>ACTION.</em>
-            </h1>
+            <div class="hero-title-wrap">
 
-            <p class="pf-lead">
-                PATHFINDER translates observed infrastructure conditions
-                into an operational response route.
-            </p>
+                <div class="hero-index">
+                    02
+                </div>
+
+                <h1>
+                    SIGNAL
+                </h1>
+
+                <div class="hero-rule"></div>
+
+                <p>
+                    Safety intelligence that turns observed
+                    road-scene evidence into a transparent
+                    assessment of risk, exposure, and
+                    contributing factors.
+                </p>
+
+            </div>
+
+            <div class="hero-bottom">
+                <span>
+                    LENS → SIGNAL
+                </span>
+
+                <span>
+                    OBSERVE / ASSESS
+                </span>
+            </div>
 
         </section>
 
 
-        <!-- INPUT / EVIDENCE -->
-        <section class="pf-evidence-section">
+        <!-- =================================================
+             ASSESSMENT CONSOLE
+        ================================================== -->
 
-            <div class="pf-section-label">
-                <span>01</span>
-                <span>INCOMING EVIDENCE</span>
+        <section class="assessment-console">
+
+            <div class="console-header">
+
+                <div>
+                    <span class="eyebrow">
+                        INPUT
+                    </span>
+
+                    <h2>
+                        SCENE EVIDENCE
+                    </h2>
+                </div>
+
+                <div class="input-state" id="input-state">
+                    WAITING FOR LENS
+                </div>
+
             </div>
 
-            <div class="pf-evidence-card" id="evidence-card">
 
-                <div class="pf-evidence-header">
+            <!-- SCENE SUMMARY -->
+
+            <div class="scene-panel">
+
+                <div class="panel-label">
+                    OBSERVED SCENE
+                </div>
+
+                <div
+                    class="scene-summary"
+                    id="scene-summary"
+                >
+                    No scene observation has been received.
+                </div>
+
+                <div class="scene-grid">
+
+                    <div class="scene-cell">
+                        <span>ROAD</span>
+                        <strong id="scene-road">
+                            —
+                        </strong>
+                    </div>
+
+                    <div class="scene-cell">
+                        <span>PEOPLE</span>
+                        <strong id="scene-people">
+                            —
+                        </strong>
+                    </div>
+
+                    <div class="scene-cell">
+                        <span>VEHICLES</span>
+                        <strong id="scene-vehicles">
+                            —
+                        </strong>
+                    </div>
+
+                    <div class="scene-cell">
+                        <span>VISIBILITY</span>
+                        <strong id="scene-visibility">
+                            —
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ASSESS BUTTON -->
+
+            <div class="assessment-action">
+
+                <button
+                    id="assess-button"
+                    class="signal-button"
+                    type="button"
+                    disabled
+                >
+                    <span>
+                        ASSESS SAFETY SIGNAL
+                    </span>
+
+                    <span class="button-arrow">
+                        ↗
+                    </span>
+                </button>
+
+                <p id="action-note">
+                    SIGNAL requires a completed
+                    LENS observation.
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 PROCESSING
+            ================================================== -->
+
+            <section
+                class="processing"
+                id="processing"
+                hidden
+            >
+
+                <div class="processing-core">
+
+                    <div class="processing-ring ring-one"></div>
+                    <div class="processing-ring ring-two"></div>
+                    <div class="processing-ring ring-three"></div>
+
+                    <div class="processing-point"></div>
+
+                </div>
+
+                <div class="processing-copy">
+
+                    <span id="processing-state">
+                        SYNTHESIZING
+                    </span>
+
+                    <strong id="processing-detail">
+                        SAFETY SIGNAL
+                    </strong>
+
+                </div>
+
+                <div class="processing-lines">
+                    <div id="process-line-1">
+                        01 INGESTING OBSERVATIONS
+                    </div>
+
+                    <div id="process-line-2">
+                        02 EVALUATING EXPOSURE
+                    </div>
+
+                    <div id="process-line-3">
+                        03 ASSESSING CONFLICT INDICATORS
+                    </div>
+
+                    <div id="process-line-4">
+                        04 BUILDING EVIDENCE CHAIN
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 RESULT
+            ================================================== -->
+
+            <section
+                class="signal-result"
+                id="signal-result"
+                hidden
+            >
+
+                <div class="result-header">
 
                     <div>
-                        <span class="pf-micro-label">SOURCE SYSTEM</span>
-                        <strong id="source-system">LENS</strong>
+                        <span class="eyebrow">
+                            SIGNAL OUTPUT
+                        </span>
+
+                        <h2>
+                            SAFETY SIGNAL
+                        </h2>
                     </div>
 
-                    <div class="pf-evidence-state" id="evidence-state">
-                        WAITING
+                    <span
+                        class="result-state"
+                        id="result-state"
+                    >
+                        ASSESSED
+                    </span>
+
+                </div>
+
+
+                <!-- RISK CORE -->
+
+                <div class="risk-layout">
+
+                    <div class="risk-orbit">
+
+                        <div class="risk-ring"></div>
+                        <div class="risk-ring risk-ring-b"></div>
+
+                        <div class="risk-value">
+                            <span id="risk-score">
+                                —
+                            </span>
+
+                            <small>
+                                / 100
+                            </small>
+                        </div>
+
+                        <div
+                            class="risk-level"
+                            id="risk-level"
+                        >
+                            UNASSESSED
+                        </div>
+
+                    </div>
+
+
+                    <div class="risk-explanation">
+
+                        <span class="eyebrow">
+                            ASSESSMENT
+                        </span>
+
+                        <h3 id="risk-headline">
+                            Awaiting assessment.
+                        </h3>
+
+                        <p id="risk-reasoning">
+                            —
+                        </p>
+
                     </div>
 
                 </div>
 
 
-                <div class="pf-evidence-main">
+                <!-- FACTORS -->
 
-                    <div class="pf-condition">
+                <div class="result-grid">
 
-                        <span class="pf-micro-label">CONDITION</span>
+                    <article class="result-card">
 
-                        <div class="pf-condition-value" id="condition">
+                        <div class="card-top">
+                            <span>
+                                01
+                            </span>
+
+                            <span>
+                                CONTRIBUTING FACTORS
+                            </span>
+                        </div>
+
+                        <div
+                            class="result-list"
+                            id="factors-list"
+                        >
                             —
                         </div>
 
-                        <div class="pf-condition-meta">
-                            <span id="evidence-severity">SEVERITY —</span>
-                            <span id="evidence-confidence">CONFIDENCE —</span>
+                    </article>
+
+
+                    <article class="result-card">
+
+                        <div class="card-top">
+                            <span>
+                                02
+                            </span>
+
+                            <span>
+                                CONFLICT INDICATORS
+                            </span>
                         </div>
 
-                    </div>
-
-
-                    <div class="pf-location">
-
-                        <span class="pf-micro-label">LOCATION</span>
-
-                        <div id="location-value">
+                        <div
+                            class="result-list"
+                            id="conflicts-list"
+                        >
                             —
                         </div>
 
-                        <small id="location-coordinates">
-                            NO COORDINATES
-                        </small>
+                    </article>
+
+
+                    <article class="result-card">
+
+                        <div class="card-top">
+                            <span>
+                                03
+                            </span>
+
+                            <span>
+                                EXPOSURE
+                            </span>
+                        </div>
+
+                        <div
+                            class="result-list"
+                            id="exposure-list"
+                        >
+                            —
+                        </div>
+
+                    </article>
+
+
+                    <article class="result-card">
+
+                        <div class="card-top">
+                            <span>
+                                04
+                            </span>
+
+                            <span>
+                                VULNERABLE USERS
+                            </span>
+                        </div>
+
+                        <div
+                            class="result-list"
+                            id="vulnerable-list"
+                        >
+                            —
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <!-- EVIDENCE -->
+
+                <div class="evidence-section">
+
+                    <div class="evidence-header">
+
+                        <div>
+                            <span class="eyebrow">
+                                EVIDENCE QUALITY
+                            </span>
+
+                            <h3>
+                                WHAT THE SIGNAL KNOWS
+                            </h3>
+                        </div>
+
+                        <strong id="evidence-strength">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="evidence-columns">
+
+                        <div class="evidence-column">
+
+                            <span>
+                                SUPPORTED
+                            </span>
+
+                            <ul id="supported-list">
+                                <li>—</li>
+                            </ul>
+
+                        </div>
+
+
+                        <div class="evidence-column">
+
+                            <span>
+                                UNKNOWN / GAP
+                            </span>
+
+                            <ul id="unknown-list">
+                                <li>—</li>
+                            </ul>
+
+                        </div>
 
                     </div>
 
                 </div>
 
 
-                <div class="pf-evidence-description">
+                <!-- HANDOFF -->
 
-                    <span class="pf-micro-label">OBSERVATION</span>
+                <div class="handoff">
 
-                    <p id="evidence-description">
-                        No LENS inspection has been forwarded yet.
-                    </p>
+                    <div class="handoff-copy">
 
-                </div>
+                        <span class="eyebrow">
+                            NEXT SYSTEM
+                        </span>
 
-            </div>
-
-
-            <button class="pf-primary-button" id="generate-button" type="button">
-                <span>GENERATE RESPONSE</span>
-                <span class="pf-button-arrow">→</span>
-            </button>
-
-        </section>
-
-
-        <!-- ROUTING -->
-        <section class="pf-routing-section" id="routing-section">
-
-            <div class="pf-section-label">
-                <span>02</span>
-                <span>OPERATIONAL ROUTE</span>
-            </div>
-
-
-            <div class="pf-route">
-
-                <!-- CONDITION -->
-                <article class="pf-route-node" data-node="condition">
-
-                    <div class="pf-node-index">01</div>
-
-                    <div class="pf-node-content">
-
-                        <span class="pf-node-label">CONDITION</span>
-
-                        <h2 id="route-condition">—</h2>
+                        <h3>
+                            TRAJECTORY
+                        </h3>
 
                         <p>
-                            Observed infrastructure condition received
-                            from visual inspection.
+                            The assessment is evidence.
+                            The decision still belongs to people.
                         </p>
 
                     </div>
 
-                </article>
-
-
-                <div class="pf-route-line">
-                    <span></span>
-                </div>
-
-
-                <!-- PRIORITY -->
-                <article class="pf-route-node" data-node="priority">
-
-                    <div class="pf-node-index">02</div>
-
-                    <div class="pf-node-content">
-
-                        <span class="pf-node-label">PRIORITY</span>
-
-                        <div class="pf-priority-display">
-
-                            <div class="pf-priority-bar">
-                                <span id="priority-fill"></span>
-                            </div>
-
-                            <strong id="route-priority">—</strong>
-
-                        </div>
-
-                        <p id="priority-reason">
-                            Priority will be derived from severity.
-                        </p>
-
-                    </div>
-
-                </article>
-
-
-                <div class="pf-route-line">
-                    <span></span>
-                </div>
-
-
-                <!-- RISK -->
-                <article class="pf-route-node" data-node="risk">
-
-                    <div class="pf-node-index">03</div>
-
-                    <div class="pf-node-content">
-
-                        <span class="pf-node-label">RISK</span>
-
-                        <h2 id="route-risk">—</h2>
-
-                        <p id="risk-description">
-                            Potential impact will be assessed from
-                            the observed condition.
-                        </p>
-
-                    </div>
-
-                </article>
-
-
-                <div class="pf-route-line">
-                    <span></span>
-                </div>
-
-
-                <!-- ROUTE -->
-                <article class="pf-route-node" data-node="route">
-
-                    <div class="pf-node-index">04</div>
-
-                    <div class="pf-node-content">
-
-                        <span class="pf-node-label">ROUTE</span>
-
-                        <h2 id="route-destination">—</h2>
-
-                        <p id="route-description">
-                            Operational destination will be selected
-                            from the condition.
-                        </p>
-
-                    </div>
-
-                </article>
-
-
-                <div class="pf-route-line">
-                    <span></span>
-                </div>
-
-
-                <!-- RESPONSE -->
-                <article class="pf-route-node pf-response-node" data-node="response">
-
-                    <div class="pf-node-index">05</div>
-
-                    <div class="pf-node-content">
-
-                        <span class="pf-node-label">RESPONSE</span>
-
-                        <div class="pf-response-steps">
-
-                            <div>
-                                <span>01</span>
-                                <strong id="response-step-1">INSPECT</strong>
-                            </div>
-
-                            <div>
-                                <span>02</span>
-                                <strong id="response-step-2">REPAIR</strong>
-                            </div>
-
-                            <div>
-                                <span>03</span>
-                                <strong id="response-step-3">VERIFY</strong>
-                            </div>
-
-                        </div>
-
-                        <p id="response-description">
-                            No response route generated.
-                        </p>
-
-                    </div>
-
-                </article>
-
-            </div>
-
-        </section>
-
-
-        <!-- DECISION SUMMARY -->
-        <section class="pf-summary-section" id="summary-section">
-
-            <div class="pf-section-label">
-                <span>03</span>
-                <span>ROUTE CONFIRMED</span>
-            </div>
-
-            <div class="pf-summary">
-
-                <div class="pf-summary-main">
-
-                    <span class="pf-micro-label">PATHFINDER DECISION</span>
-
-                    <h2 id="summary-title">
-                        AWAITING ROUTE
-                    </h2>
-
-                    <p id="summary-text">
-                        Forward evidence from LENS to generate
-                        an operational response.
-                    </p>
+                    <button
+                        id="trajectory-button"
+                        class="trajectory-button"
+                        type="button"
+                    >
+                        EXPLORE INTERVENTIONS
+                        <span>↗</span>
+                    </button>
 
                 </div>
 
 
-                <div class="pf-summary-meta">
+                <div class="result-footer">
 
-                    <div>
-                        <span>PRIORITY</span>
-                        <strong id="summary-priority">—</strong>
-                    </div>
+                    <button
+                        id="reassess-button"
+                        type="button"
+                    >
+                        REASSESS
+                    </button>
 
-                    <div>
-                        <span>ROUTE</span>
-                        <strong id="summary-route">—</strong>
-                    </div>
-
-                    <div>
-                        <span>STATUS</span>
-                        <strong id="summary-status">PENDING</strong>
-                    </div>
+                    <a href="index.html">
+                        RETURN TO SYSTEMS
+                    </a>
 
                 </div>
 
-            </div>
-
-        </section>
-
-
-        <!-- ACTIONS -->
-        <section class="pf-actions">
-
-            <button class="pf-secondary-button" id="new-route" type="button">
-                NEW ROUTE
-            </button>
-
-            <a class="pf-secondary-button" href="index.html">
-                RETURN TO SYSTEMS
-            </a>
+            </section>
 
         </section>
 
     </main>
 
 
-    <!-- FOOTER -->
-    <footer class="pf-footer">
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
 
-        <div>
-            IXVYN / PATHFINDER
-        </div>
+    <footer class="site-footer">
 
-        <div>
-            CONDITION → PRIORITY → RISK → ROUTE → RESPONSE
-        </div>
+        <span>
+            IXVYN / SIGNAL
+        </span>
 
-        <div>
-            OPERATIONAL INTELLIGENCE
-        </div>
+        <span>
+            LENS OBSERVATION → SAFETY ASSESSMENT
+        </span>
+
+        <span>
+            HUMAN DECISION REQUIRED
+        </span>
 
     </footer>
 
