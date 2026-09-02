@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>IXVYN / ECHO</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="echo.css">
+</head>
+
+<body class="echo-page">
+
+    <header class="echo-header">
+
+        <a href="index.html" class="echo-brand">
+            IXVYN
+        </a>
+
+        <div class="echo-system">
+            <span class="system-dot"></span>
+            ECHO / FIELD FEEDBACK
+        </div>
+
+        <nav class="echo-nav">
+            <a href="index.html#systems">Systems</a>
+            <a href="index.html#about">About</a>
+        </nav>
+
+    </header>
+
+
+    <main class="echo-experience">
+
+        <!-- =================================================
+             ATMOSPHERE
+             ================================================= -->
+
+        <div class="echo-geometry" aria-hidden="true">
+            <div class="geometry-ring ring-one"></div>
+            <div class="geometry-ring ring-two"></div>
+            <div class="geometry-axis axis-one"></div>
+            <div class="geometry-axis axis-two"></div>
+            <div class="echo-pulse"></div>
+        </div>
+
+
+        <!-- =================================================
+             HERO
+             ================================================= -->
+
+        <section class="echo-hero">
+
+            <div class="echo-eyebrow">
+                IXVYN / ECHO
+            </div>
+
+            <h1>
+                HEAR WHAT<br>
+                HAPPENS NEXT.
+            </h1>
+
+            <p class="echo-lead">
+                ECHO brings field observations back into the
+                incident, giving the system context from the
+                people actually on the ground.
+            </p>
+
+            <div class="echo-source">
+                <span class="source-line"></span>
+                <span id="source-status">
+                    AWAITING CIVIC CASE
+                </span>
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             01 / INCOMING CASE
+             ================================================= -->
+
+        <section class="echo-section">
+
+            <div class="section-label">
+                01 / INCOMING CASE
+            </div>
+
+            <div class="case-panel">
+
+                <div class="panel-top">
+
+                    <span>
+                        SOURCE SYSTEM
+                    </span>
+
+                    <strong id="source-system">
+                        CIVIC / WAITING
+                    </strong>
+
+                </div>
+
+
+                <div class="case-grid">
+
+                    <div class="case-cell">
+
+                        <span>
+                            CASE
+                        </span>
+
+                        <strong id="case-id">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="case-cell">
+
+                        <span>
+                            CONDITION
+                        </span>
+
+                        <strong id="condition">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="case-cell">
+
+                        <span>
+                            PRIORITY
+                        </span>
+
+                        <strong id="priority">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="case-cell">
+
+                        <span>
+                            ROUTE
+                        </span>
+
+                        <strong id="route">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="case-location">
+
+                    <span>
+                        LOCATION
+                    </span>
+
+                    <strong id="location">
+                        NO COORDINATES
+                    </strong>
+
+                </div>
+
+
+                <div class="case-status">
+
+                    <span>
+                        CASE STATUS
+                    </span>
+
+                    <strong id="status">
+                        WAITING
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             02 / FIELD INPUT
+             ================================================= -->
+
+        <section class="echo-section">
+
+            <div class="section-label">
+                02 / FIELD INPUT
+            </div>
+
+
+            <div class="field-panel">
+
+                <div class="field-header">
+
+                    <div>
+
+                        <span class="field-label">
+                            FIELD CHANNEL
+                        </span>
+
+                        <h2>
+                            REPORT WHAT<br>
+                            YOU FIND.
+                        </h2>
+
+                    </div>
+
+
+                    <div class="field-state">
+
+                        <span class="field-dot"></span>
+
+                        <span id="field-state">
+                            READY
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="input-area">
+
+                    <label
+                        class="field-input-label"
+                        for="field-input"
+                    >
+                        FIELD OBSERVATION
+                    </label>
+
+                    <textarea
+                        id="field-input"
+                        rows="5"
+                        placeholder="Describe what is happening at the location..."
+                    ></textarea>
+
+
+                    <div class="input-meta">
+
+                        <span>
+                            VOICE / TEXT EQUIVALENT
+                        </span>
+
+                        <span id="character-count">
+                            0 / 500
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="submit-feedback"
+                    class="echo-button"
+                    type="button"
+                    disabled
+                >
+                    SUBMIT FIELD FEEDBACK
+                    <span>→</span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             03 / FIELD FEEDBACK
+             ================================================= -->
+
+        <section
+            class="echo-section feedback-section"
+            id="feedback-section"
+            hidden
+        >
+
+            <div class="section-label">
+                03 / FIELD FEEDBACK
+            </div>
+
+
+            <div class="feedback-panel">
+
+                <div class="feedback-header">
+
+                    <div>
+
+                        <span class="feedback-label">
+                            OBSERVATION RECEIVED
+                        </span>
+
+                        <h2 id="feedback-title">
+                            FIELD CONDITION UPDATED
+                        </h2>
+
+                    </div>
+
+                    <div class="feedback-mark">
+                        ✓
+                    </div>
+
+                </div>
+
+
+                <div class="feedback-content">
+
+                    <span>
+                        FIELD REPORT
+                    </span>
+
+                    <p id="feedback-text">
+                        —
+                    </p>
+
+                </div>
+
+
+                <div class="feedback-grid">
+
+                    <div>
+
+                        <span>
+                            INPUT
+                        </span>
+
+                        <strong>
+                            FIELD OBSERVATION
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            CONTEXT
+                        </span>
+
+                        <strong id="feedback-context">
+                            CIVIC CASE
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            SYSTEM STATE
+                        </span>
+
+                        <strong id="feedback-state">
+                            UPDATED
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             04 / ADAPT
+             ================================================= -->
+
+        <section
+            class="echo-section"
+            id="adapt-section"
+        >
+
+            <div class="section-label">
+                04 / ADAPT
+            </div>
+
+
+            <div class="adapt-panel">
+
+                <div class="adapt-status">
+
+                    <span class="adapt-dot"></span>
+
+                    <span id="adapt-status">
+                        AWAITING FIELD INPUT
+                    </span>
+
+                </div>
+
+
+                <h2 id="adapt-title">
+                    THE FIELD<br>
+                    HAS NOT SPOKEN.
+                </h2>
+
+
+                <p id="adapt-description">
+                    Submit a field observation to update the
+                    operational context of this incident.
+                </p>
+
+
+                <div class="adapt-flow">
+
+                    <div class="flow-node">
+                        <span>01</span>
+                        <strong>FIELD</strong>
+                    </div>
+
+                    <div class="flow-line"></div>
+
+                    <div class="flow-node">
+                        <span>02</span>
+                        <strong>VOICE</strong>
+                    </div>
+
+                    <div class="flow-line"></div>
+
+                    <div class="flow-node">
+                        <span>03</span>
+                        <strong>FEEDBACK</strong>
+                    </div>
+
+                    <div class="flow-line"></div>
+
+                    <div class="flow-node">
+                        <span>04</span>
+                        <strong>CONTEXT</strong>
+                    </div>
+
+                    <div class="flow-line"></div>
+
+                    <div class="flow-node">
+                        <span>05</span>
+                        <strong>ADAPT</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <footer class="echo-footer">
+
+            <a
+                href="index.html"
+                class="echo-button secondary"
+            >
+                RETURN TO SYSTEMS
+                <span>↗</span>
+            </a>
+
+            <div class="footer-state">
+                IXVYN / ECHO / ACTIVE
+            </div>
+
+        </footer>
+
+    </main>
+
+
+    <script src="echo.js"></script>
+
+</body>
+</html>
