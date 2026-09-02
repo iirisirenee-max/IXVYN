@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IXVYN TRAJECTORY — intervention scenario intelligence for safer streets.">
+    <title>TRAJECTORY — IXVYN</title>
+    <link rel="stylesheet" href="trajectory.css">
+</head>
+
+<body>
+    <div class="noise"></div>
+
+    <header class="topbar">
+        <a href="index.html" class="wordmark">IXVYN<span>//</span></a>
+
+        <div class="module-id">
+            <span class="pulse"></span>
+            TRAJECTORY
+        </div>
+
+        <div class="role">
+            DECIDE / VISION ZERO
+        </div>
+    </header>
+
+    <main>
+
+        <section class="intro">
+            <div class="eyebrow">03 / DECIDE</div>
+
+            <h1>TRAJECTORY</h1>
+
+            <p>
+                Intervention intelligence for changing the conditions
+                that create road risk.
+            </p>
+
+            <div class="chain">
+                <span>OBSERVE</span>
+                <i>→</i>
+                <span>ASSESS</span>
+                <i>→</i>
+                <strong>DECIDE</strong>
+            </div>
+        </section>
+
+
+        <section id="input-panel" class="panel">
+
+            <div class="panel-head">
+                <span>INCOMING SIGNAL</span>
+                <span id="signal-status">WAITING</span>
+            </div>
+
+            <div class="signal-grid">
+
+                <div>
+                    <label>RISK</label>
+                    <div id="risk-value" class="big-value">—</div>
+                </div>
+
+                <div>
+                    <label>LEVEL</label>
+                    <div id="risk-level">—</div>
+                </div>
+
+                <div>
+                    <label>HEADLINE</label>
+                    <div id="risk-headline">Awaiting safety assessment.</div>
+                </div>
+
+            </div>
+
+            <div class="reason">
+                <label>WHY IT MATTERS</label>
+                <p id="risk-reasoning">
+                    TRAJECTORY requires an assessment from SIGNAL.
+                </p>
+            </div>
+
+        </section>
+
+
+        <section class="panel">
+
+            <div class="panel-head">
+                <span>INTERVENTION SPACE</span>
+                <span>WHAT COULD CHANGE?</span>
+            </div>
+
+            <div id="scenario-list" class="scenario-list">
+
+                <div class="empty-state">
+                    <span>01</span>
+                    <p>
+                        Assess the observed scene to generate
+                        intervention scenarios.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section id="decision-panel" class="panel decision-panel hidden">
+
+            <div class="panel-head">
+                <span>HUMAN DECISION</span>
+                <span>NO AUTOMATIC ACTION</span>
+            </div>
+
+            <div class="decision-copy">
+                <h2>Choose a trajectory.</h2>
+
+                <p>
+                    IXVYN proposes scenarios. A human decides whether
+                    to approve, modify, or reject them.
+                </p>
+            </div>
+
+            <div class="decision-actions">
+
+                <button id="approve-btn" class="primary-btn">
+                    APPROVE SELECTED
+                </button>
+
+                <button id="modify-btn" class="secondary-btn">
+                    MODIFY
+                </button>
+
+                <button id="reject-btn" class="secondary-btn">
+                    REJECT
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <section class="bottom-actions">
+
+            <button id="assess-btn" class="primary-btn">
+                GENERATE TRAJECTORIES
+            </button>
+
+            <button id="reset-btn" class="secondary-btn">
+                NEW DECISION
+            </button>
+
+            <a href="index.html" class="return-link">
+                ← RETURN TO SYSTEMS
+            </a>
+
+        </section>
+
+    </main>
+
+    <div id="processing" class="processing hidden">
+        <div class="processing-core"></div>
+
+        <div class="processing-text">
+            <span>TRAJECTORY ENGINE</span>
+            <strong id="processing-stage">GENERATING SCENARIOS</strong>
+        </div>
+    </div>
+
+    <script src="trajectory.js"></script>
+</body>
+</html>
