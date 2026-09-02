@@ -1839,3 +1839,295 @@ if (directionSection && directionTitle) {
         requestAnimationFrame(frame);
 
 })();
+/* ============================================================
+   IXVYN — PASS 03
+   HERO SYSTEM COUPLING
+   Cursor → Network → Node → Signal → Core
+   ============================================================ */
+
+(() => {
+    "use strict";
+
+    const geometry =
+        document.querySelector(".hero-geometry");
+
+    if (!geometry) return;
+
+    const nodes =
+        [...geometry.querySelectorAll(".geometry-node")];
+
+    const core =
+        geometry.querySelector(".geometry-core");
+
+    if (!nodes.length || !core) return;
+
+    const finePointer =
+        window.matchMedia("(pointer: fine)").matches;
+
+    const reducedMotion =
+        window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches;
+
+    if (!finePointer || reducedMotion) return;
+
+    /* ---------------------------------------------------------
+       STATE
+       --------------------------------------------------------- */
+
+    let pointerX = 0;
+    let pointerY = 0;
+
+    let targetX = 0;
+    let targetY = 0;
+
+    let activeNode = null;
+    let lastActivation = 0;
+
+    let raf = null;
+
+    /* ---------------------------------------------------------
+       POINTER
+       --------------------------------------------------------- */
+
+    window.addEventListener(
+        "pointermove",
+        event => {
+
+            const rect =
+                geometry.getBoundingClientRect();
+
+            targetX =
+                event.clientX -
+                (rect.left + rect.width / 2);
+
+            targetY =
+                event.clientY -
+                (rect.top + rect.height / 2);
+        },
+        { passive: true }
+    );
+
+    /* ---------------------------------------------------------
+       NODE POSITIONS
+       --------------------------------------------------------- */
+
+    function getNodeCenter(node) {
+
+        const rect =
+            node.getBoundingClientRect();
+
+        const geometryRect =
+            geometry.getBoundingClientRect();
+
+        return {
+            x:
+                rect.left -
+                geometryRect.left +
+                rect.width / 2,
+
+            y:
+                rect.top -
+                geometryRect.top +
+                rect.height / 2
+        };
+    }
+
+    /* ---------------------------------------------------------
+       FIND THE NEAREST NODE
+       --------------------------------------------------------- */
+
+    function findNearestNode() {
+
+        const geometryRect =
+            geometry.getBoundingClientRect();
+
+        const localX =
+            targetX +
+            geometryRect.width / 2;
+
+        const localY =
+            targetY +
+            geometryRect.height / 2;
+
+        let nearest = null;
+        let nearestDistance = Infinity;
+
+        nodes.forEach(node => {
+
+            const point =
+                getNodeCenter(node);
+
+            const dx =
+                point.x - localX;
+
+            const dy =
+                point.y - localY;
+
+            const distance =
+                Math.sqrt(
+                    dx * dx +
+                    dy * dy
+                );
+
+            if (
+                distance < nearestDistance &&
+                distance <
+                    Math.min(
+                        geometryRect.width,
+                        geometryRect.height
+                    ) * 0.23
+            ) {
+                nearest = node;
+                nearestDistance = distance;
+            }
+        });
+
+        return nearest;
+    }
+
+    /* ---------------------------------------------------------
+       NODE ACTIVATION
+       --------------------------------------------------------- */
+
+    function activateNode(node) {
+
+        if (!node) return;
+
+        const now =
+            performance.now();
+
+        // Prevent frantic repeated activation.
+        if (
+            node === activeNode &&
+            now - lastActivation < 900
+        ) {
+            return;
+        }
+
+        activeNode = node;
+        lastActivation = now;
+
+        node.classList.add(
+            "network-intelligence"
+        );
+
+        setTimeout(() => {
+
+            node.classList.remove(
+                "network-intelligence"
+            );
+
+        }, 1100);
+
+        /*
+         * Give the central core a tiny response.
+         */
+
+        core.classList.add(
+            "core-response"
+        );
+
+        setTimeout(() => {
+
+            core.classList.remove(
+                "core-response"
+            );
+
+        }, 700);
+    }
+
+    /* ---------------------------------------------------------
+       CORE RESPONSE
+       --------------------------------------------------------- */
+
+    function updateCoreResponse() {
+
+        const distanceFromCenter =
+            Math.sqrt(
+                pointerX * pointerX +
+                pointerY * pointerY
+            );
+
+        const maxDistance =
+            Math.min(
+                geometry.clientWidth,
+                geometry.clientHeight
+            ) * 0.55;
+
+        const influence =
+            Math.max(
+                0,
+                1 -
+                    distanceFromCenter /
+                        maxDistance
+            );
+
+        /*
+         * The closer the cursor gets to the core,
+         * the more the core subtly responds.
+         */
+
+        const scale =
+            1 +
+            influence * 0.025;
+
+        core.style.setProperty(
+            "--core-interaction",
+            scale
+        );
+    }
+
+    /* ---------------------------------------------------------
+       MAIN LOOP
+       --------------------------------------------------------- */
+
+    function update() {
+
+        pointerX +=
+            (targetX - pointerX) *
+            0.075;
+
+        pointerY +=
+            (targetY - pointerY) *
+            0.075;
+
+        updateCoreResponse();
+
+        const nearest =
+            findNearestNode();
+
+        if (nearest) {
+            activateNode(nearest);
+        }
+
+        raf =
+            requestAnimationFrame(
+                update
+            );
+    }
+
+    /* ---------------------------------------------------------
+       RESET WHEN POINTER LEAVES WINDOW
+       --------------------------------------------------------- */
+
+    window.addEventListener(
+        "pointerleave",
+        () => {
+
+            targetX = 0;
+            targetY = 0;
+
+        }
+    );
+
+    /* ---------------------------------------------------------
+       START
+       --------------------------------------------------------- */
+
+    raf =
+        requestAnimationFrame(
+            update
+        );
+
+})();
