@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const routes = {
             lens: "lens.html",
-            pathfinder: "pathfinderp.html",
+            pathfinder: "pathfinder.html",
             civic: "systems.html",
             echo: "systems.html",
             memory: "memory.html"
