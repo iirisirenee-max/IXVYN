@@ -2517,3 +2517,290 @@ if (directionSection && directionTitle) {
     );
 
 })();
+/* ============================================================
+   IXVYN — PASS 05
+   THE CIVIC NETWORK
+   Five systems become a living distributed network.
+   ============================================================ */
+
+(() => {
+    "use strict";
+
+    const systems =
+        document.querySelector(".systems");
+
+    if (!systems) return;
+
+    const cards =
+        [...systems.querySelectorAll(".system-card")];
+
+    if (!cards.length) return;
+
+    /* ---------------------------------------------------------
+       NETWORK LAYER
+       --------------------------------------------------------- */
+
+    const network =
+        document.createElement("div");
+
+    network.className =
+        "ixvyn-civic-network";
+
+    network.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    network.innerHTML = `
+        <div class="network-axis"></div>
+
+        <div class="network-pulse"></div>
+
+        <div class="network-threads">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="network-orbit orbit-a"></div>
+        <div class="network-orbit orbit-b"></div>
+    `;
+
+    systems.insertBefore(
+        network,
+        systems.firstChild
+    );
+
+    /* ---------------------------------------------------------
+       CARD CONNECTION
+       --------------------------------------------------------- */
+
+    cards.forEach(
+        (card, index) => {
+
+            const node =
+                document.createElement("span");
+
+            node.className =
+                "network-node";
+
+            node.dataset.system =
+                card.dataset.system ||
+                card.dataset.module ||
+                "";
+
+            node.dataset.index =
+                index;
+
+            network.appendChild(node);
+
+            /*
+             * Desktop hover.
+             */
+
+            card.addEventListener(
+                "mouseenter",
+                () => {
+
+                    node.classList.add(
+                        "network-node-active"
+                    );
+
+                    network.classList.add(
+                        "network-engaged"
+                    );
+
+                }
+            );
+
+            card.addEventListener(
+                "mouseleave",
+                () => {
+
+                    node.classList.remove(
+                        "network-node-active"
+                    );
+
+                    network.classList.remove(
+                        "network-engaged"
+                    );
+
+                }
+            );
+
+            /*
+             * Mobile tap / focus.
+             */
+
+            card.addEventListener(
+                "touchstart",
+                () => {
+
+                    node.classList.add(
+                        "network-node-active"
+                    );
+
+                    network.classList.add(
+                        "network-engaged"
+                    );
+
+                    setTimeout(
+                        () => {
+
+                            node.classList.remove(
+                                "network-node-active"
+                            );
+
+                            network.classList.remove(
+                                "network-engaged"
+                            );
+
+                        },
+                        900
+                    );
+
+                },
+                { passive: true }
+            );
+        }
+    );
+
+    /* ---------------------------------------------------------
+       POSITION NODES
+       --------------------------------------------------------- */
+
+    function positionNodes() {
+
+        const systemRect =
+            systems.getBoundingClientRect();
+
+        const networkRect =
+            network.getBoundingClientRect();
+
+        const centerX =
+            networkRect.width / 2;
+
+        cards.forEach(
+            (card, index) => {
+
+                const node =
+                    network.querySelector(
+                        `.network-node[data-index="${index}"]`
+                    );
+
+                if (!node) return;
+
+                const rect =
+                    card.getBoundingClientRect();
+
+                const y =
+                    rect.top -
+                    systemRect.top +
+                    rect.height / 2;
+
+                /*
+                 * Slight asymmetry keeps it organic.
+                 */
+
+                const offset =
+                    Math.sin(
+                        index * 1.7
+                    ) * 20;
+
+                node.style.left =
+                    `${centerX + offset}px`;
+
+                node.style.top =
+                    `${y}px`;
+            }
+        );
+    }
+
+    /* ---------------------------------------------------------
+       SCROLL ACTIVATION
+       --------------------------------------------------------- */
+
+    const observer =
+        new IntersectionObserver(
+            entries => {
+
+                entries.forEach(
+                    entry => {
+
+                        if (
+                            entry.isIntersecting
+                        ) {
+
+                            const index =
+                                cards.indexOf(
+                                    entry.target
+                                );
+
+                            const node =
+                                network.querySelector(
+                                    `.network-node[data-index="${index}"]`
+                                );
+
+                            if (node) {
+
+                                node.classList.add(
+                                    "network-node-visible"
+                                );
+
+                            }
+                        }
+                    }
+                );
+            },
+            {
+                threshold: 0.35
+            }
+        );
+
+    cards.forEach(
+        card => observer.observe(card)
+    );
+
+    /* ---------------------------------------------------------
+       RESIZE
+       --------------------------------------------------------- */
+
+    let resizeTimer;
+
+    function requestPosition() {
+
+        clearTimeout(
+            resizeTimer
+        );
+
+        resizeTimer =
+            setTimeout(
+                positionNodes,
+                120
+            );
+    }
+
+    window.addEventListener(
+        "resize",
+        requestPosition,
+        { passive: true }
+    );
+
+    /* ---------------------------------------------------------
+       INITIALIZE
+       --------------------------------------------------------- */
+
+    requestAnimationFrame(
+        () => {
+
+            positionNodes();
+
+            network.classList.add(
+                "network-ready"
+            );
+
+        }
+    );
+
+})();
