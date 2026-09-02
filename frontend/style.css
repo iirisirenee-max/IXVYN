@@ -3481,3 +3481,55 @@ body {
     opacity: 1.85;
     mix-blend-mode: screen;
 }
+/* ============================================================
+   IXVYN — PASS 03
+   SYSTEM COUPLING VISUAL RESPONSE
+   ============================================================ */
+
+.geometry-node.network-intelligence {
+    transform:
+        translate3d(
+            var(--network-x, 0px),
+            var(--network-y, 0px),
+        )
+        scale(2.15);
+
+    background: var(--accent);
+
+    border-color: var(--accent);
+
+    box-shadow:
+        0 0 8px rgba(184,255,61,.55),
+        0 0 22px rgba(184,255,61,.18);
+
+    transition:
+        transform .45s cubic-bezier(.16,1,.3,1),
+        background .3s ease,
+        border-color .3s ease,
+        box-shadow .3s ease;
+}
+
+.geometry-core {
+    transform:
+        scale(
+            var(--core-interaction, 1)
+        );
+}
+
+.geometry-core.core-response {
+    box-shadow:
+        0 0 18px rgba(184,255,61,.22),
+        0 0 55px rgba(184,255,61,.08);
+
+    transition:
+        box-shadow .3s ease;
+}
+
+@media (max-width: 700px) {
+
+    .geometry-node.network-intelligence {
+        transform:
+            scale(1.7);
+    }
+
+}
