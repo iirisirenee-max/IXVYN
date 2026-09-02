@@ -4750,3 +4750,403 @@ html[data-ixvyn-state="remember"]
     }
 
 }
+/* ============================================================
+   IXVYN — PASS 07
+   CIVIC TRAJECTORY
+   ============================================================ */
+
+.direction {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+/* ------------------------------------------------------------
+   TRAJECTORY FIELD
+   ------------------------------------------------------------ */
+
+.ixvyn-trajectory {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 0;
+
+    opacity: 0;
+
+    transition:
+        opacity 1.2s ease;
+}
+
+.ixvyn-trajectory.trajectory-visible {
+    opacity: 1;
+}
+
+/* ------------------------------------------------------------
+   SVG
+   ------------------------------------------------------------ */
+
+.trajectory-svg {
+    position: absolute;
+
+    right: 4vw;
+    top: 4%;
+    bottom: 4%;
+
+    width: min(52vw, 700px);
+    height: 92%;
+
+    overflow: visible;
+}
+
+/* ------------------------------------------------------------
+   MEMORY TRACE
+   ------------------------------------------------------------ */
+
+.trajectory-memory {
+    fill: none;
+
+    stroke:
+        rgba(184,255,61,.055);
+
+    stroke-width: 1.5;
+
+    vector-effect:
+        non-scaling-stroke;
+
+    filter:
+        drop-shadow(
+            0 0 8px
+            rgba(184,255,61,.08)
+        );
+}
+
+/* ------------------------------------------------------------
+   ACTIVE TRAJECTORY
+   ------------------------------------------------------------ */
+
+.trajectory-trace {
+    fill: none;
+
+    stroke:
+        rgba(184,255,61,.52);
+
+    stroke-width: 1.2;
+
+    vector-effect:
+        non-scaling-stroke;
+
+    filter:
+        drop-shadow(
+            0 0 8px
+            rgba(184,255,61,.22)
+        );
+
+    transition:
+        stroke .9s ease;
+}
+
+/* ------------------------------------------------------------
+   SIGNAL
+   ------------------------------------------------------------ */
+
+.trajectory-signal {
+    position: absolute;
+
+    width: 6px;
+    height: 6px;
+
+    margin-left: -3px;
+    margin-top: -3px;
+
+    border-radius: 50%;
+
+    background:
+        var(--accent);
+
+    box-shadow:
+        0 0 10px
+        rgba(184,255,61,.95),
+
+        0 0 28px
+        rgba(184,255,61,.35);
+
+    transform:
+        scale(1);
+
+    transition:
+        transform .45s ease,
+        background 1s ease,
+        box-shadow 1s ease;
+}
+
+/* ------------------------------------------------------------
+   NODES
+   ------------------------------------------------------------ */
+
+.trajectory-nodes {
+    position: absolute;
+    inset: 0;
+}
+
+.trajectory-nodes span {
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    margin-left: -3.5px;
+    margin-top: -3.5px;
+
+    border-radius: 50%;
+
+    background:
+        var(--black);
+
+    border:
+        1px solid
+        rgba(244,244,240,.22);
+
+    opacity: .55;
+
+    transform:
+        scale(.75);
+
+    transition:
+        transform .6s cubic-bezier(.16,1,.3,1),
+        opacity .6s ease,
+        background .8s ease,
+        border-color .8s ease,
+        box-shadow .8s ease;
+}
+
+.trajectory-node-past {
+    opacity: .8;
+
+    border-color:
+        rgba(184,255,61,.28);
+
+    background:
+        rgba(184,255,61,.12);
+}
+
+.trajectory-node-active {
+    opacity: 1;
+
+    transform:
+        scale(1.8);
+
+    border-color:
+        var(--accent);
+
+    background:
+        var(--accent);
+
+    box-shadow:
+        0 0 10px
+        rgba(184,255,61,.85),
+
+        0 0 30px
+        rgba(184,255,61,.25);
+}
+
+/* ------------------------------------------------------------
+   READOUT
+   ------------------------------------------------------------ */
+
+.trajectory-readout {
+    position: absolute;
+
+    right: 5vw;
+    bottom: 8%;
+
+    display: flex;
+    align-items: baseline;
+
+    gap: 8px;
+
+    font-family:
+        "DM Mono",
+        monospace;
+
+    font-size: 8px;
+
+    letter-spacing: .18em;
+
+    color:
+        rgba(244,244,240,.32);
+}
+
+.trajectory-readout strong {
+    font-size: 16px;
+
+    font-weight: 400;
+
+    color:
+        rgba(244,244,240,.72);
+}
+
+/* ------------------------------------------------------------
+   DIRECTION CONTENT ABOVE VISUAL
+   ------------------------------------------------------------ */
+
+.direction-index,
+.direction-main {
+    position: relative;
+
+    z-index: 2;
+}
+
+/* ------------------------------------------------------------
+   WORD STATES
+   ------------------------------------------------------------ */
+
+.direction .loop-word {
+    position: relative;
+
+    transition:
+        color .9s ease,
+        opacity .9s ease,
+        transform .9s
+        cubic-bezier(.16,1,.3,1);
+}
+
+.direction .loop-word:not(.trajectory-current) {
+    opacity: .32;
+}
+
+.direction .loop-word.trajectory-completed {
+    opacity: .52;
+}
+
+.direction .loop-word.trajectory-current {
+    opacity: 1;
+
+    transform:
+        translateX(12px);
+
+    color:
+        var(--white);
+
+    text-shadow:
+        0 0 24px
+        rgba(184,255,61,.12);
+}
+
+/* ------------------------------------------------------------
+   STATE COLOUR EVOLUTION
+   ------------------------------------------------------------ */
+
+html[data-ixvyn-state="understand"]
+.trajectory-trace {
+    stroke:
+        rgba(143,114,255,.48);
+}
+
+html[data-ixvyn-state="respond"]
+.trajectory-trace {
+    stroke:
+        rgba(255,189,90,.48);
+}
+
+html[data-ixvyn-state="adapt"]
+.trajectory-trace {
+    stroke:
+        rgba(53,231,238,.48);
+}
+
+html[data-ixvyn-state="remember"]
+.trajectory-trace {
+    stroke:
+        rgba(184,255,61,.28);
+}
+
+html[data-ixvyn-state="remember"]
+.trajectory-memory {
+    stroke:
+        rgba(242,241,235,.12);
+}
+
+html[data-ixvyn-state="remember"]
+.trajectory-signal {
+    opacity: .55;
+
+    box-shadow:
+        0 0 8px
+        rgba(184,255,61,.32);
+}
+
+/* ------------------------------------------------------------
+   MOBILE
+   ------------------------------------------------------------ */
+
+@media (max-width: 700px) {
+
+    .ixvyn-trajectory {
+        inset:
+            0 -15vw;
+    }
+
+    .trajectory-svg {
+        right: -2vw;
+
+        width: 110vw;
+
+        height: 92%;
+
+        opacity: .72;
+    }
+
+    .trajectory-trace {
+        stroke-width: 1.4;
+    }
+
+    .trajectory-memory {
+        stroke-width: 1.8;
+    }
+
+    .trajectory-nodes span {
+        width: 7px;
+        height: 7px;
+    }
+
+    .trajectory-signal {
+        width: 7px;
+        height: 7px;
+
+        margin-left: -3.5px;
+        margin-top: -3.5px;
+    }
+
+    .trajectory-readout {
+        right: 8vw;
+        bottom: 5%;
+
+        font-size: 7px;
+    }
+
+    .direction .loop-word.trajectory-current {
+        transform:
+            translateX(7px);
+    }
+}
+
+/* ------------------------------------------------------------
+   REDUCED MOTION
+   ------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .ixvyn-trajectory {
+        opacity: .7;
+    }
+
+    .trajectory-signal {
+        display: none;
+    }
+
+    .direction .loop-word {
+        transition: none;
+    }
+}
