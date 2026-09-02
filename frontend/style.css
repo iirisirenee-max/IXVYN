@@ -5518,3 +5518,19 @@ html[data-ixvyn-state="remember"]
         transition: none;
     }
 }
+
+/* IXVYN — FINAL MOBILE TITLE FIT */
+
+@media (max-width: 800px) {
+
+    .module-content h3 {
+        width: 100%;
+        max-width: 100%;
+        font-size: clamp(2.4rem, 13vw, 4.5rem);
+        line-height: 0.86;
+        letter-spacing: -0.075em;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+}
