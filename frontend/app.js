@@ -2132,52 +2132,52 @@ if (directionSection && directionTitle) {
 
 })();
 /* ============================================================
-   IXVYN — PASS 04
-   MOBILE TOUCH FIELD
-   Finger becomes the interaction point.
+   IXVYN — PASS 04 FIX
+   MOBILE TOUCH RESPONSE
    ============================================================ */
 
 (() => {
     "use strict";
 
-    const isMobile =
-        window.matchMedia(
-            "(max-width: 700px)"
-        ).matches;
+    if (
+        !window.matchMedia("(max-width: 700px)").matches
+    ) return;
 
-    if (!isMobile) return;
+    if (
+        window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches
+    ) return;
 
     const geometry =
-        document.querySelector(
-            ".hero-geometry"
-        );
-
-    if (!geometry) return;
-
-    const nodes =
-        [
-            ...geometry.querySelectorAll(
-                ".geometry-node"
-            )
-        ];
+        document.querySelector(".hero-geometry");
 
     const core =
-        geometry.querySelector(
-            ".geometry-core"
-        );
+        geometry?.querySelector(".geometry-core");
 
-    if (!nodes.length) return;
+    const nodes =
+        geometry
+            ? [...geometry.querySelectorAll(".geometry-node")]
+            : [];
+
+    if (!geometry || !core || !nodes.length) return;
+
+    let touchActive = false;
 
     let touchX = 0;
     let touchY = 0;
 
-    let active = false;
+    let targetX = 0;
+    let targetY = 0;
+
+    let lastNode = null;
+    let lastNodeTime = 0;
 
     /* ---------------------------------------------------------
        TOUCH START
        --------------------------------------------------------- */
 
-    geometry.addEventListener(
+    document.addEventListener(
         "touchstart",
         event => {
 
@@ -2186,22 +2186,10 @@ if (directionSection && directionTitle) {
 
             if (!touch) return;
 
-            const rect =
-                geometry.getBoundingClientRect();
+            touchActive = true;
 
-            touchX =
-                touch.clientX -
-                rect.left;
-
-            touchY =
-                touch.clientY -
-                rect.top;
-
-            active = true;
-
-            geometry.classList.add(
-                "touch-active"
-            );
+            targetX = touch.clientX;
+            targetY = touch.clientY;
 
         },
         { passive: true }
@@ -2211,7 +2199,7 @@ if (directionSection && directionTitle) {
        TOUCH MOVE
        --------------------------------------------------------- */
 
-    geometry.addEventListener(
+    document.addEventListener(
         "touchmove",
         event => {
 
@@ -2220,123 +2208,8 @@ if (directionSection && directionTitle) {
 
             if (!touch) return;
 
-            const rect =
-                geometry.getBoundingClientRect();
-
-            touchX =
-                touch.clientX -
-                rect.left;
-
-            touchY =
-                touch.clientY -
-                rect.top;
-
-            const maxDistance =
-                Math.min(
-                    rect.width,
-                    rect.height
-                ) * .24;
-
-            let nearest = null;
-            let nearestDistance =
-                Infinity;
-
-            nodes.forEach(node => {
-
-                const nodeRect =
-                    node.getBoundingClientRect();
-
-                const nodeX =
-                    nodeRect.left -
-                    rect.left +
-                    nodeRect.width / 2;
-
-                const nodeY =
-                    nodeRect.top -
-                    rect.top +
-                    nodeRect.height / 2;
-
-                const dx =
-                    nodeX - touchX;
-
-                const dy =
-                    nodeY - touchY;
-
-                const distance =
-                    Math.sqrt(
-                        dx * dx +
-                        dy * dy
-                    );
-
-                if (
-                    distance <
-                    nearestDistance
-                ) {
-                    nearest =
-                        node;
-
-                    nearestDistance =
-                        distance;
-                }
-
-            });
-
-            if (
-                nearest &&
-                nearestDistance <
-                    maxDistance
-            ) {
-
-                nearest.classList.add(
-                    "touch-awake"
-                );
-
-                setTimeout(
-                    () => {
-                        nearest.classList.remove(
-                            "touch-awake"
-                        );
-                    },
-                    420
-                );
-
-            }
-
-            if (core) {
-
-                const cx =
-                    rect.width / 2;
-
-                const cy =
-                    rect.height / 2;
-
-                const dx =
-                    touchX - cx;
-
-                const dy =
-                    touchY - cy;
-
-                const distance =
-                    Math.sqrt(
-                        dx * dx +
-                        dy * dy
-                    );
-
-                const influence =
-                    Math.max(
-                        0,
-                        1 -
-                            distance /
-                                (rect.width * .45)
-                    );
-
-                core.style.setProperty(
-                    "--touch-scale",
-                    1 +
-                        influence * .035
-                );
-
-            }
+            targetX = touch.clientX;
+            targetY = touch.clientY;
 
         },
         { passive: true }
@@ -2346,25 +2219,187 @@ if (directionSection && directionTitle) {
        TOUCH END
        --------------------------------------------------------- */
 
-    geometry.addEventListener(
+    document.addEventListener(
         "touchend",
         () => {
 
-            active = false;
+            touchActive = false;
 
-            geometry.classList.remove(
-                "touch-active"
+            core.style.setProperty(
+                "--touch-scale",
+                "1"
             );
-
-            if (core) {
-                core.style.setProperty(
-                    "--touch-scale",
-                    "1"
-                );
-            }
 
         },
         { passive: true }
     );
+
+    /* ---------------------------------------------------------
+       FIND NODE UNDER / NEAR FINGER
+       --------------------------------------------------------- */
+
+    function checkNodes() {
+
+        if (!touchActive) return;
+
+        const rect =
+            geometry.getBoundingClientRect();
+
+        /*
+         * Ignore touches that are nowhere near
+         * the visual system.
+         */
+
+        const inside =
+            targetX >= rect.left - 80 &&
+            targetX <= rect.right + 80 &&
+            targetY >= rect.top - 80 &&
+            targetY <= rect.bottom + 80;
+
+        if (!inside) return;
+
+        let closest = null;
+        let closestDistance = Infinity;
+
+        nodes.forEach(node => {
+
+            const nodeRect =
+                node.getBoundingClientRect();
+
+            const x =
+                nodeRect.left +
+                nodeRect.width / 2;
+
+            const y =
+                nodeRect.top +
+                nodeRect.height / 2;
+
+            const dx =
+                targetX - x;
+
+            const dy =
+                targetY - y;
+
+            const d =
+                Math.sqrt(
+                    dx * dx +
+                    dy * dy
+                );
+
+            if (
+                d < closestDistance
+            ) {
+                closestDistance = d;
+                closest = node;
+            }
+
+        });
+
+        /*
+         * Wake a node when the finger comes
+         * within a reasonable radius.
+         */
+
+        if (
+            closest &&
+            closestDistance < 95
+        ) {
+
+            const now =
+                performance.now();
+
+            if (
+                closest !== lastNode ||
+                now - lastNodeTime > 500
+            ) {
+
+                lastNode =
+                    closest;
+
+                lastNodeTime =
+                    now;
+
+                closest.classList.add(
+                    "touch-awake"
+                );
+
+                setTimeout(
+                    () => {
+                        closest.classList.remove(
+                            "touch-awake"
+                        );
+                    },
+                    500
+                );
+            }
+        }
+
+        /* -----------------------------------------------------
+           CORE PROXIMITY
+           ----------------------------------------------------- */
+
+        const cx =
+            rect.left +
+            rect.width / 2;
+
+        const cy =
+            rect.top +
+            rect.height / 2;
+
+        const dx =
+            targetX - cx;
+
+        const dy =
+            targetY - cy;
+
+        const distance =
+            Math.sqrt(
+                dx * dx +
+                dy * dy
+            );
+
+        const influence =
+            Math.max(
+                0,
+                1 -
+                    distance /
+                        (rect.width * .55)
+            );
+
+        core.style.setProperty(
+            "--touch-scale",
+            1 +
+                influence * .045
+        );
+
+        /*
+         * Store the touch position so the canvas
+         * can eventually respond to it too.
+         */
+
+        geometry.style.setProperty(
+            "--touch-x",
+            `${targetX - rect.left}px`
+        );
+
+        geometry.style.setProperty(
+            "--touch-y",
+            `${targetY - rect.top}px`
+        );
+    }
+
+    /* ---------------------------------------------------------
+       LOW-COST LOOP
+       --------------------------------------------------------- */
+
+    function loop() {
+
+        checkNodes();
+
+        requestAnimationFrame(loop);
+
+    }
+
+    requestAnimationFrame(loop);
 
 })();
