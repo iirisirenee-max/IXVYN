@@ -1,5 +1,5 @@
 /* =========================================================
-   IXVYN — LENS / REAL VISUAL INFRASTRUCTURE INTELLIGENCE
+   IXVYN — LENS / ROAD-SCENE OBSERVATION INTELLIGENCE
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -11,123 +11,46 @@ document.addEventListener("DOMContentLoaded", () => {
        ELEMENTS
     ===================================================== */
 
-    const imageInput =
-        document.getElementById("image-input");
+    const imageInput = document.getElementById("image-input");
+    const uploadZone = document.getElementById("upload-zone");
+    const analyzeButton = document.getElementById("analyze-button");
 
-    const uploadZone =
-        document.getElementById("upload-zone");
+    const inspectionInput = document.getElementById("inspection-input");
+    const inspectionPreview = document.getElementById("inspection-preview");
+    const previewImage = document.getElementById("preview-image");
+    const fileName = document.getElementById("file-name");
 
-    const analyzeButton =
-        document.getElementById("analyze-button");
+    const systemState = document.getElementById("system-state");
+    const analysisState = document.getElementById("analysis-state");
+    const analysisStatus = document.getElementById("analysis-status");
+    const inspectionResults = document.getElementById("inspection-results");
 
-    const inspectionInput =
-        document.getElementById("inspection-input");
+    const resultImage = document.getElementById("result-image");
+    const resultDefect = document.getElementById("result-defect");
+    const resultConfidence = document.getElementById("result-confidence");
+    const resultSeverity = document.getElementById("result-severity");
+    const resultPriority = document.getElementById("result-priority");
+    const resultDescription = document.getElementById("result-description");
+    const resultAction = document.getElementById("result-action");
 
-    const inspectionPreview =
-        document.getElementById("inspection-preview");
+    const analysisTimer = document.getElementById("analysis-timer");
+    const resultProcessingTime = document.getElementById("result-processing-time");
 
-    const previewImage =
-        document.getElementById("preview-image");
+    const resultLat = document.getElementById("result-lat");
+    const resultLon = document.getElementById("result-lon");
 
-    const fileName =
-        document.getElementById("file-name");
+    const newInspection = document.getElementById("new-inspection");
+    const saveMemoryButton = document.getElementById("save-memory");
 
-    const systemState =
-        document.getElementById("system-state");
+    const progressVision = document.getElementById("progress-vision");
+    const progressClassification = document.getElementById("progress-classification");
+    const progressSeverity = document.getElementById("progress-severity");
 
-    const analysisState =
-        document.getElementById("analysis-state");
+    const barVision = document.getElementById("bar-vision");
+    const barClassification = document.getElementById("bar-classification");
+    const barSeverity = document.getElementById("bar-severity");
 
-    const analysisStatus =
-        document.getElementById("analysis-status");
-
-    const analysisTimer =
-        document.getElementById("analysis-timer");
-
-    const inspectionResults =
-        document.getElementById("inspection-results");
-
-    const resultImage =
-        document.getElementById("result-image");
-
-    const resultDefect =
-        document.getElementById("result-defect");
-
-    const resultConfidence =
-        document.getElementById("result-confidence");
-
-    const resultSeverity =
-        document.getElementById("result-severity");
-
-    const resultPriority =
-        document.getElementById("result-priority");
-
-    const resultDescription =
-        document.getElementById("result-description");
-
-    const resultAction =
-        document.getElementById("result-action");
-
-    const resultLat =
-        document.getElementById("result-lat");
-
-    const resultLon =
-        document.getElementById("result-lon");
-
-    const newInspection =
-        document.getElementById("new-inspection");
-
-    const saveMemoryButton =
-        document.getElementById("save-memory");
-
-    const resultProcessingTime =
-        document.getElementById("result-processing-time");
-
-
-    let currentAnalysisResult = null;
-    let currentLatitude = null;
-    let currentLongitude = null;
-    let memorySaved = false;
-
-
-    /* =====================================================
-       PROCESSING TIMER
-    ===================================================== */
-
-    let analysisStartTime = null;
-    let analysisElapsedTime = null;
-    let analysisTimerInterval = null;
-
-
-    /* =====================================================
-       PROGRESS ELEMENTS
-    ===================================================== */
-
-    const progressVision =
-        document.getElementById("progress-vision");
-
-    const progressClassification =
-        document.getElementById("progress-classification");
-
-    const progressSeverity =
-        document.getElementById("progress-severity");
-
-    const barVision =
-        document.getElementById("bar-vision");
-
-    const barClassification =
-        document.getElementById("bar-classification");
-
-    const barSeverity =
-        document.getElementById("bar-severity");
-
-
-    /* =====================================================
-       DETECTION OVERLAY
-    ===================================================== */
-
-    const resultOverlay =
-        document.querySelector(".result-overlay");
+    const resultOverlay = document.querySelector(".result-overlay");
 
 
     /* =====================================================
@@ -136,7 +59,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let selectedFile = null;
     let selectedImageURL = null;
+
+    let currentAnalysisResult = null;
+
+    let currentLatitude = null;
+    let currentLongitude = null;
+
     let analysisRunning = false;
+    let memorySaved = false;
+
+    let analysisStartTime = null;
+    let analysisElapsedTime = null;
+    let analysisTimerInterval = null;
 
 
     /* =====================================================
@@ -153,42 +87,33 @@ document.addEventListener("DOMContentLoaded", () => {
         !analysisState ||
         !inspectionResults
     ) {
-
         console.error(
             "IXVYN LENS: Required interface elements are missing."
         );
-
         return;
     }
 
 
     /* =====================================================
        IMAGE INPUT
+       
+       IMPORTANT:
+       The HTML uses:
+       
+       <label for="image-input">
+       
+       We intentionally DO NOT call imageInput.click().
+       This preserves mobile file-picker behavior.
     ===================================================== */
 
-    imageInput.addEventListener(
-        "change",
-        (event) => {
+    imageInput.addEventListener("change", (event) => {
 
-            console.log(
-                "IXVYN LENS: File input changed."
-            );
+        const file = event.target.files?.[0];
 
-            const file =
-                event.target.files?.[0];
+        if (!file) return;
 
-            if (!file) {
-                return;
-            }
-
-            processFile(file);
-        }
-    );
-
-
-    /* =====================================================
-       UPLOAD ZONE
-    ===================================================== */
+        processFile(file);
+    });
 
 
     /* =====================================================
@@ -206,91 +131,37 @@ document.addEventListener("DOMContentLoaded", () => {
             !file.type ||
             !file.type.startsWith("image/")
         ) {
-
-            alert(
-                "Please select an image file."
-            );
-
+            alert("Please select an image file.");
             return;
         }
 
-
         selectedFile = file;
 
-
-        /* ---------------------------------------------
-           CLEAN PREVIOUS OBJECT URL
-        --------------------------------------------- */
-
         if (selectedImageURL) {
-
-            URL.revokeObjectURL(
-                selectedImageURL
-            );
+            URL.revokeObjectURL(selectedImageURL);
         }
 
+        selectedImageURL = URL.createObjectURL(file);
 
-        /* ---------------------------------------------
-           CREATE PREVIEW
-        --------------------------------------------- */
-
-        selectedImageURL =
-            URL.createObjectURL(file);
-
-        previewImage.src =
-            selectedImageURL;
-
+        previewImage.src = selectedImageURL;
 
         if (resultImage) {
-
-            resultImage.src =
-                selectedImageURL;
+            resultImage.src = selectedImageURL;
         }
-
-
-        /* ---------------------------------------------
-           FILE INFORMATION
-        --------------------------------------------- */
 
         if (fileName) {
-
-            fileName.textContent =
-                file.name;
+            fileName.textContent = file.name;
         }
 
+        inspectionPreview.hidden = false;
 
-        /* ---------------------------------------------
-           SHOW PREVIEW
-        --------------------------------------------- */
+        analyzeButton.disabled = false;
 
-        inspectionPreview.hidden =
-            false;
+        systemState.textContent = "FRAME READY";
 
+        uploadZone.classList.add("has-file");
 
-        /* ---------------------------------------------
-           ENABLE ANALYSIS
-        --------------------------------------------- */
-
-        analyzeButton.disabled =
-            false;
-
-
-        /* ---------------------------------------------
-           SYSTEM STATE
-        --------------------------------------------- */
-
-        systemState.textContent =
-            "FRAME READY";
-
-
-        uploadZone.classList.add(
-            "has-file"
-        );
-
-
-        console.log(
-            "IXVYN LENS: FRAME READY."
-        );
+        console.log("IXVYN LENS: FRAME READY.");
     }
 
 
@@ -298,50 +169,32 @@ document.addEventListener("DOMContentLoaded", () => {
        DRAG AND DROP
     ===================================================== */
 
-    uploadZone.addEventListener(
-        "dragover",
-        (event) => {
+    uploadZone.addEventListener("dragover", (event) => {
 
-            event.preventDefault();
+        event.preventDefault();
 
-            uploadZone.classList.add(
-                "is-dragging"
-            );
-        }
-    );
+        uploadZone.classList.add("is-dragging");
+    });
 
 
-    uploadZone.addEventListener(
-        "dragleave",
-        () => {
+    uploadZone.addEventListener("dragleave", () => {
 
-            uploadZone.classList.remove(
-                "is-dragging"
-            );
-        }
-    );
+        uploadZone.classList.remove("is-dragging");
+    });
 
 
-    uploadZone.addEventListener(
-        "drop",
-        (event) => {
+    uploadZone.addEventListener("drop", (event) => {
 
-            event.preventDefault();
+        event.preventDefault();
 
-            uploadZone.classList.remove(
-                "is-dragging"
-            );
+        uploadZone.classList.remove("is-dragging");
 
-            const file =
-                event.dataTransfer.files?.[0];
+        const file = event.dataTransfer.files?.[0];
 
-            if (!file) {
-                return;
-            }
+        if (!file) return;
 
-            processFile(file);
-        }
-    );
+        processFile(file);
+    });
 
 
     /* =====================================================
@@ -355,851 +208,752 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       BEGIN REAL ANALYSIS
+       BEGIN ANALYSIS
     ===================================================== */
 
-   async function beginAnalysis() {
-
-    if (
-        !selectedFile ||
-        analysisRunning
-    ) {
-        return;
-    }
-
-
-    analysisRunning = true;
-
-    analyzeButton.disabled = true;
-
-    systemState.textContent =
-        "ANALYZING";
-
-
-    /* =================================================
-       SHOW ANALYSIS SCREEN
-    ================================================== */
-
-    analysisState.hidden = false;
-
-    inspectionInput.hidden = true;
-
-    inspectionPreview.hidden = true;
-
-    inspectionResults.hidden = true;
-
-
-    analysisState.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-
-
-    /* =================================================
-       RESET PROGRESS
-    ================================================== */
-
-    setProgress(
-        progressVision,
-        barVision,
-        0
-    );
-
-    setProgress(
-        progressClassification,
-        barClassification,
-        0
-    );
-
-    setProgress(
-        progressSeverity,
-        barSeverity,
-        0
-    );
-
-
-    analysisStatus.textContent =
-        "FRAME ACQUIRED";
-
-
-    try {
-
-        /* =================================================
-           START REAL PROCESSING TIMER
-           
-           This timer measures the REAL analysis request.
-        ================================================== */
-
-        analysisStartTime =
-            performance.now();
-
-        analysisElapsedTime =
-            null;
-
-
-        if (analysisTimerInterval) {
-
-            clearInterval(
-                analysisTimerInterval
-            );
-
-        }
-
-
-        if (analysisTimer) {
-
-            analysisTimer.textContent =
-                "0.00s";
-
-        }
-
-
-        analysisTimerInterval =
-            setInterval(
-                () => {
-
-                    if (
-                        !Number.isFinite(
-                            analysisStartTime
-                        )
-                    ) {
-                        return;
-                    }
-
-
-                    const elapsed =
-                        (
-                            performance.now() -
-                            analysisStartTime
-                        ) / 1000;
-
-
-                    if (analysisTimer) {
-
-                        analysisTimer.textContent =
-                            `${elapsed.toFixed(2)}s`;
-
-                    }
-
-                },
-                50
-            );
-
-
-        /* =================================================
-           REAL AI REQUEST
-           
-           Gemini starts immediately.
-        ================================================== */
-
-        const aiRequest =
-            analyzeImageWithGemini();
-
-
-        /* =================================================
-           CINEMATIC PROGRESS
-           
-           Visual progress runs independently.
-        ================================================== */
-
-        const progressSequence =
-            (async () => {
-
-                await animateProgress(
-                    progressVision,
-                    barVision,
-                    100,
-                    1200,
-                    "SCANNING VISUAL FIELD"
-                );
-
-
-                await animateProgress(
-                    progressClassification,
-                    barClassification,
-                    100,
-                    1100,
-                    "EXTRACTING VISUAL EVIDENCE"
-                );
-
-
-                await animateProgress(
-                    progressSeverity,
-                    barSeverity,
-                    100,
-                    900,
-                    "ASSESSING ANOMALY SEVERITY"
-                );
-
-            })();
-
-
-        /* =================================================
-           WAIT FOR REAL GEMINI RESULT
-        ================================================== */
-
-        const result =
-            await aiRequest;
-
-
-        /* =================================================
-           STOP REAL TIMER IMMEDIATELY
-           
-           IMPORTANT:
-           The timer ends when the real AI request ends.
-           It does NOT wait for the visual animation.
-        ================================================== */
+    async function beginAnalysis() {
 
         if (
-            Number.isFinite(
-                analysisStartTime
-            )
+            !selectedFile ||
+            analysisRunning
         ) {
-
-            analysisElapsedTime =
-                (
-                    performance.now() -
-                    analysisStartTime
-                ) / 1000;
-
+            return;
         }
 
+        analysisRunning = true;
 
-        if (analysisTimerInterval) {
+        analyzeButton.disabled = true;
 
-            clearInterval(
-                analysisTimerInterval
-            );
-
-            analysisTimerInterval =
-                null;
-
-        }
+        systemState.textContent = "OBSERVING";
 
 
-        if (
-            analysisTimer &&
-            Number.isFinite(
-                analysisElapsedTime
-            )
-        ) {
+        /* -------------------------------------------------
+           SHOW ANALYSIS STATE
+        ------------------------------------------------- */
 
-            analysisTimer.textContent =
-                `${analysisElapsedTime.toFixed(2)}s`;
+        analysisState.hidden = false;
 
-        }
+        inspectionInput.hidden = true;
+
+        inspectionPreview.hidden = true;
+
+        inspectionResults.hidden = true;
+
+        analysisState.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
 
 
-        console.log(
-            "IXVYN LENS: REAL AI RESULT:",
-            result
+        /* -------------------------------------------------
+           RESET PROGRESS
+        ------------------------------------------------- */
+
+        setProgress(
+            progressVision,
+            barVision,
+            0
         );
 
-
-        console.log(
-            "IXVYN LENS: REAL PROCESSING TIME:",
-            `${analysisElapsedTime?.toFixed(2)}s`
+        setProgress(
+            progressClassification,
+            barClassification,
+            0
         );
 
-
-        /* =================================================
-           COMPLETE THE VISUAL PIPELINE
-           
-           This is presentation only.
-           It does NOT affect the real timer.
-        ================================================== */
-
-        await progressSequence;
-
-
-        analysisStatus.textContent =
-            "ANALYSIS COMPLETE";
-
-
-        /* =================================================
-           RENDER REAL RESULT
-        ================================================== */
-
-        renderResult(
-            result
+        setProgress(
+            progressSeverity,
+            barSeverity,
+            0
         );
 
+        analysisStatus.textContent = "INITIALIZING";
 
-        await sleep(500);
-
-
-        showResults();
-
-
-    } catch (error) {
-
-        /* =================================================
-           STOP TIMER IMMEDIATELY ON ERROR
-        ================================================== */
-
-        if (analysisTimerInterval) {
-
-            clearInterval(
-                analysisTimerInterval
-            );
-
-            analysisTimerInterval =
-                null;
-
-        }
-
-
-        if (
-            Number.isFinite(
-                analysisStartTime
-            )
-        ) {
-
-            analysisElapsedTime =
-                (
-                    performance.now() -
-                    analysisStartTime
-                ) / 1000;
-
-        }
-
-
-        if (
-            analysisTimer &&
-            Number.isFinite(
-                analysisElapsedTime
-            )
-        ) {
-
-            analysisTimer.textContent =
-                `${analysisElapsedTime.toFixed(2)}s`;
-
-        }
-
-
-        console.error(
-            "IXVYN LENS: Analysis failed:",
-            error
-        );
-
-
-        analysisStatus.textContent =
-            "ANALYSIS FAILED";
-
-
-        showAnalysisError(
-            error
-        );
-
-
-        analysisRunning =
-            false;
-
-        analyzeButton.disabled =
-            false;
-
-        systemState.textContent =
-            "ANALYSIS ERROR";
-
-
-        return;
-    }
-
-
-    analysisRunning =
-        false;
-}
-
-   
-
-        
-            /* =====================================================
-   REAL GEMINI REQUEST
-===================================================== */
-
-async function analyzeImageWithGemini() {
-
-    console.log(
-        "IXVYN LENS: Preparing image for AI..."
-    );
-
-    /*
-     * Prepare the image once.
-     * Retries reuse the same prepared image.
-     */
-    const preparedImage =
-        await prepareImageForAI(
-            selectedFile
-        );
-
-    const MAX_ATTEMPTS = 3;
-    const REQUEST_TIMEOUT = 35000;
-
-    function isRetryableStatus(status) {
-
-        return (
-            status === 408 ||
-            status === 425 ||
-            status === 429 ||
-            status === 500 ||
-            status === 502 ||
-            status === 503 ||
-            status === 504
-        );
-    }
-
-    for (
-        let attempt = 1;
-        attempt <= MAX_ATTEMPTS;
-        attempt++
-    ) {
-
-        let controller = null;
-        let timeoutId = null;
 
         try {
 
-            console.log(
-                `IXVYN LENS: AI request attempt ${attempt}/${MAX_ATTEMPTS}`
-            );
+            /* -------------------------------------------------
+               REAL AI TIMER
+            ------------------------------------------------- */
 
-            controller =
-                new AbortController();
+            analysisStartTime = performance.now();
 
-            timeoutId =
-                setTimeout(
-                    () => {
-                        controller.abort();
-                    },
-                    REQUEST_TIMEOUT
+            analysisElapsedTime = null;
+
+            if (analysisTimerInterval) {
+
+                clearInterval(
+                    analysisTimerInterval
                 );
-
-            if (attempt > 1) {
-
-                analysisStatus.textContent =
-                    `RETRYING AI REQUEST // ${attempt}/${MAX_ATTEMPTS}`;
-
             }
 
-            console.log(
-                "IXVYN LENS: Sending frame to /api/analyze..."
-            );
+            if (analysisTimer) {
+                analysisTimer.textContent = "0.00s";
+            }
 
-            const response =
-                await fetch(
-                    "/api/analyze",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body: JSON.stringify({
-                            image:
-                                preparedImage.data,
-
-                            mimeType:
-                                preparedImage.mimeType
-                        }),
-
-                        signal:
-                            controller.signal
-                    }
-                );
-
-            clearTimeout(
-                timeoutId
-            );
-
-            let data = null;
-
-            const responseText =
-                await response.text();
-
-            try {
-
-                data =
-                    responseText
-                        ? JSON.parse(
-                            responseText
-                        )
-                        : null;
-
-            } catch (parseError) {
-
-                console.error(
-                    "IXVYN: /api/analyze returned non-JSON:",
-                    responseText
-                );
+            analysisTimerInterval = setInterval(() => {
 
                 if (
-                    isRetryableStatus(
-                        response.status
-                    ) &&
-                    attempt < MAX_ATTEMPTS
+                    !Number.isFinite(
+                        analysisStartTime
+                    )
                 ) {
-
-                    console.warn(
-                        `IXVYN: Retrying after HTTP ${response.status}.`
-                    );
-
-                    analysisStatus.textContent =
-                        `RETRYING // HTTP ${response.status}`;
-
-                    await sleep(
-                        attempt === 1
-                            ? 1200
-                            : 2500
-                    );
-
-                    continue;
+                    return;
                 }
 
-                throw new Error(
-                    `Analysis server returned HTTP ${response.status}.`
-                );
-            }
+                const elapsed =
+                    (
+                        performance.now() -
+                        analysisStartTime
+                    ) / 1000;
 
-            /*
-             * HTTP ERROR
-             */
-            if (!response.ok) {
+                if (analysisTimer) {
 
-                console.error(
-                    "IXVYN: Analysis API error:",
-                    response.status,
-                    data
-                );
-
-                const serverMessage =
-                    data?.details ||
-                    data?.error ||
-                    data?.message ||
-                    `Gemini analysis failed with HTTP ${response.status}.`;
-
-                if (
-                    isRetryableStatus(
-                        response.status
-                    ) &&
-                    attempt < MAX_ATTEMPTS
-                ) {
-
-                    console.warn(
-                        `IXVYN: Temporary API failure (${response.status}). ` +
-                        `Retrying attempt ${attempt + 1}/${MAX_ATTEMPTS}.`
-                    );
-
-                    analysisStatus.textContent =
-                        `RETRYING // HTTP ${response.status}`;
-
-                    await sleep(
-                        attempt === 1
-                            ? 1200
-                            : 2500
-                    );
-
-                    continue;
+                    analysisTimer.textContent =
+                        `${elapsed.toFixed(2)}s`;
                 }
 
-                throw new Error(
-                    serverMessage
-                );
-            }
+            }, 50);
 
-            /*
-             * INVALID APPLICATION RESPONSE
-             */
+
+            /* -------------------------------------------------
+               START REAL AI REQUEST IMMEDIATELY
+            ------------------------------------------------- */
+
+            const aiRequest =
+                analyzeImageWithGemini();
+
+
+            /* -------------------------------------------------
+               VISUAL ANALYSIS
+            ------------------------------------------------- */
+
+            await animateProgress(
+                progressVision,
+                barVision,
+                100,
+                1100,
+                "SCENE PERCEPTION"
+            );
+
+
+            /* -------------------------------------------------
+               ROAD / PEOPLE / VEHICLES
+            ------------------------------------------------- */
+
+            await animateProgress(
+                progressClassification,
+                barClassification,
+                100,
+                900,
+                "ROAD / PEOPLE / VEHICLES"
+            );
+
+
+            /* -------------------------------------------------
+               INFRASTRUCTURE / INTERACTIONS
+            ------------------------------------------------- */
+
+            await animateProgress(
+                progressSeverity,
+                barSeverity,
+                100,
+                700,
+                "INFRASTRUCTURE / INTERACTIONS"
+            );
+
+
+            /* -------------------------------------------------
+               WAIT FOR GEMINI
+            ------------------------------------------------- */
+
+            const result = await aiRequest;
+
+
+            /* -------------------------------------------------
+               STOP TIMER
+            ------------------------------------------------- */
+
             if (
-                !data ||
-                data.success === false
+                Number.isFinite(
+                    analysisStartTime
+                )
             ) {
 
-                const applicationMessage =
-                    data?.details ||
-                    data?.error ||
-                    data?.message ||
-                    "No valid analysis result was returned.";
-
-                if (
-                    attempt < MAX_ATTEMPTS
-                ) {
-
-                    console.warn(
-                        "IXVYN: Invalid analysis response. " +
-                        `Retrying attempt ${attempt + 1}/${MAX_ATTEMPTS}.`
-                    );
-
-                    analysisStatus.textContent =
-                        "RETRYING // INVALID AI RESPONSE";
-
-                    await sleep(
-                        attempt === 1
-                            ? 1200
-                            : 2500
-                    );
-
-                    continue;
-                }
-
-                throw new Error(
-                    applicationMessage
-                );
+                analysisElapsedTime =
+                    (
+                        performance.now() -
+                        analysisStartTime
+                    ) / 1000;
             }
 
-            /*
-             * SUCCESS
-             */
+            if (analysisTimerInterval) {
+
+                clearInterval(
+                    analysisTimerInterval
+                );
+
+                analysisTimerInterval = null;
+            }
+
+            if (analysisTimer) {
+
+                analysisTimer.textContent =
+                    `${(
+                        analysisElapsedTime || 0
+                    ).toFixed(2)}s`;
+            }
+
+            if (resultProcessingTime) {
+
+                resultProcessingTime.textContent =
+                    `${(
+                        analysisElapsedTime || 0
+                    ).toFixed(2)}s`;
+            }
+
+
+            analysisStatus.textContent =
+                "OBSERVATION COMPLETE";
+
+
             console.log(
-                "IXVYN LENS: Gemini analysis received:",
-                data
+                "IXVYN LENS: REAL AI RESULT:",
+                result
             );
 
-            return data;
+
+            renderResult(result);
+
+
+            await sleep(500);
+
+            showResults();
+
 
         } catch (error) {
 
-            if (timeoutId) {
-
-                clearTimeout(
-                    timeoutId
-                );
-
-            }
-
-            const wasTimeout =
-                error?.name === "AbortError";
-
-            const wasNetworkError =
-                error?.name === "TypeError";
-
-            /*
-             * Retry temporary network failures
-             * and request timeouts.
-             */
-            if (
-                (
-                    wasTimeout ||
-                    wasNetworkError
-                ) &&
-                attempt < MAX_ATTEMPTS
-            ) {
-
-                console.warn(
-                    "IXVYN: Temporary network/request failure.",
-                    error
-                );
-
-                analysisStatus.textContent =
-                    wasTimeout
-                        ? "RETRYING // REQUEST TIMEOUT"
-                        : "RETRYING // NETWORK FAILURE";
-
-                await sleep(
-                    attempt === 1
-                        ? 1200
-                        : 2500
-                );
-
-                continue;
-            }
-
             console.error(
-                `IXVYN: AI request failed on attempt ${attempt}/${MAX_ATTEMPTS}:`,
+                "IXVYN LENS: Analysis failed:",
                 error
             );
 
-            throw error;
-        }
-    }
+            if (analysisTimerInterval) {
 
-    throw new Error(
-        "AI analysis failed after all retry attempts."
-    );
-                       }
-    /* =====================================================
-       PREPARE IMAGE
-    ===================================================== */
-
-    function prepareImageForAI(file) {
-
-        return new Promise(
-            (resolve, reject) => {
-
-                const reader =
-                    new FileReader();
-
-
-                reader.onload =
-                    () => {
-
-                        const image =
-                            new Image();
-
-
-                        image.onload =
-                            () => {
-
-                                const MAX_SIZE =
-                                    800;
-
-                                let width =
-                                    image.naturalWidth;
-
-                                let height =
-                                    image.naturalHeight;
-
-
-                                if (
-                                    width > MAX_SIZE ||
-                                    height > MAX_SIZE
-                                ) {
-
-                                    const scale =
-                                        Math.min(
-                                            MAX_SIZE / width,
-                                            MAX_SIZE / height
-                                        );
-
-
-                                    width =
-                                        Math.round(
-                                            width * scale
-                                        );
-
-                                    height =
-                                        Math.round(
-                                            height * scale
-                                        );
-                                }
-
-
-                                const canvas =
-                                    document.createElement(
-                                        "canvas"
-                                    );
-
-
-                                canvas.width =
-                                    width;
-
-                                canvas.height =
-                                    height;
-
-
-                                const context =
-                                    canvas.getContext(
-                                        "2d"
-                                    );
-
-
-                                if (!context) {
-
-                                    reject(
-                                        new Error(
-                                            "Could not prepare image."
-                                        )
-                                    );
-
-                                    return;
-                                }
-
-
-                                context.drawImage(
-                                    image,
-                                    0,
-                                    0,
-                                    width,
-                                    height
-                                );
-
-
-                                /*
-                                 * JPEG keeps requests reasonably small
-                                 * while retaining enough detail.
-                                 */
-
-                                const dataURL =
-                                    canvas.toDataURL(
-                                        "image/jpeg",
-                                        0.82
-                                    );
-
-
-                                resolve({
-
-                                    data:
-                                        dataURL,
-
-                                    mimeType:
-                                        "image/jpeg"
-
-                                });
-
-                            };
-
-
-                        image.onerror =
-                            () => {
-
-                                reject(
-                                    new Error(
-                                        "Could not read the selected image."
-                                    )
-                                );
-                            };
-
-
-                        image.src =
-                            reader.result;
-
-                    };
-
-
-                reader.onerror =
-                    () => {
-
-                        reject(
-                            new Error(
-                                "Could not load image file."
-                            )
-                        );
-                    };
-
-
-                reader.readAsDataURL(
-                    file
+                clearInterval(
+                    analysisTimerInterval
                 );
 
+                analysisTimerInterval = null;
             }
-        );
-    }
 
+            analysisStatus.textContent =
+                "ANALYSIS FAILED";
 
-    /* =====================================================
-       RENDER REAL RESULT
-    ===================================================== */
+            showAnalysisError(error);
 
-    function renderResult(result) {
+            analysisRunning = false;
 
-        if (!result) {
+            analyzeButton.disabled = false;
+
+            systemState.textContent =
+                "ANALYSIS ERROR";
+
             return;
         }
 
 
-        currentAnalysisResult =
-            result;
-
-        memorySaved =
-            false;
-
-        resetMemoryButton();
+        analysisRunning = false;
+    }
 
 
-        /* ---------------------------------------------
+    /* =====================================================
+       REAL GEMINI REQUEST
+    ===================================================== */
+
+    async function analyzeImageWithGemini() {
+
+        console.log(
+            "IXVYN LENS: Preparing image for AI..."
+        );
+
+
+        const preparedImage =
+            await prepareImageForAI(
+                selectedFile
+            );
+
+
+        console.log(
+            "IXVYN LENS: Sending frame to /api/analyze..."
+        );
+
+
+        const response = await fetch(
+            "/api/analyze",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+                    image:
+                        preparedImage.data,
+
+                    mimeType:
+                        preparedImage.mimeType
+                })
+            }
+        );
+
+
+        let data = null;
+
+        const responseText =
+            await response.text();
+
+
+        try {
+
+            data =
+                responseText
+                    ? JSON.parse(
+                        responseText
+                    )
+                    : null;
+
+        } catch (parseError) {
+
+            console.error(
+                "IXVYN: /api/analyze returned non-JSON:",
+                responseText
+            );
+
+            throw new Error(
+                `Analysis server returned HTTP ${response.status}.`
+            );
+        }
+
+
+        if (!response.ok) {
+
+            console.error(
+                "IXVYN: Analysis API error:",
+                response.status,
+                data
+            );
+
+            throw new Error(
+                data?.details ||
+                data?.error ||
+                data?.message ||
+                `Gemini analysis failed with HTTP ${response.status}.`
+            );
+        }
+
+
+        if (
+            !data ||
+            data.success === false
+        ) {
+
+            throw new Error(
+                data?.details ||
+                data?.error ||
+                data?.message ||
+                "No valid analysis result was returned."
+            );
+        }
+
+
+        console.log(
+            "IXVYN LENS: Gemini analysis received:",
+            data
+        );
+
+
+        return data;
+    }
+
+
+    /* =====================================================
+       PREPARE IMAGE FOR AI
+    ===================================================== */
+
+    function prepareImageForAI(file) {
+
+        return new Promise((resolve, reject) => {
+
+            if (!file) {
+
+                reject(
+                    new Error(
+                        "No image selected."
+                    )
+                );
+
+                return;
+            }
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload = () => {
+
+                const image =
+                    new Image();
+
+
+                image.onload = () => {
+
+                    const MAX_SIZE = 1600;
+
+                    let width =
+                        image.naturalWidth;
+
+                    let height =
+                        image.naturalHeight;
+
+
+                    if (
+                        width > MAX_SIZE ||
+                        height > MAX_SIZE
+                    ) {
+
+                        const scale =
+                            Math.min(
+                                MAX_SIZE / width,
+                                MAX_SIZE / height
+                            );
+
+                        width =
+                            Math.round(
+                                width * scale
+                            );
+
+                        height =
+                            Math.round(
+                                height * scale
+                            );
+                    }
+
+
+                    const canvas =
+                        document.createElement(
+                            "canvas"
+                        );
+
+
+                    canvas.width = width;
+
+                    canvas.height = height;
+
+
+                    const context =
+                        canvas.getContext("2d");
+
+
+                    if (!context) {
+
+                        reject(
+                            new Error(
+                                "Could not prepare image."
+                            )
+                        );
+
+                        return;
+                    }
+
+
+                    context.drawImage(
+                        image,
+                        0,
+                        0,
+                        width,
+                        height
+                    );
+
+
+                    const dataURL =
+                        canvas.toDataURL(
+                            "image/jpeg",
+                            0.82
+                        );
+
+
+                    resolve({
+                        data: dataURL,
+                        mimeType: "image/jpeg"
+                    });
+                };
+
+
+                image.onerror = () => {
+
+                    reject(
+                        new Error(
+                            "Could not read the selected image."
+                        )
+                    );
+                };
+
+
+                image.src =
+                    reader.result;
+            };
+
+
+            reader.onerror = () => {
+
+                reject(
+                    new Error(
+                        "Could not load image file."
+                    )
+                );
+            };
+
+
+            reader.readAsDataURL(file);
+        });
+    }
+
+
+    /* =====================================================
+       RENDER OBSERVATION
+       
+       LENS OBSERVES.
+       LENS DOES NOT DETERMINE RISK.
+       LENS DOES NOT PRESCRIBE INTERVENTIONS.
+    ===================================================== */
+
+    function renderResult(result) {
+
+        if (!result) return;
+
+        currentAnalysisResult = result;
+
+
+        /* -------------------------------------------------
+           SAFE VALUE HELPERS
+        ------------------------------------------------- */
+
+        const safe = (
+            value,
+            fallback = "NOT OBSERVABLE"
+        ) => {
+
+            if (
+                value === null ||
+                value === undefined ||
+                value === ""
+            ) {
+                return fallback;
+            }
+
+
+            if (Array.isArray(value)) {
+
+                return value.length
+                    ? value.join(" · ")
+                    : fallback;
+            }
+
+
+            if (typeof value === "object") {
+
+                return Object.entries(value)
+                    .map(
+                        ([key, val]) =>
+                            `${key.toUpperCase()}: ${
+                                val ?? fallback
+                            }`
+                    )
+                    .join(" · ");
+            }
+
+
+            return String(value);
+        };
+
+
+        const list = (value) => {
+
+            if (
+                !Array.isArray(value) ||
+                !value.length
+            ) {
+                return "NONE OBSERVED";
+            }
+
+
+            return value
+                .map((item) => {
+
+                    if (
+                        typeof item === "string"
+                    ) {
+                        return item;
+                    }
+
+
+                    return (
+                        item?.label ||
+                        item?.type ||
+                        item?.description ||
+                        JSON.stringify(item)
+                    );
+                })
+                .join(" · ");
+        };
+
+
+        /* -------------------------------------------------
+           ROAD SCENE
+        ------------------------------------------------- */
+
+        if (resultDefect) {
+
+            resultDefect.textContent =
+                result.sceneType ||
+                result.road?.sceneType ||
+                "ROAD SCENE";
+        }
+
+
+        /* -------------------------------------------------
+           CONFIDENCE
+        ------------------------------------------------- */
+
+        if (resultConfidence) {
+
+            const confidence =
+                Number(
+                    result.confidence
+                );
+
+
+            resultConfidence.textContent =
+                Number.isFinite(
+                    confidence
+                )
+                    ? `${Math.round(
+                        confidence <= 1
+                            ? confidence * 100
+                            : confidence
+                    )}%`
+                    : "UNKNOWN";
+        }
+
+
+        /* -------------------------------------------------
+           OBSERVATIONS
+        ------------------------------------------------- */
+
+        if (resultSeverity) {
+
+            resultSeverity.textContent =
+                result.observations?.length
+                    ? list(
+                        result.observations
+                    )
+                    : safe(
+                        result.infrastructure,
+                        "NO SAFETY JUDGMENT"
+                    );
+        }
+
+
+        /* -------------------------------------------------
+           EVIDENCE
+        ------------------------------------------------- */
+
+        if (resultPriority) {
+
+            const clear =
+                result.evidence?.clear || [];
+
+            const uncertain =
+                result.evidence?.uncertain || [];
+
+
+            resultPriority.textContent =
+                clear.length ||
+                uncertain.length
+                    ? `${clear.length} CLEAR / ${uncertain.length} UNCERTAIN`
+                    : "FORWARD TO SIGNAL";
+        }
+
+
+        /* -------------------------------------------------
+           SCENE SUMMARY
+        ------------------------------------------------- */
+
+        if (resultDescription) {
+
+            const lines = [
+
+                result.sceneSummary ||
+                result.analysis ||
+                "Road-scene observation completed.",
+
+                `ROAD — ${
+                    safe(result.road)
+                }`,
+
+                `PEOPLE — ${
+                    safe(result.people)
+                }`,
+
+                `VEHICLES — ${
+                    safe(result.vehicles)
+                }`,
+
+                `INFRASTRUCTURE — ${
+                    safe(result.infrastructure)
+                }`,
+
+                `OBSTRUCTIONS — ${
+                    list(result.obstructions)
+                }`,
+
+                `VISIBILITY — ${
+                    safe(result.visibility)
+                }`,
+
+                `INTERACTIONS — ${
+                    list(result.interactions)
+                }`,
+
+                `EVIDENCE — ${
+                    safe(result.evidence)
+                }`
+            ];
+
+
+            resultDescription.textContent =
+                lines.join("\n\n");
+        }
+
+
+        /* -------------------------------------------------
+           HANDOFF
+        ------------------------------------------------- */
+
+        if (resultAction) {
+
+            resultAction.textContent =
+                "Observed evidence is ready for SIGNAL. LENS does not determine risk or prescribe an intervention.";
+        }
+
+
+        /* -------------------------------------------------
            PROCESSING TIME
-        --------------------------------------------- */
+        ------------------------------------------------- */
 
         if (resultProcessingTime) {
 
@@ -1209,98 +963,12 @@ async function analyzeImageWithGemini() {
                 )
                     ? `${analysisElapsedTime.toFixed(2)}s`
                     : "—";
-
         }
 
 
-        /* ---------------------------------------------
-           DEFECT
-        --------------------------------------------- */
-
-        if (resultDefect) {
-
-            resultDefect.textContent =
-                result.defect ||
-                "NO ACTIONABLE ANOMALY";
-        }
-
-
-        /* ---------------------------------------------
-           CONFIDENCE
-        --------------------------------------------- */
-
-        if (resultConfidence) {
-
-            const confidence =
-                parseFloat(
-                    result.confidence
-                );
-
-
-            resultConfidence.textContent =
-                Number.isFinite(confidence)
-                    ? (
-                        confidence <= 1
-                            ? `${(confidence * 100).toFixed(1)}%`
-                            : `${confidence.toFixed(1)}%`
-                    )
-                    : "—";
-        }
-
-
-        /* ---------------------------------------------
-           SEVERITY
-        --------------------------------------------- */
-
-        if (resultSeverity) {
-
-            resultSeverity.textContent =
-                result.severity ||
-                "—";
-        }
-
-
-        /* ---------------------------------------------
-           PRIORITY
-        --------------------------------------------- */
-
-        if (resultPriority) {
-
-            resultPriority.textContent =
-                result.priority ||
-                "—";
-        }
-
-
-        /* ---------------------------------------------
-           DESCRIPTION
-        --------------------------------------------- */
-
-        if (resultDescription) {
-
-            resultDescription.textContent =
-                result.description ||
-                result.analysis ||
-                "No actionable infrastructure anomaly was identified.";
-        }
-
-
-        /* ---------------------------------------------
-           ACTION
-        --------------------------------------------- */
-
-        if (resultAction) {
-
-            resultAction.textContent =
-                result.recommendedAction ||
-                result.action ||
-                "No immediate action recommended.";
-        }
-
-
-        /* ---------------------------------------------
-           RESULT IMAGE
-        --------------------------------------------- */
+        /* -------------------------------------------------
+           IMAGE
+        ------------------------------------------------- */
 
         if (
             resultImage &&
@@ -1312,94 +980,29 @@ async function analyzeImageWithGemini() {
         }
 
 
-        /* ---------------------------------------------
-           SYSTEM STATE
-        --------------------------------------------- */
+        /* -------------------------------------------------
+           LOCATION
+        ------------------------------------------------- */
 
-        if (
-            result.status ===
-            "no_actionable_anomaly"
-        ) {
+        if (resultLat) {
 
-            systemState.textContent =
-                "NO ACTIONABLE ANOMALY";
-
-        } else if (
-            result.anomalyDetected ===
-            false
-        ) {
-
-            systemState.textContent =
-                "NO ACTIONABLE ANOMALY";
-
-        } else {
-
-            systemState.textContent =
-                "ANOMALY DETECTED";
+            resultLat.textContent =
+                currentLatitude ?? "—";
         }
 
 
-        /* ---------------------------------------------
-           REAL AI DETECTION BOX
-        --------------------------------------------- */
+        if (resultLon) {
 
-        renderBoundingBox(
-            result.boundingBox
-        );
-
-
-        /* ---------------------------------------------
-           LOCATION & DATA MATRICES FORWARDING
-        --------------------------------------------- */
-
-        sessionStorage.setItem(
-            "sih_defect",
-            result.defect ||
-            "UNIFORMITY HAZARD"
-        );
-
-        sessionStorage.setItem(
-            "sih_severity",
-            result.severity ||
-            "HIGH // PRIORITY"
-        );
-
-        sessionStorage.setItem(
-            "sih_trigger",
-            "true"
-        );
-
-
-        requestLocation();
-    }
-
-
-    /* =====================================================
-       REAL BOUNDING BOX
-    ===================================================== */
-
-    function renderBoundingBox(
-        boundingBox
-    ) {
-
-        if (!resultOverlay) {
-
-            console.warn(
-                "IXVYN LENS: Result overlay element not found."
-            );
-
-            return;
+            resultLon.textContent =
+                currentLongitude ?? "—";
         }
 
 
-        /*
-         * No usable detection → hide overlay.
-         */
+        /* -------------------------------------------------
+           OPTIONAL OBSERVATION BOUNDING BOX
+        ------------------------------------------------- */
 
-        if (
-            !boundingBox ||
-            typeof boundingBox !== "object"
-        ) {
+        if (resultOverlay) {
 
             resultOverlay.style.display =
                 "none";
@@ -1408,601 +1011,460 @@ async function analyzeImageWithGemini() {
                 "data-ai-detection"
             );
 
-            return;
-        }
 
-
-        let x;
-        let y;
-        let width;
-        let height;
-
-
-        /*
-         * FORMAT 1:
-         * { xmin, ymin, xmax, ymax }
-         */
-
-        if (
-            Number.isFinite(
-                Number(boundingBox.xmin)
-            ) &&
-            Number.isFinite(
-                Number(boundingBox.ymin)
-            ) &&
-            Number.isFinite(
-                Number(boundingBox.xmax)
-            ) &&
-            Number.isFinite(
-                Number(boundingBox.ymax)
-            )
-        ) {
-
-            const xmin =
-                Number(boundingBox.xmin);
-
-            const ymin =
-                Number(boundingBox.ymin);
-
-            const xmax =
-                Number(boundingBox.xmax);
-
-            const ymax =
-                Number(boundingBox.ymax);
-
-
-            x =
-                xmin;
-
-            y =
-                ymin;
-
-            width =
-                xmax - xmin;
-
-            height =
-                ymax - ymin;
+            const box =
+                result.observationBoxes?.[0] ||
+                result.boundingBox ||
+                result.bounding_box ||
+                result.detection;
 
 
             if (
-                Math.max(
-                    Math.abs(x),
-                    Math.abs(y),
-                    Math.abs(width),
-                    Math.abs(height)
-                ) > 1
+                box &&
+                typeof box === "object"
             ) {
 
-                x /= 10;
-                y /= 10;
-                width /= 10;
-                height /= 10;
+                const x =
+                    Number(
+                        box.x ??
+                        box.left ??
+                        box.x_min
+                    );
+
+                const y =
+                    Number(
+                        box.y ??
+                        box.top ??
+                        box.y_min
+                    );
+
+                const w =
+                    Number(
+                        box.width ??
+                        box.w ??
+                        (
+                            Number(
+                                box.x_max
+                            ) -
+                            Number(
+                                box.x_min
+                            )
+                        )
+                    );
+
+                const h =
+                    Number(
+                        box.height ??
+                        box.h ??
+                        (
+                            Number(
+                                box.y_max
+                            ) -
+                            Number(
+                                box.y_min
+                            )
+                        )
+                    );
+
+
+                if (
+                    [
+                        x,
+                        y,
+                        w,
+                        h
+                    ].every(
+                        Number.isFinite
+                    )
+                ) {
+
+                    const scale =
+                        [
+                            x,
+                            y,
+                            w,
+                            h
+                        ].every(
+                            (value) =>
+                                value <= 1
+                        )
+                            ? 100
+                            : (
+                                [
+                                    x,
+                                    y,
+                                    w,
+                                    h
+                                ].every(
+                                    (value) =>
+                                        value <= 100
+                                )
+                                    ? 1
+                                    : 0.1
+                            );
+
+
+                    resultOverlay.style.display =
+                        "block";
+
+                    resultOverlay.style.left =
+                        `${x * scale}%`;
+
+                    resultOverlay.style.top =
+                        `${y * scale}%`;
+
+                    resultOverlay.style.width =
+                        `${w * scale}%`;
+
+                    resultOverlay.style.height =
+                        `${h * scale}%`;
+
+                    resultOverlay.setAttribute(
+                        "data-ai-detection",
+                        "true"
+                    );
+                }
             }
         }
 
 
-        /*
-         * FORMAT 2:
-         * { x, y, width, height }
-         */
+        /* =================================================
+           LENS → SIGNAL
+           
+           Pass evidence.
+           Never pass a LENS-generated risk judgement.
+        ================================================= */
 
-        else if (
-            Number.isFinite(
-                Number(boundingBox.x)
-            ) &&
-            Number.isFinite(
-                Number(boundingBox.y)
-            ) &&
-            Number.isFinite(
-                Number(boundingBox.width)
-            ) &&
-            Number.isFinite(
-                Number(boundingBox.height)
+        const lensEvidence = {
+
+            source: "LENS",
+
+            schema:
+                "IXVYN_SCENE_OBSERVATION_V2",
+
+            timestamp:
+                new Date().toISOString(),
+
+            road:
+                result.road || {},
+
+            people:
+                result.people || {},
+
+            vehicles:
+                result.vehicles || {},
+
+            infrastructure:
+                result.infrastructure || {},
+
+            obstructions:
+                result.obstructions || [],
+
+            visibility:
+                result.visibility || {},
+
+            interactions:
+                result.interactions || [],
+
+            observations:
+                result.observations || [],
+
+            evidence:
+                result.evidence || {},
+
+            sceneSummary:
+                result.sceneSummary ||
+                result.analysis ||
+                "Scene observed.",
+
+            confidence:
+                Number.isFinite(
+                    Number(
+                        result.confidence
+                    )
+                )
+                    ? Number(
+                        result.confidence
+                    )
+                    : null,
+
+            location: {
+                lat:
+                    currentLatitude ?? null,
+
+                lon:
+                    currentLongitude ?? null
+            }
+        };
+
+
+        sessionStorage.setItem(
+            "ixvyn_lens_observation",
+            JSON.stringify(
+                lensEvidence
             )
-        ) {
-
-            x =
-                Number(boundingBox.x);
-
-            y =
-                Number(boundingBox.y);
-
-            width =
-                Number(boundingBox.width);
-
-            height =
-                Number(boundingBox.height);
+        );
 
 
-            const largestValue =
-                Math.max(
-                    Math.abs(x),
-                    Math.abs(y),
-                    Math.abs(width),
-                    Math.abs(height)
-                );
-
-
-            if (largestValue <= 1) {
-
-                x *= 100;
-                y *= 100;
-                width *= 100;
-                height *= 100;
-
-            } else if (largestValue <= 100) {
-
-                /* Already percentage */
-
-            } else {
-
-                x /= 10;
-                y /= 10;
-                width /= 10;
-                height /= 10;
-
-            }
-        }
-
-
-        else {
-
-            console.warn(
-                "IXVYN LENS: Unsupported bounding box format.",
-                boundingBox
-            );
-
-            resultOverlay.style.display =
-                "none";
-
-            resultOverlay.removeAttribute(
-                "data-ai-detection"
-            );
-
-            return;
-        }
-
-
-        if (
-            !Number.isFinite(x) ||
-            !Number.isFinite(y) ||
-            !Number.isFinite(width) ||
-            !Number.isFinite(height)
-        ) {
-
-            resultOverlay.style.display =
-                "none";
-
-            resultOverlay.removeAttribute(
-                "data-ai-detection"
-            );
-
-            return;
-        }
-
-
-        if (width < 0) {
-
-            x += width;
-
-            width =
-                Math.abs(width);
-        }
-
-
-        if (height < 0) {
-
-            y += height;
-
-            height =
-                Math.abs(height);
-        }
-
-
-        x =
-            clamp(
-                x,
-                0,
-                100
-            );
-
-        y =
-            clamp(
-                y,
-                0,
-                100
-            );
-
-        width =
-            clamp(
-                width,
-                0,
-                100 - x
-            );
-
-        height =
-            clamp(
-                height,
-                0,
-                100 - y
-            );
-
-
-        if (
-            width < 1 ||
-            height < 1
-        ) {
-
-            resultOverlay.style.display =
-                "none";
-
-            return;
-        }
-
-
-        resultOverlay.style.display =
-            "block";
-
-        resultOverlay.style.left =
-            `${x}%`;
-
-        resultOverlay.style.top =
-            `${y}%`;
-
-        resultOverlay.style.width =
-            `${width}%`;
-
-        resultOverlay.style.height =
-            `${height}%`;
-
-        resultOverlay.setAttribute(
-            "data-ai-detection",
+        sessionStorage.setItem(
+            "ixvyn_signal_trigger",
             "true"
         );
+
+
+        console.log(
+            "IXVYN LENS: Scene observation forwarded to SIGNAL.",
+            lensEvidence
+        );
+
+
+        systemState.textContent =
+            "SCENE OBSERVED";
     }
 
 
     /* =====================================================
-       CLAMP
+       SHOW RESULTS
     ===================================================== */
 
-    function clamp(
-        value,
-        minimum,
-        maximum
-    ) {
+    function showResults() {
 
-        return Math.min(
-            Math.max(
-                value,
-                minimum
-            ),
-            maximum
-        );
+        inspectionResults.hidden =
+            false;
+
+        analysisState.hidden =
+            true;
+
+        inspectionResults.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
     }
 
 
     /* =====================================================
-       GEOLOCATION
+       ANALYSIS ERROR
     ===================================================== */
 
-    function requestLocation() {
+    function showAnalysisError(error) {
 
-        if (
-            !resultLat ||
-            !resultLon
-        ) {
+        if (resultDescription) {
 
-            return;
+            resultDescription.textContent =
+                error?.message ||
+                "The scene could not be analyzed.";
         }
 
 
-        if (
-            !navigator.geolocation
-        ) {
+        if (resultAction) {
 
-            setFallbackLocation();
-
-            return;
+            resultAction.textContent =
+                "Retry the observation with another frame.";
         }
 
 
-        resultLat.textContent =
-            "LOCATING...";
+        inspectionResults.hidden =
+            false;
 
-        resultLon.textContent =
-            "LOCATING...";
-
-
-        navigator.geolocation.getCurrentPosition(
-
-            (position) => {
-
-                const latitude =
-                    position.coords.latitude;
-
-                const longitude =
-                    position.coords.longitude;
-
-
-                currentLatitude =
-                    latitude;
-
-                currentLongitude =
-                    longitude;
-
-
-                resultLat.textContent =
-                    latitude.toFixed(5);
-
-                resultLon.textContent =
-                    longitude.toFixed(5);
-
-
-                sessionStorage.setItem(
-                    "sih_lat",
-                    latitude.toFixed(5)
-                );
-
-                sessionStorage.setItem(
-                    "sih_lon",
-                    longitude.toFixed(5)
-                );
-
-
-                console.log(
-                    "IXVYN LENS: Location captured.",
-                    latitude,
-                    longitude
-                );
-            },
-
-
-            (error) => {
-
-                console.warn(
-                    "IXVYN LENS: Location unavailable.",
-                    error.message
-                );
-
-                setFallbackLocation();
-            },
-
-
-            {
-                enableHighAccuracy: true,
-                timeout: 8000,
-                maximumAge: 0
-            }
-        );
+        analysisState.hidden =
+            true;
     }
 
 
-    function setFallbackLocation() {
-
-        const fLat =
-            "28.61390";
-
-        const fLon =
-            "77.20900";
-
-
-        resultLat.textContent =
-            fLat;
-
-        resultLon.textContent =
-            fLon;
-
-        currentLatitude =
-            fLat;
-
-        currentLongitude =
-            fLon;
-
-
-        sessionStorage.setItem(
-            "sih_lat",
-            fLat
-        );
-
-        sessionStorage.setItem(
-            "sih_lon",
-            fLon
-        );
-    }    /* =====================================================
-       MEMORY — SAVE INSPECTION
+    /* =====================================================
+       SAVE OBSERVATION TO MEMORY
     ===================================================== */
 
-    function saveCurrentInspection() {
+    function saveToMemory() {
 
         if (!currentAnalysisResult) {
 
             console.warn(
-                "IXVYN LENS: No completed analysis available to save."
+                "IXVYN LENS: Nothing to save."
             );
 
             return;
         }
 
 
-        if (memorySaved) {
-            return;
+        const memoryKey =
+            "ixvyn_infrastructure_memory";
+
+
+        let memory = [];
+
+
+        try {
+
+            memory =
+                JSON.parse(
+                    localStorage.getItem(
+                        memoryKey
+                    ) || "[]"
+                );
+
+
+            if (
+                !Array.isArray(memory)
+            ) {
+                memory = [];
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "IXVYN LENS: Memory store reset.",
+                error
+            );
+
+            memory = [];
         }
 
 
         const record = {
 
             id:
-                `IXVYN-${Date.now()}`,
+                `IX-${Date.now()}`,
 
-            defect:
-                currentAnalysisResult.defect ||
-                "UNKNOWN ANOMALY",
-
-            confidence:
-                currentAnalysisResult.confidence ??
-                "",
-
-            severity:
-                currentAnalysisResult.severity ||
-                "UNKNOWN",
-
-            priority:
-                currentAnalysisResult.priority ||
-                "—",
-
-            description:
-                currentAnalysisResult.description ||
-                currentAnalysisResult.analysis ||
-                "",
-
-            action:
-                currentAnalysisResult.recommendedAction ||
-                currentAnalysisResult.action ||
-                "",
-
-            latitude:
-                Number(currentLatitude) ||
-                null,
-
-            longitude:
-                Number(currentLongitude) ||
-                null,
+            schema:
+                "IXVYN_SCENE_OBSERVATION_V2",
 
             timestamp:
                 new Date().toISOString(),
 
-            status:
-                "active"
+            sceneType:
+                currentAnalysisResult.sceneType ||
+                currentAnalysisResult.road?.sceneType ||
+                "ROAD SCENE",
 
+            confidence:
+                currentAnalysisResult.confidence ??
+                null,
+
+            road:
+                currentAnalysisResult.road ||
+                {},
+
+            people:
+                currentAnalysisResult.people ||
+                {},
+
+            vehicles:
+                currentAnalysisResult.vehicles ||
+                {},
+
+            infrastructure:
+                currentAnalysisResult.infrastructure ||
+                {},
+
+            obstructions:
+                currentAnalysisResult.obstructions ||
+                [],
+
+            visibility:
+                currentAnalysisResult.visibility ||
+                {},
+
+            interactions:
+                currentAnalysisResult.interactions ||
+                [],
+
+            observations:
+                currentAnalysisResult.observations ||
+                [],
+
+            evidence:
+                currentAnalysisResult.evidence ||
+                {},
+
+            sceneSummary:
+                currentAnalysisResult.sceneSummary ||
+                currentAnalysisResult.analysis ||
+                "",
+
+            latitude:
+                currentLatitude,
+
+            longitude:
+                currentLongitude,
+
+            /*
+             * These fields intentionally begin empty.
+             * SIGNAL / TRAJECTORY / MEMORY will populate
+             * the later stages of the safety lifecycle.
+             */
+
+            riskAssessment:
+                null,
+
+            intervention:
+                null,
+
+            outcome:
+                null,
+
+            status:
+                "observed"
         };
 
 
-        const STORAGE_KEY =
-            "ixvyn_infrastructure_memory";
+        memory.unshift(record);
 
 
-        let records = [];
+        /* -------------------------------------------------
+           KEEP MEMORY BOUNDED
+        ------------------------------------------------- */
 
+        if (
+            memory.length > 100
+        ) {
 
-        try {
-
-            const stored =
-                localStorage.getItem(
-                    STORAGE_KEY
+            memory =
+                memory.slice(
+                    0,
+                    100
                 );
-
-
-            if (stored) {
-
-                const parsed =
-                    JSON.parse(stored);
-
-
-                if (Array.isArray(parsed)) {
-
-                    records =
-                        parsed;
-                }
-            }
-
-        } catch (error) {
-
-            console.warn(
-                "IXVYN LENS: Could not read MEMORY database index keys.",
-                error
-            );
         }
 
 
-        records.push(
-            record
+        localStorage.setItem(
+            memoryKey,
+            JSON.stringify(
+                memory
+            )
         );
 
 
-        try {
+        memorySaved = true;
 
-            localStorage.setItem(
-                STORAGE_KEY,
-                JSON.stringify(records)
+
+        if (saveMemoryButton) {
+
+            saveMemoryButton.textContent =
+                "SAVED TO MEMORY";
+
+            saveMemoryButton.classList.add(
+                "is-saved"
             );
-
-
-            memorySaved =
-                true;
-
-
-            setMemorySavedState();
-
-
-            console.log(
-                "IXVYN LENS: Inspection successfully persisted to local storage array.",
-                record
-            );
-
-        } catch (error) {
-
-            console.error(
-                "IXVYN LENS: Local database write failure:",
-                error
-            );
-
-            resetMemoryButton();
         }
+
+
+        console.log(
+            "IXVYN MEMORY: Observation saved:",
+            record
+        );
     }
 
 
     /* =====================================================
-       MEMORY — BUTTON STATES
-    ===================================================== */
-
-    function setMemorySavedState() {
-
-        if (!saveMemoryButton) {
-            return;
-        }
-
-
-        saveMemoryButton.disabled =
-            true;
-
-
-        saveMemoryButton.innerHTML =
-            `
-                SAVED TO MEMORY
-                <span>✓</span>
-            `;
-    }
-
-
-    function resetMemoryButton() {
-
-        if (!saveMemoryButton) {
-            return;
-        }
-
-
-        saveMemoryButton.disabled =
-            false;
-
-
-        saveMemoryButton.innerHTML =
-            `
-                SAVE TO MEMORY
-                <span>↗</span>
-            `;
-    }
-
-
-    /* =====================================================
-       MEMORY — BUTTON EVENT BINDINGS
+       SAVE BUTTON
     ===================================================== */
 
     if (saveMemoryButton) {
 
         saveMemoryButton.addEventListener(
             "click",
-            saveCurrentInspection
+            saveToMemory
         );
     }
 
@@ -2023,33 +1485,13 @@ async function analyzeImageWithGemini() {
     function resetInspection() {
 
         console.log(
-            "IXVYN LENS: Resetting inspection."
+            "IXVYN LENS: Starting new inspection."
         );
 
 
-        currentAnalysisResult =
-            null;
-
-        currentLatitude =
-            null;
-
-        currentLongitude =
-            null;
-
-        memorySaved =
-            false;
-
-
-        /* ---------------------------------------------
-           RESET PROCESSING TIMER
-        --------------------------------------------- */
-
-        analysisStartTime =
-            null;
-
-        analysisElapsedTime =
-            null;
-
+        /* -------------------------------------------------
+           STOP TIMER
+        ------------------------------------------------- */
 
         if (analysisTimerInterval) {
 
@@ -2059,31 +1501,17 @@ async function analyzeImageWithGemini() {
 
             analysisTimerInterval =
                 null;
-
         }
 
 
-        if (analysisTimer) {
+        analysisStartTime = null;
 
-            analysisTimer.textContent =
-                "0.00s";
-
-        }
+        analysisElapsedTime = null;
 
 
-        resetMemoryButton();
-
-
-        selectedFile =
-            null;
-
-        analysisRunning =
-            false;
-
-
-        /* ---------------------------------------------
-           CLEAN BLOB OBJECT URL
-        --------------------------------------------- */
+        /* -------------------------------------------------
+           CLEAN OBJECT URL
+        ------------------------------------------------- */
 
         if (selectedImageURL) {
 
@@ -2091,37 +1519,95 @@ async function analyzeImageWithGemini() {
                 selectedImageURL
             );
 
-            selectedImageURL =
-                null;
+            selectedImageURL = null;
         }
 
 
-        /* ---------------------------------------------
-           RESET FILE INPUT
-        --------------------------------------------- */
+        /* -------------------------------------------------
+           RESET STATE
+        ------------------------------------------------- */
 
-        imageInput.value =
-            "";
+        selectedFile = null;
+
+        currentAnalysisResult = null;
+
+        currentLatitude = null;
+
+        currentLongitude = null;
+
+        memorySaved = false;
+
+        analysisRunning = false;
 
 
-        /* ---------------------------------------------
-           RESET IMAGE PREVIEWS
-        --------------------------------------------- */
+        /* -------------------------------------------------
+           RESET INPUT
+        ------------------------------------------------- */
 
-        previewImage.src =
-            "";
+        if (imageInput) {
+
+            imageInput.value = "";
+        }
+
+
+        /* -------------------------------------------------
+           RESET IMAGES
+        ------------------------------------------------- */
+
+        if (previewImage) {
+
+            previewImage.removeAttribute(
+                "src"
+            );
+        }
 
 
         if (resultImage) {
 
-            resultImage.src =
-                "";
+            resultImage.removeAttribute(
+                "src"
+            );
         }
 
 
-        /* ---------------------------------------------
-           RESET DETECTION OVERLAY
-        --------------------------------------------- */
+        /* -------------------------------------------------
+           RESET FILE NAME
+        ------------------------------------------------- */
+
+        if (fileName) {
+
+            fileName.textContent = "";
+        }
+
+
+        /* -------------------------------------------------
+           RESET BUTTON
+        ------------------------------------------------- */
+
+        if (analyzeButton) {
+
+            analyzeButton.disabled = true;
+        }
+
+
+        /* -------------------------------------------------
+           RESET MEMORY BUTTON
+        ------------------------------------------------- */
+
+        if (saveMemoryButton) {
+
+            saveMemoryButton.textContent =
+                "SAVE OBSERVATION";
+
+            saveMemoryButton.classList.remove(
+                "is-saved"
+            );
+        }
+
+
+        /* -------------------------------------------------
+           RESET OVERLAY
+        ------------------------------------------------- */
 
         if (resultOverlay) {
 
@@ -2131,98 +1617,12 @@ async function analyzeImageWithGemini() {
             resultOverlay.removeAttribute(
                 "data-ai-detection"
             );
-
-            resultOverlay.style.left =
-                "";
-
-            resultOverlay.style.top =
-                "";
-
-            resultOverlay.style.width =
-                "";
-
-            resultOverlay.style.height =
-                "";
         }
 
 
-        /* ---------------------------------------------
-           RESET TEXT
-        --------------------------------------------- */
-
-        if (fileName) {
-
-            fileName.textContent =
-                "—";
-        }
-
-
-        if (resultDefect) {
-
-            resultDefect.textContent =
-                "—";
-        }
-
-
-        if (resultConfidence) {
-
-            resultConfidence.textContent =
-                "—";
-        }
-
-
-        if (resultSeverity) {
-
-            resultSeverity.textContent =
-                "—";
-        }
-
-
-        if (resultPriority) {
-
-            resultPriority.textContent =
-                "—";
-        }
-
-
-        if (resultProcessingTime) {
-
-            resultProcessingTime.textContent =
-                "—";
-        }
-
-
-        if (resultDescription) {
-
-            resultDescription.textContent =
-                "—";
-        }
-
-
-        if (resultAction) {
-
-            resultAction.textContent =
-                "—";
-        }
-
-
-        if (resultLat) {
-
-            resultLat.textContent =
-                "—";
-        }
-
-
-        if (resultLon) {
-
-            resultLon.textContent =
-                "—";
-        }
-
-
-        /* ---------------------------------------------
+        /* -------------------------------------------------
            RESET PROGRESS
-        --------------------------------------------- */
+        ------------------------------------------------- */
 
         setProgress(
             progressVision,
@@ -2243,15 +1643,57 @@ async function analyzeImageWithGemini() {
         );
 
 
-        /* ---------------------------------------------
-           RESET VISIBILITY
-        --------------------------------------------- */
+        /* -------------------------------------------------
+           RESET TIMER
+        ------------------------------------------------- */
 
-        inspectionResults.hidden =
-            true;
+        if (analysisTimer) {
 
-        analysisState.hidden =
-            true;
+            analysisTimer.textContent =
+                "0.00s";
+        }
+
+
+        if (resultProcessingTime) {
+
+            resultProcessingTime.textContent =
+                "—";
+        }
+
+
+        /* -------------------------------------------------
+           RESET LOCATION
+        ------------------------------------------------- */
+
+        if (resultLat) {
+
+            resultLat.textContent =
+                "—";
+        }
+
+
+        if (resultLon) {
+
+            resultLon.textContent =
+                "—";
+        }
+
+
+        /* -------------------------------------------------
+           RESET SYSTEM
+        ------------------------------------------------- */
+
+        systemState.textContent =
+            "READY";
+
+
+        analysisStatus.textContent =
+            "WAITING FOR FRAME";
+
+
+        /* -------------------------------------------------
+           RESET PANELS
+        ------------------------------------------------- */
 
         inspectionInput.hidden =
             false;
@@ -2259,100 +1701,120 @@ async function analyzeImageWithGemini() {
         inspectionPreview.hidden =
             true;
 
+        analysisState.hidden =
+            true;
 
-        /* ---------------------------------------------
-           RESET ANALYZE BUTTON
-        --------------------------------------------- */
-
-        analyzeButton.disabled =
+        inspectionResults.hidden =
             true;
 
 
-        /* ---------------------------------------------
-           RESET UPLOAD STATE
-        --------------------------------------------- */
+        if (uploadZone) {
 
-        uploadZone.classList.remove(
-            "has-file",
-            "is-dragging"
-        );
-
-
-        /* ---------------------------------------------
-           RESET STATUS
-        --------------------------------------------- */
-
-        systemState.textContent =
-            "READY";
-
-        analysisStatus.textContent =
-            "READY";
+            uploadZone.classList.remove(
+                "has-file",
+                "is-dragging"
+            );
+        }
 
 
         inspectionInput.scrollIntoView({
             behavior: "smooth",
             block: "start"
         });
+
+
+        console.log(
+            "IXVYN LENS: Ready for new frame."
+        );
     }
 
 
     /* =====================================================
-       PROGRESS
+       PROGRESS HELPERS
     ===================================================== */
 
     function setProgress(
-        numberElement,
+        progressElement,
         barElement,
         value
     ) {
 
-        if (numberElement) {
+        const safeValue =
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    Number(value) || 0
+                )
+            );
 
-            numberElement.textContent =
-                Math.round(value);
+
+        if (progressElement) {
+
+            progressElement.textContent =
+                `${Math.round(
+                    safeValue
+                )}%`;
         }
 
 
         if (barElement) {
 
             barElement.style.width =
-                `${value}%`;
+                `${safeValue}%`;
         }
     }
 
 
     /* =====================================================
-       ANIMATE PROGRESS
+       ANIMATED PROGRESS
     ===================================================== */
 
-    async function animateProgress(
-        numberElement,
+    function animateProgress(
+        progressElement,
         barElement,
         target,
         duration,
-        label
+        statusText
     ) {
-
-        analysisStatus.textContent =
-            label;
-
-
-        const start =
-            performance.now();
-
 
         return new Promise(
             (resolve) => {
 
-                function frame(now) {
+                const start =
+                    performance.now();
+
+
+                const initial =
+                    parseFloat(
+                        (
+                            progressElement?.textContent ||
+                            "0"
+                        ).replace(
+                            "%",
+                            ""
+                        )
+                    ) || 0;
+
+
+                if (statusText) {
+
+                    analysisStatus.textContent =
+                        statusText;
+                }
+
+
+                function frame(currentTime) {
 
                     const elapsed =
-                        now - start;
+                        currentTime -
+                        start;
 
 
-                    const progress =
+                    const rawProgress =
                         Math.min(
-                            elapsed / duration,
+                            elapsed /
+                            duration,
                             1
                         );
 
@@ -2360,20 +1822,31 @@ async function analyzeImageWithGemini() {
                     const eased =
                         1 -
                         Math.pow(
-                            1 - progress,
+                            1 -
+                            rawProgress,
                             3
                         );
 
 
+                    const value =
+                        initial +
+                        (
+                            target -
+                            initial
+                        ) *
+                        eased;
+
+
                     setProgress(
-                        numberElement,
+                        progressElement,
                         barElement,
-                        eased * target
+                        value
                     );
 
 
                     if (
-                        progress < 1
+                        rawProgress <
+                        1
                     ) {
 
                         requestAnimationFrame(
@@ -2382,14 +1855,18 @@ async function analyzeImageWithGemini() {
 
                     } else {
 
+                        setProgress(
+                            progressElement,
+                            barElement,
+                            target
+                        );
+
                         resolve();
                     }
                 }
 
 
-                requestAnimationFrame(
-                    frame
-                );
+                requestAnimationFrame(frame);
             }
         );
     }
@@ -2399,9 +1876,7 @@ async function analyzeImageWithGemini() {
        SLEEP
     ===================================================== */
 
-    function sleep(
-        milliseconds
-    ) {
+    function sleep(milliseconds) {
 
         return new Promise(
             (resolve) => {
@@ -2410,84 +1885,87 @@ async function analyzeImageWithGemini() {
                     resolve,
                     milliseconds
                 );
-
             }
         );
     }
 
 
     /* =====================================================
-       SHOW RESULTS
+       CLEANUP
     ===================================================== */
 
-    function showResults() {
+    window.addEventListener(
+        "beforeunload",
+        () => {
 
-        analysisState.hidden =
-            true;
+            if (analysisTimerInterval) {
 
-        inspectionResults.hidden =
-            false;
+                clearInterval(
+                    analysisTimerInterval
+                );
+
+                analysisTimerInterval =
+                    null;
+            }
 
 
-        inspectionResults.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    }
+            if (selectedImageURL) {
+
+                URL.revokeObjectURL(
+                    selectedImageURL
+                );
+
+                selectedImageURL = null;
+            }
+        }
+    );
 
 
     /* =====================================================
-       ANALYSIS ERROR
+       INITIAL STATE
     ===================================================== */
 
-    function showAnalysisError(
-        error
-    ) {
+    systemState.textContent =
+        "READY";
 
-        analysisState.hidden =
-            false;
 
-        inspectionResults.hidden =
-            true;
-
+    if (analysisStatus) {
 
         analysisStatus.textContent =
-            "ANALYSIS FAILED";
-
-
-        console.error(
-            "IXVYN LENS: Analysis error:",
-            error
-        );
+            "WAITING FOR FRAME";
     }
 
 
-    /* =====================================================
-       INITIAL VISIBILITY
-    ===================================================== */
+    if (analyzeButton) {
 
-    inspectionPreview.hidden =
-        true;
-
-    analysisState.hidden =
-        true;
-
-    inspectionResults.hidden =
-        true;
-
-    analyzeButton.disabled =
-        true;
+        analyzeButton.disabled =
+            true;
+    }
 
 
-    if (resultOverlay) {
+    if (analysisState) {
 
-        resultOverlay.style.display =
-            "none";
+        analysisState.hidden =
+            true;
+    }
+
+
+    if (inspectionResults) {
+
+        inspectionResults.hidden =
+            true;
+    }
+
+
+    if (inspectionPreview) {
+
+        inspectionPreview.hidden =
+            true;
     }
 
 
     console.log(
-        "IXVYN LENS: Real visual inspection interface ready."
+        "IXVYN LENS: Interface initialized."
     );
 
 });
