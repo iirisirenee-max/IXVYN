@@ -3514,3 +3514,19 @@ if (directionSection && directionTitle) {
     observer.observe(about);
 
 })();
+/* ============================================================
+   IXVYN — RESTORE HOMEPAGE AFTER SYSTEM BACK NAVIGATION
+   ============================================================ */
+
+window.addEventListener("pageshow", () => {
+
+    const handoff =
+        document.querySelector(".ixvyn-handoff");
+
+    if (!handoff) return;
+
+    handoff.classList.remove("active");
+
+    handoff.remove();
+
+});
