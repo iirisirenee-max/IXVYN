@@ -2131,36 +2131,41 @@ if (directionSection && directionTitle) {
         );
 
 })();
+
 /* ============================================================
-   IXVYN — PASS 04 FIX
-   MOBILE TOUCH RESPONSE
+   IXVYN — PASS 04.1
+   TOUCH-DRIVEN INTELLIGENCE FIELD
+   Finger → Field → Core
    ============================================================ */
 
 (() => {
     "use strict";
 
-    if (
-        !window.matchMedia("(max-width: 700px)").matches
-    ) return;
+    const mobile =
+        window.matchMedia("(max-width: 700px)");
 
-    if (
-        window.matchMedia(
-            "(prefers-reduced-motion: reduce)"
-        ).matches
-    ) return;
+    if (!mobile.matches) return;
 
     const geometry =
         document.querySelector(".hero-geometry");
 
-    const core =
-        geometry?.querySelector(".geometry-core");
+    if (!geometry) return;
 
-    const nodes =
-        geometry
-            ? [...geometry.querySelectorAll(".geometry-node")]
-            : [];
+    const canvas =
+        geometry.querySelector(
+            ".ixvyn-intelligence-field"
+        );
 
-    if (!geometry || !core || !nodes.length) return;
+    if (!canvas) return;
+
+    const ctx =
+        canvas.getContext("2d");
+
+    if (!ctx) return;
+
+    /* ---------------------------------------------------------
+       TOUCH STATE
+       --------------------------------------------------------- */
 
     let touchActive = false;
 
@@ -2170,8 +2175,27 @@ if (directionSection && directionTitle) {
     let targetX = 0;
     let targetY = 0;
 
-    let lastNode = null;
-    let lastNodeTime = 0;
+    let touchStrength = 0;
+
+    /* ---------------------------------------------------------
+       FIND CANVAS SIZE
+       --------------------------------------------------------- */
+
+    function canvasPoint(touch) {
+
+        const rect =
+            canvas.getBoundingClientRect();
+
+        return {
+            x:
+                (touch.clientX - rect.left) *
+                (canvas.width / rect.width),
+
+            y:
+                (touch.clientY - rect.top) *
+                (canvas.height / rect.height)
+        };
+    }
 
     /* ---------------------------------------------------------
        TOUCH START
@@ -2186,10 +2210,22 @@ if (directionSection && directionTitle) {
 
             if (!touch) return;
 
+            const point =
+                canvasPoint(touch);
+
+            targetX = point.x;
+            targetY = point.y;
+
+            touchX = targetX;
+            touchY = targetY;
+
+            touchStrength = 1;
+
             touchActive = true;
 
-            targetX = touch.clientX;
-            targetY = touch.clientY;
+            geometry.classList.add(
+                "ixvyn-touching"
+            );
 
         },
         { passive: true }
@@ -2208,8 +2244,13 @@ if (directionSection && directionTitle) {
 
             if (!touch) return;
 
-            targetX = touch.clientX;
-            targetY = touch.clientY;
+            const point =
+                canvasPoint(touch);
+
+            targetX = point.x;
+            targetY = point.y;
+
+            touchActive = true;
 
         },
         { passive: true }
@@ -2225,132 +2266,198 @@ if (directionSection && directionTitle) {
 
             touchActive = false;
 
-            core.style.setProperty(
-                "--touch-scale",
-                "1"
-            );
+        },
+        { passive: true }
+    );
+
+    document.addEventListener(
+        "touchcancel",
+        () => {
+
+            touchActive = false;
 
         },
         { passive: true }
     );
 
     /* ---------------------------------------------------------
-       FIND NODE UNDER / NEAR FINGER
+       VISUAL TOUCH FIELD
        --------------------------------------------------------- */
 
-    function checkNodes() {
+    function drawTouchField() {
 
-        if (!touchActive) return;
+        if (!touchActive) {
+
+            touchStrength *= 0.92;
+
+            return;
+
+        }
+
+        touchX +=
+            (targetX - touchX) *
+            0.18;
+
+        touchY +=
+            (targetY - touchY) *
+            0.18;
+
+        touchStrength =
+            Math.min(
+                1,
+                touchStrength + 0.08
+            );
+
+        /*
+         * A small spectral field follows the finger.
+         *
+         * This is intentionally NOT a giant glow.
+         */
+
+        const radius =
+            Math.min(
+                canvas.width,
+                canvas.height
+            ) * 0.13;
+
+        const gradient =
+            ctx.createRadialGradient(
+                touchX,
+                touchY,
+                0,
+                touchX,
+                touchY,
+                radius
+            );
+
+        gradient.addColorStop(
+            0,
+            "rgba(184,255,61,0.16)"
+        );
+
+        gradient.addColorStop(
+            0.28,
+            "rgba(53,231,238,0.075)"
+        );
+
+        gradient.addColorStop(
+            0.58,
+            "rgba(143,114,255,0.035)"
+        );
+
+        gradient.addColorStop(
+            1,
+            "rgba(0,0,0,0)"
+        );
+
+        ctx.fillStyle =
+            gradient;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            touchX,
+            touchY,
+            radius,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+        /*
+         * Expanding interaction ring.
+         */
+
+        const pulse =
+            (
+                performance.now() *
+                0.0018
+            ) % 1;
+
+        ctx.beginPath();
+
+        ctx.strokeStyle =
+            `rgba(
+                184,
+                255,
+                61,
+                ${(
+                    0.22 *
+                    (1 - pulse)
+                ).toFixed(3)}
+            )`;
+
+        ctx.lineWidth = 1;
+
+        ctx.arc(
+            touchX,
+            touchY,
+            radius *
+                (0.35 + pulse * 0.65),
+            0,
+            Math.PI * 2
+        );
+
+        ctx.stroke();
+
+    }
+
+    /* ---------------------------------------------------------
+       CORE RESPONSE
+       --------------------------------------------------------- */
+
+    function updateCore() {
+
+        const core =
+            geometry.querySelector(
+                ".geometry-core"
+            );
+
+        if (!core) return;
 
         const rect =
             geometry.getBoundingClientRect();
 
-        /*
-         * Ignore touches that are nowhere near
-         * the visual system.
-         */
-
-        const inside =
-            targetX >= rect.left - 80 &&
-            targetX <= rect.right + 80 &&
-            targetY >= rect.top - 80 &&
-            targetY <= rect.bottom + 80;
-
-        if (!inside) return;
-
-        let closest = null;
-        let closestDistance = Infinity;
-
-        nodes.forEach(node => {
-
-            const nodeRect =
-                node.getBoundingClientRect();
-
-            const x =
-                nodeRect.left +
-                nodeRect.width / 2;
-
-            const y =
-                nodeRect.top +
-                nodeRect.height / 2;
-
-            const dx =
-                targetX - x;
-
-            const dy =
-                targetY - y;
-
-            const d =
-                Math.sqrt(
-                    dx * dx +
-                    dy * dy
-                );
-
-            if (
-                d < closestDistance
-            ) {
-                closestDistance = d;
-                closest = node;
-            }
-
-        });
-
-        /*
-         * Wake a node when the finger comes
-         * within a reasonable radius.
-         */
-
-        if (
-            closest &&
-            closestDistance < 95
-        ) {
-
-            const now =
-                performance.now();
-
-            if (
-                closest !== lastNode ||
-                now - lastNodeTime > 500
-            ) {
-
-                lastNode =
-                    closest;
-
-                lastNodeTime =
-                    now;
-
-                closest.classList.add(
-                    "touch-awake"
-                );
-
-                setTimeout(
-                    () => {
-                        closest.classList.remove(
-                            "touch-awake"
-                        );
-                    },
-                    500
-                );
-            }
-        }
-
-        /* -----------------------------------------------------
-           CORE PROXIMITY
-           ----------------------------------------------------- */
-
-        const cx =
+        const centerX =
             rect.left +
             rect.width / 2;
 
-        const cy =
+        const centerY =
             rect.top +
             rect.height / 2;
 
+        /*
+         * Convert the finger into viewport
+         * coordinates for proximity testing.
+         */
+
+        const fingerRect =
+            canvas.getBoundingClientRect();
+
+        const fingerViewportX =
+            fingerRect.left +
+            touchX *
+                (
+                    fingerRect.width /
+                    canvas.width
+                );
+
+        const fingerViewportY =
+            fingerRect.top +
+            touchY *
+                (
+                    fingerRect.height /
+                    canvas.height
+                );
+
         const dx =
-            targetX - cx;
+            fingerViewportX -
+            centerX;
 
         const dy =
-            targetY - cy;
+            fingerViewportY -
+            centerY;
 
         const distance =
             Math.sqrt(
@@ -2363,43 +2470,50 @@ if (directionSection && directionTitle) {
                 0,
                 1 -
                     distance /
-                        (rect.width * .55)
+                        (rect.width * 0.55)
             );
+
+        const scale =
+            1 +
+            influence *
+            touchStrength *
+            0.055;
 
         core.style.setProperty(
             "--touch-scale",
-            1 +
-                influence * .045
+            scale.toFixed(3)
         );
 
-        /*
-         * Store the touch position so the canvas
-         * can eventually respond to it too.
-         */
-
-        geometry.style.setProperty(
+        core.style.setProperty(
             "--touch-x",
-            `${targetX - rect.left}px`
+            `${dx * 0.025}px`
         );
 
-        geometry.style.setProperty(
+        core.style.setProperty(
             "--touch-y",
-            `${targetY - rect.top}px`
+            `${dy * 0.025}px`
         );
+
     }
 
     /* ---------------------------------------------------------
-       LOW-COST LOOP
+       ANIMATION
        --------------------------------------------------------- */
 
     function loop() {
 
-        checkNodes();
+        drawTouchField();
 
-        requestAnimationFrame(loop);
+        updateCore();
+
+        requestAnimationFrame(
+            loop
+        );
 
     }
 
-    requestAnimationFrame(loop);
+    requestAnimationFrame(
+        loop
+    );
 
 })();
