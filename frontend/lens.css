@@ -2142,3 +2142,295 @@
         animation: none !important;
     }
 }
+ /* =========================================================
+    LENS V2 — STRUCTURED SCENE PRESENTATION
+    ========================================================= */
+
+.result-intelligence {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+
+/* ---------------------------------------------------------
+   SCENE IDENTITY
+   --------------------------------------------------------- */
+
+.scene-identity {
+    padding: 28px 0 30px;
+    border-bottom: 1px solid rgba(128, 255, 177, .16);
+}
+
+.scene-identity strong {
+    display: block;
+
+    margin-top: 8px;
+
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 1;
+
+    letter-spacing: -.045em;
+}
+
+.scene-state {
+    display: inline-block;
+
+    margin-top: 14px;
+
+    padding: 6px 9px;
+
+    border: 1px solid rgba(128,255,177,.28);
+
+    color: #7dffad;
+
+    font: 9px monospace;
+    letter-spacing: .14em;
+}
+
+
+/* ---------------------------------------------------------
+   TELEMETRY
+   --------------------------------------------------------- */
+
+.scene-telemetry {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    border-bottom: 1px solid rgba(128,255,177,.16);
+}
+
+.scene-telemetry .intelligence-block {
+    min-height: 105px;
+
+    padding: 22px 20px;
+
+    border-right: 1px solid rgba(128,255,177,.12);
+}
+
+.scene-telemetry .intelligence-block:last-child {
+    border-right: 0;
+}
+
+.scene-telemetry strong {
+    display: block;
+
+    margin-top: 7px;
+
+    font-size: 17px;
+    line-height: 1.35;
+}
+
+
+/* ---------------------------------------------------------
+   SUMMARY
+   --------------------------------------------------------- */
+
+.scene-summary-block {
+    padding: 28px 0;
+
+    border-bottom: 1px solid rgba(128,255,177,.16);
+}
+
+.scene-summary-block p {
+    margin: 12px 0 0;
+
+    max-width: 760px;
+
+    color: rgba(233,244,236,.72);
+
+    font-size: 16px;
+    line-height: 1.65;
+}
+
+
+/* ---------------------------------------------------------
+   OBSERVATION MATRIX
+   --------------------------------------------------------- */
+
+.observation-matrix {
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 1px;
+
+    margin-top: 1px;
+
+    background: rgba(128,255,177,.12);
+}
+
+.observation-card {
+    padding: 23px 20px;
+
+    background: rgba(5,8,6,.94);
+
+    min-width: 0;
+}
+
+.observation-card-wide {
+    grid-column: 1 / -1;
+}
+
+.observation-row {
+    display: grid;
+
+    grid-template-columns: 105px 1fr;
+
+    gap: 15px;
+
+    padding: 11px 0;
+
+    border-bottom: 1px solid rgba(128,255,177,.08);
+}
+
+.observation-row:last-child {
+    border-bottom: 0;
+}
+
+.observation-row > span {
+    color: rgba(129,144,135,.85);
+
+    font: 8px monospace;
+    letter-spacing: .1em;
+
+    line-height: 1.5;
+}
+
+.observation-row strong {
+    color: rgba(233,244,236,.86);
+
+    font: 11px monospace;
+
+    line-height: 1.5;
+
+    overflow-wrap: anywhere;
+}
+
+.observation-list strong {
+    color: rgba(125,255,173,.82);
+}
+
+.observation-card-wide p {
+    margin: 12px 0 0;
+
+    color: rgba(233,244,236,.72);
+
+    font: 12px monospace;
+
+    line-height: 1.7;
+}
+
+
+/* ---------------------------------------------------------
+   EVIDENCE MATRIX
+   --------------------------------------------------------- */
+
+.evidence-matrix {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 1px;
+
+    margin-top: 1px;
+
+    background: rgba(128,255,177,.12);
+}
+
+.evidence-matrix > div {
+    padding: 21px 20px;
+
+    background: rgba(5,8,6,.96);
+}
+
+.evidence-matrix strong {
+    display: block;
+
+    margin-top: 7px;
+
+    color: #e9f4ec;
+
+    font: 18px monospace;
+}
+
+
+/* ---------------------------------------------------------
+   HANDOFF
+   --------------------------------------------------------- */
+
+.result-intelligence .intelligence-action {
+    margin-top: 1px;
+
+    padding: 24px 0 5px;
+}
+
+.result-intelligence .intelligence-action p {
+    margin: 10px 0 0;
+
+    max-width: 700px;
+
+    color: rgba(125,255,173,.78);
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    .scene-telemetry {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .scene-telemetry .intelligence-block:nth-child(2) {
+        border-right: 0;
+    }
+
+    .scene-telemetry .intelligence-block:last-child {
+        grid-column: 1 / -1;
+
+        border-top: 1px solid rgba(128,255,177,.12);
+        border-right: 0;
+    }
+
+    .observation-matrix {
+        grid-template-columns: 1fr;
+    }
+
+    .observation-card-wide {
+        grid-column: auto;
+    }
+
+    .evidence-matrix {
+        grid-template-columns: 1fr;
+    }
+
+    .evidence-matrix > div {
+        border-bottom: 1px solid rgba(128,255,177,.08);
+    }
+
+    .observation-row {
+        grid-template-columns: 90px 1fr;
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   REDUCED MOTION
+   --------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .scene-identity,
+    .observation-card,
+    .evidence-matrix {
+        transition: none !important;
+    }
+
+}
