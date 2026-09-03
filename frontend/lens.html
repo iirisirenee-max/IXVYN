@@ -17,13 +17,21 @@
 
     <title>IXVYN — LENS</title>
 
-    <!-- Existing global IXVYN styles -->
+
+    <!-- =====================================================
+         GLOBAL IXVYN STYLES
+    ====================================================== -->
+
     <link
         rel="stylesheet"
         href="style.css"
     >
 
-    <!-- LENS styles -->
+
+    <!-- =====================================================
+         LENS STYLES
+    ====================================================== -->
+
     <link
         rel="stylesheet"
         href="lens.css"
@@ -126,7 +134,7 @@
 
 
         <!-- =================================================
-             HERO
+             HERO / INPUT
         ================================================== -->
 
         <section
@@ -166,7 +174,6 @@
                 id="inspection-input"
             >
 
-
                 <div class="inspection-input-header">
 
                     <span>
@@ -181,31 +188,51 @@
 
 
 
-               <label
-    class="upload-zone"
-    id="upload-zone"
-    for="image-input"
->
-    <div class="upload-cross">
-        +
-    </div>
+                <!-- =================================================
+                     MOBILE-SAFE UPLOAD ZONE
 
-    <strong>
-        DROP ROAD FRAME
-    </strong
+                     IMPORTANT:
+                     This is a LABEL connected directly to the
+                     native file input.
 
-    <span>
-        OR SELECT A SCENE FOR OBSERVATION
-    </span>
-</label>
+                     Do not add another image-input.
+                ================================================== -->
 
-<input
-    type="file"
-    id="image-input"
-    accept="image/*"
-    class="visually-hidden"
->
+                <label
+                    class="upload-zone"
+                    id="upload-zone"
+                    for="image-input"
+                >
 
+                    <div class="upload-cross">
+                        +
+                    </div>
+
+
+                    <strong>
+                        DROP ROAD FRAME
+                    </strong>
+
+
+                    <span>
+                        OR SELECT A SCENE FOR OBSERVATION
+                    </span>
+
+                </label>
+
+
+                <input
+                    type="file"
+                    id="image-input"
+                    accept="image/*"
+                    class="visually-hidden"
+                >
+
+
+
+                <!-- =================================================
+                     CONTROLS
+                ================================================== -->
 
                 <div class="inspection-controls">
 
@@ -272,13 +299,16 @@
                         class="scan-corner scan-corner-tl"
                     ></div>
 
+
                     <div
                         class="scan-corner scan-corner-tr"
                     ></div>
 
+
                     <div
                         class="scan-corner scan-corner-bl"
                     ></div>
+
 
                     <div
                         class="scan-corner scan-corner-br"
@@ -293,7 +323,7 @@
 
 
         <!-- =====================================================
-             SCENE SUMMARY STATE
+             ANALYSIS STATE
         ====================================================== -->
 
         <section
@@ -310,9 +340,12 @@
                         LENS / SCENE SUMMARY
                     </p>
 
+
                     <h2>
+
                         OBSERVING
                         <span>SCENE.</span>
+
                     </h2>
 
                 </div>
@@ -326,6 +359,7 @@
                     >
                         INITIALIZING
                     </div>
+
 
                     <div class="analysis-timer">
 
@@ -345,7 +379,14 @@
 
 
 
+            <!-- =================================================
+                 ANALYSIS CONSOLE
+            ================================================== -->
+
             <div class="analysis-console">
+
+
+                <!-- FRAME -->
 
                 <div class="analysis-line">
 
@@ -358,9 +399,11 @@
                     </span>
 
                     <strong>
+
                         <span id="progress-frame">
                             100
                         </span>%
+
                     </strong>
 
                 </div>
@@ -368,11 +411,16 @@
 
                 <div class="analysis-bar">
 
-                    <span id="bar-frame"></span>
+                    <span
+                        id="bar-frame"
+                        style="width:100%"
+                    ></span>
 
                 </div>
 
 
+
+                <!-- SCENE -->
 
                 <div class="analysis-line">
 
@@ -385,9 +433,11 @@
                     </span>
 
                     <strong>
+
                         <span id="progress-vision">
                             0
                         </span>%
+
                     </strong>
 
                 </div>
@@ -395,11 +445,15 @@
 
                 <div class="analysis-bar">
 
-                    <span id="bar-vision"></span>
+                    <span
+                        id="bar-vision"
+                    ></span>
 
                 </div>
 
 
+
+                <!-- ROAD / PEOPLE / VEHICLES -->
 
                 <div class="analysis-line">
 
@@ -412,9 +466,11 @@
                     </span>
 
                     <strong>
+
                         <span id="progress-classification">
                             0
                         </span>%
+
                     </strong>
 
                 </div>
@@ -422,11 +478,15 @@
 
                 <div class="analysis-bar">
 
-                    <span id="bar-classification"></span>
+                    <span
+                        id="bar-classification"
+                    ></span>
 
                 </div>
 
 
+
+                <!-- INFRASTRUCTURE / INTERACTIONS -->
 
                 <div class="analysis-line">
 
@@ -439,9 +499,11 @@
                     </span>
 
                     <strong>
+
                         <span id="progress-severity">
                             0
                         </span>%
+
                     </strong>
 
                 </div>
@@ -449,7 +511,9 @@
 
                 <div class="analysis-bar">
 
-                    <span id="bar-severity"></span>
+                    <span
+                        id="bar-severity"
+                    ></span>
 
                 </div>
 
@@ -469,6 +533,11 @@
             hidden
         >
 
+
+            <!-- =================================================
+                 RESULTS HEADER
+            ================================================== -->
+
             <div class="results-header">
 
                 <div>
@@ -477,9 +546,12 @@
                         IXVYN / LENS
                     </p>
 
+
                     <h2>
+
                         SCENE
                         <span>OBSERVED.</span>
+
                     </h2>
 
                 </div>
@@ -493,10 +565,16 @@
 
 
 
+            <!-- =================================================
+                 RESULTS GRID
+            ================================================== -->
+
             <div class="results-grid">
 
 
-                <!-- IMAGE -->
+                <!-- =================================================
+                     VISUAL EVIDENCE
+                ================================================== -->
 
                 <div class="result-visual">
 
@@ -514,6 +592,13 @@
                         >
 
 
+                        <!--
+                            Optional AI observation box.
+
+                            It remains hidden unless the backend
+                            actually provides coordinates.
+                        -->
+
                         <div
                             class="result-overlay"
                             id="result-overlay"
@@ -527,91 +612,111 @@
 
                     </div>
 
-               <div class="result-intelligence">
-
-    <!-- SCENE IDENTITY -->
-    <div class="scene-identity">
-        <span class="metric-label">ROAD SCENE</span>
-        <strong id="result-scene-type">—</strong>
-        <span class="scene-state">OBSERVED</span>
-    </div>
+                </div>
 
 
-    <!-- CORE TELEMETRY -->
-    <div class="scene-telemetry">
 
-      
+                <!-- =================================================
+                     OBSERVATION INTELLIGENCE
+                ================================================== -->
 
-</div>
+                <div class="result-intelligence">
 
 
-                    <div class="intelligence-block">
+                    <!-- =================================================
+                         SCENE IDENTITY
+                    ================================================== -->
+
+                    <div class="scene-identity">
 
                         <span class="metric-label">
-                            CONFIDENCE
+                            ROAD SCENE
                         </span>
 
-                        <strong>
 
-                            <span id="result-confidence">
-                                —
-                            </span>
-
-                        </strong>
-
-                    </div>
-
-
-                    <div class="intelligence-block">
-
-                        <span class="metric-label">
-                            OBSERVATIONS
-                        </span>
-
-                        <strong id="result-severity">
+                        <strong id="result-scene-type">
                             —
                         </strong>
 
-                    </div>
 
-
-                    <div class="intelligence-block">
-
-                        <span class="metric-label">
-                            EVIDENCE
+                        <span class="scene-state">
+                            OBSERVED
                         </span>
-
-                        <strong id="result-priority">
-                            —
-                        </strong>
 
                     </div>
 
 
-                    <!-- PROCESS TIME -->
 
-                    <div class="intelligence-block">
+                    <!-- =================================================
+                         CORE TELEMETRY
+                    ================================================== -->
 
-                        <span class="metric-label">
-                            PROCESS TIME
-                        </span>
+                    <div class="scene-telemetry">
 
-                        <strong>
 
-                            <span id="result-processing-time">
-                                —
+                        <!-- CONFIDENCE -->
+
+                        <div class="intelligence-block">
+
+                            <span class="metric-label">
+                                CONFIDENCE
                             </span>
 
-                        </strong>
+
+                            <strong id="result-confidence">
+                                —
+                            </strong>
+
+                        </div>
+
+
+
+                        <!-- EVIDENCE -->
+
+                        <div class="intelligence-block">
+
+                            <span class="metric-label">
+                                EVIDENCE
+                            </span>
+
+
+                            <strong id="result-evidence">
+                                —
+                            </strong>
+
+                        </div>
+
+
+
+                        <!-- PROCESS TIME -->
+
+                        <div class="intelligence-block">
+
+                            <span class="metric-label">
+                                PROCESS TIME
+                            </span>
+
+
+                            <strong id="result-processing-time">
+                                —
+                            </strong>
+
+                        </div>
 
                     </div>
 
+
+
+                    <!-- =================================================
+                         SCENE SUMMARY
+                    ================================================== -->
 
                     <div class="intelligence-description">
 
                         <span class="metric-label">
                             SCENE SUMMARY
                         </span>
+
 
                         <p id="result-description">
                             —
@@ -620,14 +725,433 @@
                     </div>
 
 
+
+                    <!-- =================================================
+                         OBSERVATION MATRIX
+                    ================================================== -->
+
+                    <div class="observation-matrix">
+
+
+                        <!-- =================================================
+                             ROAD
+                        ================================================== -->
+
+                        <div class="observation-group">
+
+                            <div class="observation-group-header">
+
+                                <span>
+                                    01
+                                </span>
+
+                                <strong>
+                                    ROAD
+                                </strong>
+
+                            </div>
+
+
+                            <div class="observation-grid">
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        GEOMETRY
+                                    </span>
+
+                                    <strong id="obs-road-geometry">
+                                        NOT OBSERVABLE
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        LANE MARKINGS
+                                    </span>
+
+                                    <strong id="obs-road-markings">
+                                        NOT OBSERVABLE
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        INTERSECTION
+                                    </span>
+
+                                    <strong id="obs-road-intersection">
+                                        UNKNOWN
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        CROSSING
+                                    </span>
+
+                                    <strong id="obs-road-crossing">
+                                        UNKNOWN
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =================================================
+                             PEOPLE
+                        ================================================== -->
+
+                        <div class="observation-group">
+
+                            <div class="observation-group-header">
+
+                                <span>
+                                    02
+                                </span>
+
+                                <strong>
+                                    PEOPLE
+                                </strong>
+
+                            </div>
+
+
+                            <div class="observation-grid">
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        PRESENCE
+                                    </span>
+
+                                    <strong id="obs-people-presence">
+                                        UNKNOWN
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        VULNERABLE ROAD USERS
+                                    </span>
+
+                                    <strong id="obs-people-vulnerable">
+                                        NONE OBSERVED
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =================================================
+                             VEHICLES
+                        ================================================== -->
+
+                        <div class="observation-group">
+
+                            <div class="observation-group-header">
+
+                                <span>
+                                    03
+                                </span>
+
+                                <strong>
+                                    VEHICLES
+                                </strong>
+
+                            </div>
+
+
+                            <div class="observation-grid">
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        PRESENCE
+                                    </span>
+
+                                    <strong id="obs-vehicles-presence">
+                                        UNKNOWN
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        TYPES
+                                    </span>
+
+                                    <strong id="obs-vehicles-types">
+                                        NONE OBSERVED
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =================================================
+                             INFRASTRUCTURE
+                        ================================================== -->
+
+                        <div class="observation-group">
+
+                            <div class="observation-group-header">
+
+                                <span>
+                                    04
+                                </span>
+
+                                <strong>
+                                    INFRASTRUCTURE
+                                </strong>
+
+                            </div>
+
+
+                            <div class="observation-grid">
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        ROAD SURFACE
+                                    </span>
+
+                                    <strong id="obs-road-surface">
+                                        NOT OBSERVABLE
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        ROAD EDGE
+                                    </span>
+
+                                    <strong id="obs-road-edge">
+                                        NOT OBSERVABLE
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        LIGHTING
+                                    </span>
+
+                                    <strong id="obs-lighting">
+                                        NOT OBSERVABLE
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =================================================
+                             VISIBILITY
+                        ================================================== -->
+
+                        <div class="observation-group">
+
+                            <div class="observation-group-header">
+
+                                <span>
+                                    05
+                                </span>
+
+                                <strong>
+                                    VISIBILITY
+                                </strong>
+
+                            </div>
+
+
+                            <div class="observation-grid">
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        STATE
+                                    </span>
+
+                                    <strong id="obs-visibility-state">
+                                        UNKNOWN
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        FACTORS
+                                    </span>
+
+                                    <strong id="obs-visibility-factors">
+                                        NONE OBSERVED
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =================================================
+                             INTERACTIONS
+                        ================================================== -->
+
+                        <div class="observation-group">
+
+                            <div class="observation-group-header">
+
+                                <span>
+                                    06
+                                </span>
+
+                                <strong>
+                                    INTERACTIONS
+                                </strong>
+
+                            </div>
+
+
+                            <div class="observation-full">
+
+                                <strong id="obs-interactions">
+                                    NONE OBSERVED
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- =================================================
+                             EVIDENCE
+                        ================================================== -->
+
+                        <div class="observation-group">
+
+                            <div class="observation-group-header">
+
+                                <span>
+                                    07
+                                </span>
+
+                                <strong>
+                                    EVIDENCE
+                                </strong>
+
+                            </div>
+
+
+                            <div class="observation-grid">
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        CLEAR
+                                    </span>
+
+                                    <strong id="evidence-clear">
+                                        0
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        UNCERTAIN
+                                    </span>
+
+                                    <strong id="evidence-uncertain">
+                                        0
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="observation-item">
+
+                                    <span class="metric-label">
+                                        NOT OBSERVABLE
+                                    </span>
+
+                                    <strong id="evidence-unknown">
+                                        0
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         SIGNAL HANDOFF
+                    ================================================== -->
+
                     <div class="intelligence-action">
 
                         <span class="metric-label">
-                            HANDOFF
+                            HANDOFF / SIGNAL
                         </span>
 
+
                         <p id="result-action">
-                            —
+
+                            Observed evidence will be passed
+                            to SIGNAL for assessment.
+
                         </p>
 
                     </div>
@@ -650,6 +1174,7 @@
                         SPATIAL RECORD
                     </span>
 
+
                     <strong>
                         INSPECTION LOCATION
                     </strong>
@@ -660,6 +1185,7 @@
                 <div class="coordinates">
 
                     <span>
+
                         LAT
 
                         <strong id="result-lat">
@@ -668,7 +1194,9 @@
 
                     </span>
 
+
                     <span>
+
                         LON
 
                         <strong id="result-lon">
@@ -689,6 +1217,9 @@
 
             <div class="diagnosis-actions">
 
+
+                <!-- SAVE -->
+
                 <button
                     class="lens-button"
                     id="save-memory"
@@ -704,6 +1235,9 @@
                 </button>
 
 
+
+                <!-- NEW -->
+
                 <button
                     class="lens-button lens-button-secondary"
                     id="new-inspection"
@@ -718,6 +1252,9 @@
 
                 </button>
 
+
+
+                <!-- RETURN -->
 
                 <a
                     href="index.html"
@@ -748,12 +1285,14 @@
                 IXVYN / LENS
             </span>
 
-            <span>
-                VISUAL INTELLIGENCE SYSTEM
-            </span>
 
             <span>
-                BUILD 002
+                ROAD-SCENE OBSERVATION INTELLIGENCE
+            </span>
+
+
+            <span>
+                BUILD 003
             </span>
 
         </footer>
@@ -763,7 +1302,12 @@
 
 
 
-    <script src="lens.js?v=3"></script>
+    <!-- =====================================================
+         LENS JAVASCRIPT
+    ====================================================== -->
+
+    <script src="lens.js?v=4"></script>
+
 
 </body>
 
