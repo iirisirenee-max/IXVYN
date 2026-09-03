@@ -1,322 +1,786 @@
 /* =========================================================
-   IXVYN — LENS / VISUAL INFRASTRUCTURE INTELLIGENCE
+   IXVYN — LENS
+   ROAD-SCENE OBSERVATION INTELLIGENCE
+   BUILD 003
    ========================================================= */
 
+:root {
 
-/* =========================================================
-   PAGE
-   ========================================================= */
+    --lens-bg: #080a0f;
 
-.lens-page {
-    background: #080a0f;
-    color: #f2f1ec;
-    min-height: 100vh;
+    --lens-text: #f2f1ec;
+
+    --lens-muted: #777a7d;
+
+    --lens-dim: #55585b;
+
+    --lens-line: rgba(255,255,255,.14);
+
+    --lens-soft-line: rgba(255,255,255,.06);
+
+    --lens-accent: #d7ff3f;
+
 }
 
 
-.lens-experience {
-    position: relative;
+/* =========================================================
+   BASE
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body.lens-page {
+
+    margin: 0;
+
     min-height: 100vh;
-    padding: 150px 6vw 80px;
-    overflow: hidden;
+
+    background:
+        #080a0f;
+
+    color:
+        var(--lens-text);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    overflow-x: hidden;
+
+    -webkit-text-size-adjust: 100%;
+
+}
+
+
+/*
+   Disable unnecessary touch flashes.
+*/
+
+.lens-page button,
+.lens-page a,
+.lens-page label {
+
+    -webkit-tap-highlight-color:
+        transparent;
+
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.lens-page .system-header {
+
+    height: 74px;
+
+    padding:
+        0 4vw;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    border-bottom:
+        1px solid var(--lens-line);
+
+    position:
+        relative;
+
+    z-index:
+        50;
+
+    background:
+        rgba(8,10,15,.96);
+
+}
+
+
+.lens-page .wordmark {
+
+    color:
+        var(--lens-text);
+
+    text-decoration:
+        none;
+
+    font-family:
+        monospace;
+
+    font-weight:
+        700;
+
+    font-size:
+        15px;
+
+    letter-spacing:
+        .65em;
+
+}
+
+
+.lens-page .wordmark:hover {
+
+    color:
+        var(--lens-accent);
+
+}
+
+
+.lens-page .system-nav {
+
+    display:
+        flex;
+
+    gap:
+        42px;
+
+}
+
+
+.lens-page .system-nav a {
+
+    color:
+        #777;
+
+    text-decoration:
+        none;
+
+    font:
+        10px monospace;
+
+    letter-spacing:
+        .18em;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.lens-page .system-nav a:hover {
+
+    color:
+        var(--lens-text);
+
+}
+
+
+.lens-page .system-status {
+
+    color:
+        #666;
+
+    font:
+        9px monospace;
+
+    letter-spacing:
+        .16em;
+
+    text-transform:
+        uppercase;
+
+}
+
+
+.lens-page .status-dot {
+
+    width:
+        6px;
+
+    height:
+        6px;
+
+    display:
+        inline-block;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--lens-accent);
+
+    margin-right:
+        8px;
+
+    box-shadow:
+        0 0 12px
+        rgba(215,255,63,.45);
+
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.lens-experience {
+
+    position:
+        relative;
+
+    min-height:
+        calc(100vh - 74px);
+
+    padding:
+        55px 6vw 80px;
+
+    overflow:
+        hidden;
+
 }
 
 
 /* =========================================================
    BACKGROUND GEOMETRY
+
+   IMPORTANT:
+   No continuous JS animation.
+   Desktop gets subtle CSS geometry.
+   Mobile disables it.
    ========================================================= */
 
 .lens-geometry {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-    opacity: 0.45;
+
+    position:
+        absolute;
+
+    width:
+        min(720px,70vw);
+
+    height:
+        min(720px,70vw);
+
+    right:
+        -190px;
+
+    top:
+        -170px;
+
+    pointer-events:
+        none;
+
+    opacity:
+        .42;
+
 }
 
 
 .lens-ring {
-    position: absolute;
-    border: 1px solid rgba(210, 255, 70, 0.10);
-    border-radius: 50%;
+
+    position:
+        absolute;
+
+    border:
+        1px solid
+        rgba(215,255,63,.075);
+
+    border-radius:
+        50%;
+
 }
 
 
 .lens-ring-a {
-    width: 520px;
-    height: 520px;
-    right: -170px;
-    top: 40px;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
 }
 
 
 .lens-ring-b {
-    width: 390px;
-    height: 390px;
-    right: -105px;
-    top: 105px;
+
+    width:
+        72%;
+
+    height:
+        72%;
+
+    left:
+        14%;
+
+    top:
+        14%;
+
 }
 
 
 .lens-ring-c {
-    width: 260px;
-    height: 260px;
-    right: -40px;
-    top: 170px;
+
+    width:
+        43%;
+
+    height:
+        43%;
+
+    left:
+        28.5%;
+
+    top:
+        28.5%;
+
 }
 
 
 .lens-axis {
-    position: absolute;
-    background: rgba(255,255,255,0.06);
+
+    position:
+        absolute;
+
+    background:
+        rgba(255,255,255,.035);
+
 }
 
 
 .lens-axis-x {
-    width: 100%;
-    height: 1px;
-    top: 280px;
-    left: 0;
+
+    width:
+        100%;
+
+    height:
+        1px;
+
+    left:
+        0;
+
+    top:
+        50%;
+
 }
 
 
 .lens-axis-y {
-    height: 100%;
-    width: 1px;
-    right: 105px;
-    top: 0;
+
+    width:
+        1px;
+
+    height:
+        100%;
+
+    top:
+        0;
+
+    left:
+        50%;
+
 }
 
 
 .lens-focus {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border: 1px solid #d7ff3f;
-    border-radius: 50%;
-    right: 100px;
-    top: 275px;
+
+    position:
+        absolute;
+
+    width:
+        9px;
+
+    height:
+        9px;
+
+    left:
+        50%;
+
+    top:
+        50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    border:
+        1px solid
+        var(--lens-accent);
+
+    border-radius:
+        50%;
+
 }
 
 
 /* =========================================================
-   PROGRESS / SYSTEM BAR
+   SYSTEM BAR
    ========================================================= */
 
 .lens-progress {
-    position: relative;
-    z-index: 2;
 
-    width: 100%;
+    position:
+        relative;
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    z-index:
+        2;
 
-    padding-bottom: 24px;
-    border-bottom: 1px solid rgba(255,255,255,0.14);
+    width:
+        100%;
 
-    font-family: "DM Mono", monospace;
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    display:
+        flex;
 
-    color: rgba(255,255,255,0.45);
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    padding-bottom:
+        24px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.14);
+
+    font-family:
+        monospace;
+
+    font-size:
+        10px;
+
+    letter-spacing:
+        .18em;
+
+    text-transform:
+        uppercase;
+
+    color:
+        rgba(255,255,255,.42);
+
 }
 
 
 #system-state {
-    color: #d7ff3f;
+
+    color:
+        var(--lens-accent);
+
 }
 
 
 /* =========================================================
-   MAIN INSPECTION
+   INSPECTION
    ========================================================= */
 
 .lens-inspection {
-    position: relative;
-    z-index: 2;
 
-    max-width: 1200px;
-    margin: 100px auto 0;
+    position:
+        relative;
+
+    z-index:
+        2;
+
+    max-width:
+        1200px;
+
+    margin:
+        100px auto 0;
+
 }
 
 
 .eyebrow {
-    font-family: "DM Mono", monospace;
-    font-size: 11px;
-    letter-spacing: 0.20em;
-    text-transform: uppercase;
 
-    color: #d7ff3f;
+    margin:
+        0 0 28px;
 
-    margin-bottom: 28px;
+    font-family:
+        monospace;
+
+    font-size:
+        10px;
+
+    letter-spacing:
+        .20em;
+
+    text-transform:
+        uppercase;
+
+    color:
+        var(--lens-accent);
+
 }
 
 
 .lens-inspection h1 {
-    max-width: 900px;
 
-    font-family: "Inter", sans-serif;
-    font-size: clamp(52px, 8vw, 112px);
-    line-height: 0.92;
-    letter-spacing: -0.065em;
-    font-weight: 700;
+    max-width:
+        900px;
 
-    margin: 0;
+    margin:
+        0;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size:
+        clamp(52px,8vw,112px);
+
+    line-height:
+        .92;
+
+    letter-spacing:
+        -.065em;
+
+    font-weight:
+        700;
+
 }
 
 
 .lens-inspection h1 span,
 .analysis-header h2 span,
 .results-header h2 span {
-    color: #d7ff3f;
+
+    color:
+        var(--lens-accent);
+
 }
 
 
 .lens-lead {
-    max-width: 650px;
 
-    margin: 45px 0 70px;
+    max-width:
+        650px;
 
-    font-size: clamp(18px, 2vw, 24px);
-    line-height: 1.55;
+    margin:
+        45px 0 70px;
 
-    color: rgba(255,255,255,0.48);
+    font-size:
+        clamp(17px,2vw,23px);
+
+    line-height:
+        1.55;
+
+    color:
+        rgba(255,255,255,.48);
+
 }
 
 
 /* =========================================================
-   INPUT CONTAINER
+   INPUT
    ========================================================= */
 
 .inspection-input {
-    max-width: 900px;
 
-    border: 1px solid rgba(255,255,255,0.16);
+    max-width:
+        900px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.14);
 
     background:
-        linear-gradient(
-            135deg,
-            rgba(255,255,255,0.035),
-            rgba(255,255,255,0.008)
-        );
+        rgba(255,255,255,.018);
 
-    transition:
-        border-color 250ms ease,
-        background 250ms ease;
-}
-
-
-.inspection-input:hover {
-    border-color: rgba(215,255,63,0.35);
 }
 
 
 .inspection-input-header {
-    display: flex;
-    justify-content: space-between;
 
-    padding: 18px 22px;
+    display:
+        flex;
 
-    border-bottom: 1px solid rgba(255,255,255,0.10);
+    justify-content:
+        space-between;
 
-    font-family: "DM Mono", monospace;
-    font-size: 10px;
-    letter-spacing: 0.17em;
-    text-transform: uppercase;
+    padding:
+        18px 22px;
 
-    color: rgba(255,255,255,0.40);
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.09);
+
+    font-family:
+        monospace;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        .17em;
+
+    text-transform:
+        uppercase;
+
+    color:
+        rgba(255,255,255,.40);
+
 }
 
 
-/* =========================================================
-   UPLOAD ZONE
-   ========================================================= */
-
 .upload-zone {
-    min-height: 300px;
 
-    padding: 55px 30px;
+    position:
+        relative;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    min-height:
+        300px;
 
-    text-align: center;
+    margin:
+        22px;
 
-    cursor: pointer;
+    padding:
+        55px 30px;
 
-    border: 1px dashed rgba(255,255,255,0.18);
+    display:
+        flex;
 
-    margin: 22px;
+    flex-direction:
+        column;
 
-    transition:
-        border-color 250ms ease,
-        background 250ms ease,
-        transform 250ms ease;
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    text-align:
+        center;
+
+    cursor:
+        pointer;
+
+    border:
+        1px dashed
+        rgba(255,255,255,.18);
+
+    overflow:
+        hidden;
+
 }
 
 
 .upload-zone:hover,
 .upload-zone.is-dragging {
-    border-color: #d7ff3f;
+
+    border-color:
+        var(--lens-accent);
 
     background:
-        radial-gradient(
-            circle at center,
-            rgba(215,255,63,0.07),
-            transparent 65%
-        );
+        rgba(215,255,63,.035);
 
-    transform: translateY(-2px);
 }
 
 
 .upload-zone.has-file {
-    border-color: rgba(215,255,63,0.65);
+
+    border-color:
+        rgba(215,255,63,.60);
+
 }
 
 
 .upload-cross {
-    width: 52px;
-    height: 52px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width:
+        52px;
 
-    margin-bottom: 25px;
+    height:
+        52px;
 
-    border: 1px solid rgba(215,255,63,0.65);
+    display:
+        flex;
 
-    color: #d7ff3f;
+    align-items:
+        center;
 
-    font-family: "DM Mono", monospace;
-    font-size: 24px;
+    justify-content:
+        center;
+
+    margin-bottom:
+        25px;
+
+    border:
+        1px solid
+        rgba(215,255,63,.65);
+
+    color:
+        var(--lens-accent);
+
+    font-family:
+        monospace;
+
+    font-size:
+        24px;
+
 }
 
 
 .upload-zone strong {
-    font-family: "Inter", sans-serif;
 
-    font-size: 18px;
-    letter-spacing: -0.02em;
+    font-size:
+        18px;
 
-    margin-bottom: 10px;
+    margin-bottom:
+        10px;
+
 }
 
 
 .upload-zone > span {
-    font-family: "DM Mono", monospace;
 
-    font-size: 10px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    font-family:
+        monospace;
 
-    color: rgba(255,255,255,0.38);
+    font-size:
+        9px;
+
+    letter-spacing:
+        .14em;
+
+    text-transform:
+        uppercase;
+
+    color:
+        rgba(255,255,255,.38);
+
+}
+
+
+.visually-hidden {
+
+    position:
+        absolute !important;
+
+    width:
+        1px !important;
+
+    height:
+        1px !important;
+
+    padding:
+        0 !important;
+
+    margin:
+        -1px !important;
+
+    overflow:
+        hidden !important;
+
+    clip:
+        rect(0,0,0,0) !important;
+
+    white-space:
+        nowrap !important;
+
+    border:
+        0 !important;
+
 }
 
 
@@ -325,202 +789,313 @@
    ========================================================= */
 
 .inspection-controls {
-    padding: 0 22px 24px;
+
+    padding:
+        0 22px 24px;
+
 }
 
 
 .lens-button {
-    appearance: none;
 
-    border: none;
-    border-bottom: 1px solid #d7ff3f;
+    appearance:
+        none;
 
-    background: transparent;
+    border:
+        none;
 
-    color: #d7ff3f;
+    border-bottom:
+        1px solid
+        var(--lens-accent);
 
-    padding: 15px 2px;
+    background:
+        transparent;
 
-    font-family: "DM Mono", monospace;
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    color:
+        var(--lens-accent);
 
-    cursor: pointer;
+    padding:
+        15px 2px;
 
-    transition:
-        opacity 200ms ease,
-        transform 200ms ease,
-        border-color 200ms ease;
+    font-family:
+        monospace;
+
+    font-size:
+        10px;
+
+    letter-spacing:
+        .18em;
+
+    text-transform:
+        uppercase;
+
+    cursor:
+        pointer;
+
 }
 
 
 .lens-button span {
-    margin-left: 25px;
+
+    margin-left:
+        24px;
+
 }
 
 
 .lens-button:hover:not(:disabled) {
-    transform: translateX(5px);
+
+    transform:
+        translateX(4px);
+
 }
 
 
 .lens-button:disabled {
-    opacity: 0.25;
-    cursor: not-allowed;
-    border-color: rgba(215,255,63,0.25);
+
+    opacity:
+        .25;
+
+    cursor:
+        not-allowed;
+
+}
+
+
+.lens-button-secondary {
+
+    color:
+        rgba(255,255,255,.50);
+
+    border-color:
+        rgba(255,255,255,.25);
+
+}
+
+
+.lens-link {
+
+    text-decoration:
+        none;
+
 }
 
 
 /* =========================================================
-   IMAGE PREVIEW
+   PREVIEW
    ========================================================= */
 
 .inspection-preview {
-    position: relative;
-    z-index: 2;
 
-    max-width: 900px;
+    position:
+        relative;
 
-    margin: 55px auto 0;
+    z-index:
+        2;
 
-    border: 1px solid rgba(255,255,255,0.15);
+    max-width:
+        900px;
+
+    margin:
+        55px auto 0;
+
+    border:
+        1px solid
+        rgba(255,255,255,.13);
+
 }
 
 
 .inspection-preview-header {
-    display: flex;
-    justify-content: space-between;
 
-    padding: 15px 20px;
+    display:
+        flex;
 
-    border-bottom: 1px solid rgba(255,255,255,0.10);
+    justify-content:
+        space-between;
 
-    font-family: "DM Mono", monospace;
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    gap:
+        20px;
 
-    color: rgba(255,255,255,0.45);
+    padding:
+        15px 20px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.08);
+
+    font-family:
+        monospace;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        .15em;
+
+    text-transform:
+        uppercase;
+
+    color:
+        rgba(255,255,255,.40);
+
 }
 
 
 .preview-stage {
-    position: relative;
 
-    min-height: 300px;
+    position:
+        relative;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    min-height:
+        300px;
 
-    background: #050609;
+    display:
+        flex;
 
-    overflow: hidden;
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    background:
+        #050609;
+
+    overflow:
+        hidden;
+
 }
 
 
 .preview-stage img {
-    display: block;
 
-    width: 100%;
-    max-height: 650px;
+    display:
+        block;
 
-    object-fit: contain;
+    width:
+        100%;
+
+    height:
+        auto;
+
+    max-height:
+        650px;
+
+    object-fit:
+        contain;
+
 }
 
 
 .scan-line {
-    position: absolute;
 
-    left: 0;
-    right: 0;
+    position:
+        absolute;
 
-    top: 0;
+    left:
+        0;
 
-    height: 2px;
+    right:
+        0;
 
-    background: #d7ff3f;
+    top:
+        50%;
 
-    box-shadow:
-        0 0 18px rgba(215,255,63,0.8);
+    height:
+        1px;
 
-    opacity: 0;
-}
+    background:
+        rgba(215,255,63,.70);
 
-
-.inspection-preview:not([hidden])
-.scan-line {
-    animation: scan 3s linear infinite;
-}
-
-
-@keyframes scan {
-
-    0% {
-        top: 0;
-        opacity: 0;
-    }
-
-    10% {
-        opacity: 1;
-    }
-
-    90% {
-        opacity: 1;
-    }
-
-    100% {
-        top: 100%;
-        opacity: 0;
-    }
+    opacity:
+        .55;
 
 }
 
-
-/* =========================================================
-   SCAN CORNERS
-   ========================================================= */
 
 .scan-corner {
-    position: absolute;
 
-    width: 25px;
-    height: 25px;
+    position:
+        absolute;
 
-    border-color: #d7ff3f;
+    width:
+        18px;
+
+    height:
+        18px;
+
+    border-color:
+        var(--lens-accent);
+
 }
 
 
 .scan-corner-tl {
-    top: 18px;
-    left: 18px;
-    border-top: 1px solid;
-    border-left: 1px solid;
+
+    top:
+        16px;
+
+    left:
+        16px;
+
+    border-top:
+        1px solid;
+
+    border-left:
+        1px solid;
+
 }
 
 
 .scan-corner-tr {
-    top: 18px;
-    right: 18px;
-    border-top: 1px solid;
-    border-right: 1px solid;
+
+    top:
+        16px;
+
+    right:
+        16px;
+
+    border-top:
+        1px solid;
+
+    border-right:
+        1px solid;
+
 }
 
 
 .scan-corner-bl {
-    bottom: 18px;
-    left: 18px;
-    border-bottom: 1px solid;
-    border-left: 1px solid;
+
+    bottom:
+        16px;
+
+    left:
+        16px;
+
+    border-bottom:
+        1px solid;
+
+    border-left:
+        1px solid;
+
 }
 
 
 .scan-corner-br {
-    bottom: 18px;
-    right: 18px;
-    border-bottom: 1px solid;
-    border-right: 1px solid;
+
+    bottom:
+        16px;
+
+    right:
+        16px;
+
+    border-bottom:
+        1px solid;
+
+    border-right:
+        1px solid;
+
 }
 
 
@@ -528,125 +1103,244 @@
    ANALYSIS
    ========================================================= */
 
-.inspection-analysis,
-.inspection-results {
-    position: relative;
-    z-index: 2;
+.inspection-analysis {
 
-    max-width: 1200px;
+    position:
+        relative;
 
-    margin: 120px auto 0;
+    z-index:
+        2;
 
-    padding-top: 80px;
+    max-width:
+        1200px;
 
-    border-top: 1px solid rgba(255,255,255,0.13);
+    margin:
+        100px auto 0;
+
 }
 
 
 .analysis-header,
 .results-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
 
-    gap: 40px;
+    display:
+        flex;
 
-    margin-bottom: 70px;
+    justify-content:
+        space-between;
+
+    align-items:
+        flex-end;
+
+    gap:
+        40px;
+
+    margin-bottom:
+        50px;
+
 }
 
 
 .analysis-header h2,
 .results-header h2 {
-    margin: 0;
 
-    font-family: "Inter", sans-serif;
+    margin:
+        0;
 
-    font-size: clamp(42px, 6vw, 82px);
-    line-height: 0.95;
-    letter-spacing: -0.06em;
+    font-size:
+        clamp(42px,6vw,80px);
+
+    line-height:
+        .95;
+
+    letter-spacing:
+        -.055em;
+
 }
 
 
-.analysis-status,
-.results-marker {
-    font-family: "DM Mono", monospace;
+.analysis-telemetry {
 
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    display:
+        flex;
 
-    color: #d7ff3f;
+    gap:
+        35px;
+
+    align-items:
+        flex-end;
+
 }
 
 
-/* =========================================================
-   ANALYSIS CONSOLE
-   ========================================================= */
+.analysis-status {
+
+    font-family:
+        monospace;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        .15em;
+
+    text-transform:
+        uppercase;
+
+    color:
+        var(--lens-accent);
+
+}
+
+
+.analysis-timer {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    gap:
+        8px;
+
+    font-family:
+        monospace;
+
+}
+
+
+.analysis-timer span {
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        .15em;
+
+    color:
+        rgba(255,255,255,.35);
+
+}
+
+
+.analysis-timer strong {
+
+    font-size:
+        20px;
+
+    font-weight:
+        400;
+
+    font-variant-numeric:
+        tabular-nums;
+
+}
+
 
 .analysis-console {
-    max-width: 850px;
 
-    padding: 35px;
+    max-width:
+        850px;
 
-    border: 1px solid rgba(255,255,255,0.12);
+    padding:
+        35px;
 
-    background: rgba(255,255,255,0.015);
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    background:
+        rgba(255,255,255,.012);
+
 }
 
 
 .analysis-line {
-    display: grid;
 
-    grid-template-columns: 50px 1fr 70px;
+    display:
+        grid;
 
-    align-items: center;
+    grid-template-columns:
+        40px minmax(0,1fr) 60px;
 
-    gap: 20px;
+    align-items:
+        center;
 
-    margin-bottom: 12px;
+    gap:
+        18px;
 
-    font-family: "DM Mono", monospace;
+    margin-bottom:
+        12px;
 
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-family:
+        monospace;
+
+    font-size:
+        10px;
+
+    letter-spacing:
+        .08em;
+
+    text-transform:
+        uppercase;
+
 }
 
 
 .analysis-line > span:first-child {
-    color: rgba(255,255,255,0.25);
+
+    color:
+        rgba(255,255,255,.25);
+
 }
 
 
 .analysis-line strong {
-    text-align: right;
 
-    color: #d7ff3f;
+    text-align:
+        right;
 
-    font-weight: 400;
+    color:
+        var(--lens-accent);
+
+    font-weight:
+        400;
+
 }
 
 
 .analysis-bar {
-    height: 3px;
 
-    margin-bottom: 32px;
+    height:
+        3px;
 
-    background: rgba(255,255,255,0.08);
+    margin-bottom:
+        30px;
 
-    overflow: hidden;
+    background:
+        rgba(255,255,255,.07);
+
+    overflow:
+        hidden;
+
 }
 
 
 .analysis-bar span {
-    display: block;
 
-    width: 0%;
-    height: 100%;
+    display:
+        block;
 
-    background: #d7ff3f;
+    width:
+        0%;
 
-    transition: width 100ms linear;
+    height:
+        100%;
+
+    background:
+        var(--lens-accent);
+
 }
 
 
@@ -654,152 +1348,563 @@
    RESULTS
    ========================================================= */
 
+.inspection-results {
+
+    position:
+        relative;
+
+    z-index:
+        2;
+
+    max-width:
+        1300px;
+
+    margin:
+        100px auto 0;
+
+}
+
+
+.results-marker {
+
+    font-family:
+        monospace;
+
+    font-size:
+        9px;
+
+    letter-spacing:
+        .15em;
+
+    color:
+        rgba(255,255,255,.35);
+
+}
+
+
 .results-grid {
-    display: grid;
+
+    display:
+        grid;
 
     grid-template-columns:
-        minmax(0, 1.35fr)
-        minmax(280px, 0.65fr);
+        minmax(0,1.35fr)
+        minmax(300px,.65fr);
 
-    gap: 35px;
+    gap:
+        35px;
+
 }
 
 
 .result-visual {
-    border: 1px solid rgba(255,255,255,0.13);
+
+    min-width:
+        0;
+
+    border:
+        1px solid
+        rgba(255,255,255,.13);
+
 }
 
 
 .result-label {
-    padding: 16px 20px;
 
-    border-bottom: 1px solid rgba(255,255,255,0.10);
+    padding:
+        16px 20px;
 
-    font-family: "DM Mono", monospace;
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.08);
 
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    font-family:
+        monospace;
 
-    color: rgba(255,255,255,0.40);
+    font-size:
+        9px;
+
+    letter-spacing:
+        .15em;
+
+    text-transform:
+        uppercase;
+
+    color:
+        rgba(255,255,255,.40);
+
 }
 
 
 .result-image-stage {
-    position: relative;
 
-    background: #050609;
+    position:
+        relative;
 
-    min-height: 400px;
+    min-height:
+        400px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display:
+        flex;
 
-    overflow: hidden;
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    background:
+        #050609;
+
+    overflow:
+        hidden;
+
 }
 
 
 .result-image-stage img {
-    width: 100%;
-    max-height: 650px;
 
-    object-fit: contain;
+    display:
+        block;
 
-    display: block;
+    width:
+        100%;
+
+    height:
+        auto;
+
+    max-height:
+        650px;
+
+    object-fit:
+        contain;
+
 }
 
 
 .result-overlay {
-    position: absolute;
 
-    top: 20%;
-    left: 20%;
+    position:
+        absolute;
 
-    width: 45%;
-    height: 35%;
+    border:
+        1px solid
+        var(--lens-accent);
 
-    border: 1px solid #d7ff3f;
+    pointer-events:
+        none;
 
-    pointer-events: none;
 }
 
 
 .result-overlay span {
-    position: absolute;
 
-    top: -22px;
-    left: -1px;
+    position:
+        absolute;
 
-    padding: 5px 8px;
+    left:
+        -1px;
 
-    background: #d7ff3f;
-    color: #080a0f;
+    top:
+        -22px;
 
-    font-family: "DM Mono", monospace;
+    padding:
+        5px 8px;
 
-    font-size: 9px;
-    letter-spacing: 0.12em;
+    background:
+        var(--lens-accent);
+
+    color:
+        #080a0f;
+
+    font-family:
+        monospace;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        .12em;
+
 }
 
 
 /* =========================================================
-   INTELLIGENCE
+   RESULT INTELLIGENCE
    ========================================================= */
 
 .result-intelligence {
-    border-top: 1px solid rgba(255,255,255,0.13);
+
+    min-width:
+        0;
+
+    border-top:
+        1px solid
+        rgba(255,255,255,.13);
+
 }
 
 
-.intelligence-block {
-    padding: 24px 0;
+.scene-identity {
 
-    border-bottom: 1px solid rgba(255,255,255,0.10);
+    padding:
+        0 0 28px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.10);
+
+}
+
+
+.scene-identity strong {
+
+    display:
+        block;
+
+    max-width:
+        100%;
+
+    overflow-wrap:
+        anywhere;
+
+    font-size:
+        clamp(34px,4vw,62px);
+
+    line-height:
+        .95;
+
+    letter-spacing:
+        -.055em;
+
+}
+
+
+.scene-state {
+
+    display:
+        inline-block;
+
+    margin-top:
+        14px;
+
+    padding:
+        7px 10px;
+
+    border:
+        1px solid
+        rgba(215,255,63,.35);
+
+    color:
+        var(--lens-accent);
+
+    font-family:
+        monospace;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        .15em;
+
 }
 
 
 .metric-label {
-    display: block;
 
-    margin-bottom: 10px;
+    display:
+        block;
 
-    font-family: "DM Mono", monospace;
+    margin-bottom:
+        10px;
 
-    font-size: 9px;
-    letter-spacing: 0.17em;
-    text-transform: uppercase;
+    font-family:
+        monospace;
 
-    color: rgba(255,255,255,0.38);
+    font-size:
+        8px;
+
+    letter-spacing:
+        .16em;
+
+    text-transform:
+        uppercase;
+
+    color:
+        rgba(255,255,255,.36);
+
+}
+
+
+.scene-telemetry {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.10);
+
+}
+
+
+.intelligence-block {
+
+    min-width:
+        0;
+
+    padding:
+        24px 18px;
+
+    border-right:
+        1px solid
+        rgba(255,255,255,.08);
+
+}
+
+
+.intelligence-block:last-child {
+
+    border-right:
+        none;
+
 }
 
 
 .intelligence-block strong {
-    font-family: "Inter", sans-serif;
 
-    font-size: 28px;
-    letter-spacing: -0.03em;
+    display:
+        block;
 
-    color: #f2f1ec;
+    overflow-wrap:
+        anywhere;
+
+    font-size:
+        22px;
+
+    line-height:
+        1.15;
+
 }
 
 
-.intelligence-description,
+.scene-summary-block {
+
+    padding:
+        25px 0;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.10);
+
+}
+
+
+.scene-summary-block p,
+.intelligence-action p,
+.observation-card p {
+
+    margin:
+        0;
+
+    color:
+        rgba(255,255,255,.58);
+
+    font-size:
+        14px;
+
+    line-height:
+        1.65;
+
+    overflow-wrap:
+        anywhere;
+
+}
+
+
+/* =========================================================
+   OBSERVATION MATRIX
+   ========================================================= */
+
+.observation-matrix {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:
+        1px;
+
+    margin-top:
+        1px;
+
+    background:
+        rgba(255,255,255,.08);
+
+}
+
+
+.observation-card {
+
+    min-width:
+        0;
+
+    padding:
+        22px;
+
+    background:
+        rgba(8,10,15,.96);
+
+}
+
+
+.observation-card-wide {
+
+    grid-column:
+        1 / -1;
+
+}
+
+
+.observation-row {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        minmax(95px,.45fr)
+        minmax(0,1fr);
+
+    gap:
+        16px;
+
+    padding:
+        12px 0;
+
+    border-top:
+        1px solid
+        rgba(255,255,255,.055);
+
+}
+
+
+.observation-row > span {
+
+    font-family:
+        monospace;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        .10em;
+
+    text-transform:
+        uppercase;
+
+    color:
+        rgba(255,255,255,.30);
+
+}
+
+
+.observation-row strong {
+
+    min-width:
+        0;
+
+    font-size:
+        14px;
+
+    line-height:
+        1.3;
+
+    overflow-wrap:
+        anywhere;
+
+    word-break:
+        break-word;
+
+}
+
+
+.observation-list strong {
+
+    color:
+        rgba(215,255,63,.88);
+
+}
+
+
+/* =========================================================
+   EVIDENCE
+   ========================================================= */
+
+.evidence-matrix {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap:
+        1px;
+
+    margin-top:
+        35px;
+
+    background:
+        rgba(255,255,255,.08);
+
+}
+
+
+.evidence-matrix > div {
+
+    min-width:
+        0;
+
+    padding:
+        22px;
+
+    background:
+        rgba(8,10,15,.96);
+
+}
+
+
+.evidence-matrix strong {
+
+    display:
+        block;
+
+    overflow-wrap:
+        anywhere;
+
+    font-size:
+        18px;
+
+    line-height:
+        1.25;
+
+}
+
+
 .intelligence-action {
-    padding: 25px 0;
 
-    border-bottom: 1px solid rgba(255,255,255,0.10);
-}
+    padding:
+        25px 0;
 
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.10);
 
-.intelligence-description p,
-.intelligence-action p {
-    margin: 0;
-
-    font-size: 15px;
-    line-height: 1.65;
-
-    color: rgba(255,255,255,0.58);
 }
 
 
@@ -808,80 +1913,110 @@
    ========================================================= */
 
 .location-panel {
-    margin-top: 35px;
 
-    padding: 25px;
+    margin-top:
+        35px;
 
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding:
+        25px;
 
-    gap: 30px;
+    display:
+        flex;
 
-    border: 1px solid rgba(255,255,255,0.13);
+    justify-content:
+        space-between;
 
-    background: rgba(255,255,255,0.015);
+    align-items:
+        center;
+
+    gap:
+        30px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.13);
+
+    background:
+        rgba(255,255,255,.012);
+
 }
 
 
 .location-panel > div:first-child strong {
-    display: block;
 
-    font-family: "Inter", sans-serif;
+    display:
+        block;
 
-    font-size: 20px;
+    font-size:
+        20px;
+
 }
 
 
 .coordinates {
-    display: flex;
 
-    gap: 30px;
+    display:
+        flex;
 
-    font-family: "DM Mono", monospace;
+    gap:
+        30px;
 
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    font-family:
+        monospace;
 
-    color: rgba(255,255,255,0.40);
+    font-size:
+        9px;
+
+    letter-spacing:
+        .12em;
+
+    text-transform:
+        uppercase;
+
+    color:
+        rgba(255,255,255,.38);
+
 }
 
 
 .coordinates strong {
-    margin-left: 6px;
 
-    color: #d7ff3f;
+    margin-left:
+        6px;
 
-    font-weight: 400;
+    color:
+        var(--lens-accent);
+
+    font-weight:
+        400;
+
 }
 
 
 /* =========================================================
-   RESULT ACTIONS
+   ACTIONS
    ========================================================= */
 
 .diagnosis-actions {
-    display: flex;
 
-    justify-content: space-between;
-    align-items: center;
+    display:
+        flex;
 
-    gap: 25px;
+    justify-content:
+        space-between;
 
-    margin-top: 55px;
-}
+    align-items:
+        center;
 
+    gap:
+        25px;
 
-.lens-button-secondary {
-    color: rgba(255,255,255,0.55);
+    margin-top:
+        55px;
 
-    border-color: rgba(255,255,255,0.25);
-}
+    flex-wrap:
+        wrap;
 
-
-.lens-link {
-    text-decoration: none;
 }
 
 
@@ -890,29 +2025,50 @@
    ========================================================= */
 
 .lens-footer {
-    position: relative;
-    z-index: 2;
 
-    max-width: 1200px;
+    position:
+        relative;
 
-    margin: 120px auto 0;
+    z-index:
+        2;
 
-    padding-top: 30px;
+    max-width:
+        1200px;
 
-    border-top: 1px solid rgba(255,255,255,0.12);
+    margin:
+        120px auto 0;
 
-    display: flex;
-    justify-content: space-between;
+    padding-top:
+        30px;
 
-    gap: 20px;
+    border-top:
+        1px solid
+        rgba(255,255,255,.10);
 
-    font-family: "DM Mono", monospace;
+    display:
+        flex;
 
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    justify-content:
+        space-between;
 
-    color: rgba(255,255,255,0.28);
+    gap:
+        20px;
+
+    font-family:
+        monospace;
+
+    font-size:
+        8px;
+
+    letter-spacing:
+        .15em;
+
+    text-transform:
+        uppercase;
+
+    color:
+        rgba(255,255,255,.25);
+
 }
 
 
@@ -922,92 +2078,653 @@
 
 @media (max-width: 800px) {
 
-    .lens-experience {
+
+    /*
+       Keep the phone away from unnecessary geometry.
+    */
+
+    .lens-geometry {
+
+        width:
+            420px;
+
+        height:
+            420px;
+
+        right:
+            -245px;
+
+        top:
+            -100px;
+
+        opacity:
+            .16;
+
+    }
+
+
+    .lens-ring,
+    .lens-axis {
+
+        border-color:
+            rgba(215,255,63,.045);
+
+    }
+
+
+    /*
+       The focus point is static on mobile.
+    */
+
+    .lens-focus {
+
+        box-shadow:
+            none;
+
+    }
+
+
+    .lens-page .system-header {
+
+        height:
+            62px;
+
         padding:
-            120px 24px 60px;
+            0 18px;
+
+    }
+
+
+    .lens-page .wordmark {
+
+        font-size:
+            12px;
+
+        letter-spacing:
+            .48em;
+
+    }
+
+
+    .lens-page .system-nav {
+
+        gap:
+            16px;
+
+    }
+
+
+    .lens-page .system-nav a {
+
+        font-size:
+            8px;
+
+        letter-spacing:
+            .12em;
+
+    }
+
+
+    .lens-page .system-status {
+
+        display:
+            none;
+
+    }
+
+
+    .lens-experience {
+
+        min-height:
+            calc(100vh - 62px);
+
+        padding:
+            32px 18px 55px;
+
+    }
+
+
+    .lens-progress {
+
+        padding-bottom:
+            16px;
+
+        font-size:
+            8px;
+
     }
 
 
     .lens-inspection {
-        margin-top: 70px;
+
+        margin-top:
+            52px;
+
+    }
+
+
+    .eyebrow {
+
+        margin-bottom:
+            20px;
+
+        font-size:
+            8px;
+
     }
 
 
     .lens-inspection h1 {
-        font-size: clamp(
-            48px,
-            13vw,
-            78px
-        );
+
+        font-size:
+            clamp(46px,14vw,74px);
+
+        line-height:
+            .91;
+
     }
 
 
     .lens-lead {
+
         margin:
-            30px 0 45px;
+            28px 0 40px;
+
+        font-size:
+            16px;
+
+        line-height:
+            1.55;
+
+    }
+
+
+    .inspection-input {
+
+        width:
+            100%;
+
+    }
+
+
+    .inspection-input-header {
+
+        padding:
+            15px;
+
+        font-size:
+            8px;
+
     }
 
 
     .upload-zone {
-        min-height: 240px;
 
-        margin: 15px;
-        padding: 35px 20px;
+        min-height:
+            220px;
+
+        margin:
+            15px;
+
+        padding:
+            32px 16px;
+
+    }
+
+
+    .upload-cross {
+
+        width:
+            46px;
+
+        height:
+            46px;
+
+        margin-bottom:
+            20px;
+
+        font-size:
+            20px;
+
+    }
+
+
+    .upload-zone strong {
+
+        font-size:
+            16px;
+
+    }
+
+
+    .upload-zone > span {
+
+        max-width:
+            250px;
+
+        line-height:
+            1.5;
+
+    }
+
+
+    .inspection-controls {
+
+        padding:
+            0 15px 18px;
+
+    }
+
+
+    .lens-button {
+
+        font-size:
+            9px;
+
+        letter-spacing:
+            .13em;
+
+    }
+
+
+    .inspection-preview {
+
+        margin:
+            30px auto 0;
+
+    }
+
+
+    .inspection-preview-header {
+
+        padding:
+            12px 14px;
+
+        font-size:
+            8px;
+
+    }
+
+
+    .preview-stage {
+
+        min-height:
+            220px;
+
+    }
+
+
+    .preview-stage img {
+
+        max-height:
+            420px;
+
+    }
+
+
+    /*
+       Analysis becomes compact.
+    */
+
+    .inspection-analysis {
+
+        margin-top:
+            65px;
+
     }
 
 
     .analysis-header,
     .results-header {
-        flex-direction: column;
 
-        align-items: flex-start;
+        display:
+            block;
 
-        margin-bottom: 45px;
+        margin-bottom:
+            32px;
+
     }
 
 
+    .analysis-header h2,
+    .results-header h2 {
+
+        font-size:
+            clamp(42px,12vw,68px);
+
+    }
+
+
+    .analysis-telemetry {
+
+        margin-top:
+            22px;
+
+        justify-content:
+            space-between;
+
+    }
+
+
+    .analysis-console {
+
+        padding:
+            22px 16px;
+
+    }
+
+
+    .analysis-line {
+
+        grid-template-columns:
+            26px minmax(0,1fr) 48px;
+
+        gap:
+            10px;
+
+        font-size:
+            8px;
+
+    }
+
+
+    .analysis-bar {
+
+        margin-bottom:
+            22px;
+
+    }
+
+
+    /*
+       Results become a single column.
+    */
+
     .results-grid {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            25px;
+
     }
 
 
     .result-image-stage {
-        min-height: 260px;
+
+        min-height:
+            220px;
+
+    }
+
+
+    .result-image-stage img {
+
+        max-height:
+            420px;
+
+    }
+
+
+    .scene-telemetry {
+
+        grid-template-columns:
+            1fr 1fr 1fr;
+
+    }
+
+
+    .intelligence-block {
+
+        padding:
+            18px 12px;
+
+    }
+
+
+    .intelligence-block strong {
+
+        font-size:
+            17px;
+
+    }
+
+
+    /*
+       THIS is the important fix for your screenshot.
+       Every observation card becomes a clean vertical block.
+    */
+
+    .observation-matrix {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            1px;
+
+    }
+
+
+    .observation-card-wide {
+
+        grid-column:
+            auto;
+
+    }
+
+
+    .observation-card {
+
+        padding:
+            18px 16px;
+
+    }
+
+
+    .observation-row {
+
+        grid-template-columns:
+            minmax(90px,.42fr)
+            minmax(0,1fr);
+
+        gap:
+            12px;
+
+    }
+
+
+    .observation-row strong {
+
+        font-size:
+            13px;
+
+    }
+
+
+    .evidence-matrix {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            1px;
+
+        margin-top:
+            22px;
+
+    }
+
+
+    .evidence-matrix > div {
+
+        padding:
+            17px;
+
     }
 
 
     .location-panel {
-        flex-direction: column;
 
-        align-items: flex-start;
+        flex-direction:
+            column;
+
+        align-items:
+            flex-start;
+
+        gap:
+            20px;
+
+        padding:
+            20px;
+
     }
 
 
     .coordinates {
-        flex-direction: column;
 
-        gap: 12px;
+        width:
+            100%;
+
+        justify-content:
+            space-between;
+
+        gap:
+            10px;
+
+        font-size:
+            8px;
+
     }
 
 
     .diagnosis-actions {
-        flex-direction: column;
 
-        align-items: flex-start;
+        flex-direction:
+            column;
+
+        align-items:
+            flex-start;
+
+        gap:
+            22px;
+
+        margin-top:
+            38px;
+
     }
 
 
     .lens-footer {
-        flex-direction: column;
 
-        gap: 12px;
+        margin-top:
+            75px;
+
+        flex-direction:
+            column;
+
+        align-items:
+            flex-start;
+
+        gap:
+            10px;
+
     }
 
 }
 
 
 /* =========================================================
-   REDUCED MOTION
+   SMALL PHONES
+   ========================================================= */
+
+@media (max-width: 430px) {
+
+
+    .lens-page .system-nav {
+
+        display:
+            none;
+
+    }
+
+
+    .lens-inspection h1 {
+
+        font-size:
+            clamp(42px,14vw,62px);
+
+    }
+
+
+    .lens-lead {
+
+        font-size:
+            15px;
+
+    }
+
+
+    .scene-telemetry {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .intelligence-block {
+
+        border-right:
+            none;
+
+        border-bottom:
+            1px solid
+            rgba(255,255,255,.08);
+
+    }
+
+
+    .intelligence-block:last-child {
+
+        border-bottom:
+            none;
+
+    }
+
+
+    .observation-row {
+
+        grid-template-columns:
+            1fr;
+
+        gap:
+            7px;
+
+    }
+
+
+    .observation-row > span {
+
+        font-size:
+            7px;
+
+    }
+
+
+    .observation-row strong {
+
+        font-size:
+            13px;
+
+    }
+
+}
+
+
+/* =========================================================
+   LOW-POWER / REDUCED MOTION
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1015,1422 +2732,72 @@
     *,
     *::before,
     *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+
+        animation:
+            none !important;
+
+        transition:
+            none !important;
+
+        scroll-behavior:
+            auto !important;
+
     }
 
 }
+
+
 /* =========================================================
-   IXVYN — MOBILE POLISH
+   MOBILE PERFORMANCE MODE
+
+   Explicitly remove visual effects that can cause
+   unnecessary GPU work on weaker devices.
    ========================================================= */
-
-@media (max-width: 520px) {
-
-    .lens-experience {
-        padding: 105px 14px 50px;
-    }
-
-    .lens-progress {
-        padding-bottom: 16px;
-        font-size: 8px;
-        letter-spacing: 0.12em;
-    }
-
-    .lens-inspection {
-        margin-top: 48px;
-    }
-
-    .eyebrow {
-        font-size: 8px;
-        letter-spacing: 0.16em;
-        margin-bottom: 20px;
-    }
-
-    .lens-inspection h1 {
-        font-size: clamp(42px, 12vw, 62px);
-        line-height: 0.91;
-        letter-spacing: -0.06em;
-    }
-
-    .lens-lead {
-        font-size: 14px;
-        line-height: 1.55;
-        margin: 24px 0 35px;
-        max-width: 360px;
-    }
-
-    .inspection-input {
-        width: 100%;
-    }
-
-    .inspection-input-header {
-        padding: 13px 14px;
-        font-size: 8px;
-    }
-
-    .upload-zone {
-        min-height: 190px;
-        margin: 10px;
-        padding: 25px 14px;
-    }
-
-    .upload-cross {
-        width: 42px;
-        height: 42px;
-        margin-bottom: 18px;
-        font-size: 20px;
-    }
-
-    .upload-zone strong {
-        font-size: 15px;
-    }
-
-    .upload-zone > span {
-        font-size: 8px;
-        line-height: 1.5;
-    }
-
-    .inspection-controls {
-        padding: 0 14px 18px;
-    }
-
-    .lens-button {
-        font-size: 9px;
-        letter-spacing: 0.14em;
-    }
-
-    /* ANALYSIS */
-
-    .inspection-analysis,
-    .inspection-results {
-        margin-top: 75px;
-        padding-top: 50px;
-    }
-
-    .analysis-header,
-    .results-header {
-        margin-bottom: 32px;
-        gap: 16px;
-    }
-
-    .analysis-header h2,
-    .results-header h2 {
-        font-size: clamp(36px, 11vw, 55px);
-        line-height: 0.94;
-    }
-
-    .analysis-status,
-    .results-marker {
-        font-size: 8px;
-        letter-spacing: 0.12em;
-    }
-
-    .analysis-console {
-        padding: 20px 14px;
-    }
-
-    .analysis-line {
-        grid-template-columns: 30px 1fr 50px;
-        gap: 10px;
-        font-size: 8px;
-        letter-spacing: 0.04em;
-    }
-
-    .analysis-bar {
-        margin-bottom: 22px;
-    }
-
-    /* RESULT IMAGE */
-
-    .result-visual {
-        width: 100%;
-    }
-
-    .result-label {
-        padding: 12px 14px;
-        font-size: 8px;
-    }
-
-    .result-image-stage {
-        min-height: 0;
-        aspect-ratio: 4 / 3;
-    }
-
-    .result-image-stage img {
-        width: 100%;
-        height: 100%;
-        max-height: none;
-        object-fit: contain;
-    }
-
-    .result-overlay {
-        top: 20%;
-        left: 20%;
-        width: 45%;
-        height: 35%;
-    }
-
-    .result-overlay span {
-        top: -18px;
-        padding: 4px 6px;
-        font-size: 7px;
-    }
-
-    /* INTELLIGENCE */
-
-    .intelligence-block {
-        padding: 18px 0;
-    }
-
-    .metric-label {
-        font-size: 8px;
-        margin-bottom: 7px;
-    }
-
-    .intelligence-block strong {
-        font-size: 23px;
-    }
-
-    .intelligence-description,
-    .intelligence-action {
-        padding: 18px 0;
-    }
-
-    .intelligence-description p,
-    .intelligence-action p {
-        font-size: 13px;
-        line-height: 1.6;
-    }
-
-    /* LOCATION */
-
-    .location-panel {
-        margin-top: 24px;
-        padding: 18px;
-        gap: 18px;
-    }
-
-    .location-panel > div:first-child strong {
-        font-size: 16px;
-    }
-
-    .coordinates {
-        gap: 9px;
-        font-size: 8px;
-    }
-
-    /* ACTIONS */
-
-    .diagnosis-actions {
-        margin-top: 35px;
-        gap: 18px;
-    }
-
-    .lens-footer {
-        margin-top: 75px;
-        padding-top: 22px;
-        font-size: 8px;
-    }
-
-}                                                                                                                                 
-/* =====================================================
-   IXVYN LENS — PROCESSING TIMER
-===================================================== */
-
-.analysis-telemetry {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 14px;
-}
-
-.analysis-timer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
-}
-
-.analysis-timer span {
-    font-family: "DM Mono", monospace;
-    font-size: 10px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    opacity: 0.55;
-}
-
-.analysis-timer strong {
-    font-family: "DM Mono", monospace;
-    font-size: 20px;
-    letter-spacing: 0.04em;
-}
-
-@media (max-width: 700px) {
-
-    .analysis-telemetry {
-        align-items: flex-start;
-        margin-top: 20px;
-    }
-
-    .analysis-timer {
-        align-items: flex-start;
-    }
-
-}
-/* =========================================================
-   IXVYN — LENS / CINEMATIC INTELLIGENCE LAYER
-   ========================================================= */
-
-/* ---------------------------------------------------------
-   SYSTEM ATMOSPHERE
-   --------------------------------------------------------- */
-
-.lens-page {
-    position: relative;
-    background:
-        radial-gradient(
-            circle at 78% 18%,
-            rgba(215,255,63,0.035),
-            transparent 28%
-        ),
-        #080a0f;
-}
-
-.lens-page::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-
-    background:
-        linear-gradient(
-            rgba(255,255,255,0.018) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(255,255,255,0.018) 1px,
-            transparent 1px
-        );
-
-    background-size: 72px 72px;
-
-    mask-image: linear-gradient(
-        to bottom,
-        black,
-        transparent 80%
-    );
-
-    opacity: 0.28;
-}
-
-
-/* ---------------------------------------------------------
-   LIVING BACKGROUND GEOMETRY
-   --------------------------------------------------------- */
-
-.lens-geometry {
-    opacity: 0.55;
-    transform-origin: center;
-    animation: lensGeometryDrift 18s ease-in-out infinite;
-}
-
-.lens-ring {
-    transition:
-        transform 1200ms cubic-bezier(.16,1,.3,1),
-        opacity 500ms ease;
-}
-
-.lens-ring-a {
-    animation: lensRingA 22s linear infinite;
-}
-
-.lens-ring-b {
-    animation: lensRingB 16s linear infinite reverse;
-}
-
-.lens-ring-c {
-    animation: lensRingC 11s linear infinite;
-}
-
-.lens-focus {
-    animation:
-        lensFocusPulse 2.2s ease-in-out infinite,
-        lensFocusRotate 8s linear infinite;
-}
-
-@keyframes lensGeometryDrift {
-    0%, 100% {
-        transform: translate3d(0,0,0);
-    }
-
-    50% {
-        transform: translate3d(-12px,8px,0);
-    }
-}
-
-@keyframes lensRingA {
-    from {
-        transform: rotate(0deg) scale(1);
-    }
-
-    to {
-        transform: rotate(360deg) scale(1.025);
-    }
-}
-
-@keyframes lensRingB {
-    from {
-        transform: rotate(0deg) scale(1);
-    }
-
-    to {
-        transform: rotate(360deg) scale(0.975);
-    }
-}
-
-@keyframes lensRingC {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(-360deg);
-    }
-}
-
-@keyframes lensFocusPulse {
-    0%, 100% {
-        opacity: 0.35;
-        box-shadow: 0 0 0 rgba(215,255,63,0);
-    }
-
-    50% {
-        opacity: 1;
-        box-shadow:
-            0 0 14px rgba(215,255,63,0.55),
-            0 0 35px rgba(215,255,63,0.12);
-    }
-}
-
-@keyframes lensFocusRotate {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-
-/* ---------------------------------------------------------
-   SYSTEM BAR
-   --------------------------------------------------------- */
-
-.lens-progress {
-    position: relative;
-}
-
-.lens-progress::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -1px;
-
-    width: 80px;
-    height: 1px;
-
-    background: #d7ff3f;
-
-    box-shadow:
-        0 0 12px rgba(215,255,63,0.5);
-
-    animation: progressSignal 3.5s ease-in-out infinite;
-}
-
-@keyframes progressSignal {
-    0% {
-        transform: translateX(0);
-        opacity: 0.25;
-    }
-
-    50% {
-        transform: translateX(420px);
-        opacity: 1;
-    }
-
-    100% {
-        transform: translateX(0);
-        opacity: 0.25;
-    }
-}
-
-
-/* ---------------------------------------------------------
-   HERO REVEAL
-   --------------------------------------------------------- */
-
-.lens-inspection {
-    animation: lensHeroReveal 1000ms cubic-bezier(.16,1,.3,1) both;
-}
-
-.lens-inspection .eyebrow {
-    animation:
-        lensElementReveal 700ms 100ms cubic-bezier(.16,1,.3,1) both;
-}
-
-.lens-inspection h1 {
-    animation:
-        lensTitleReveal 1000ms 180ms cubic-bezier(.16,1,.3,1) both;
-}
-
-.lens-lead {
-    animation:
-        lensElementReveal 800ms 350ms cubic-bezier(.16,1,.3,1) both;
-}
-
-.inspection-input {
-    animation:
-        lensInputReveal 900ms 500ms cubic-bezier(.16,1,.3,1) both;
-}
-
-@keyframes lensHeroReveal {
-    from {
-        opacity: 0;
-        transform: translateY(28px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes lensElementReveal {
-    from {
-        opacity: 0;
-        transform: translateY(18px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes lensTitleReveal {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-        letter-spacing: -0.025em;
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-        letter-spacing: -0.065em;
-    }
-}
-
-@keyframes lensInputReveal {
-    from {
-        opacity: 0;
-        transform: translateY(25px) scale(0.985);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-
-/* ---------------------------------------------------------
-   UPLOAD ZONE — ACTIVE INTELLIGENCE FEEL
-   --------------------------------------------------------- */
-
-.upload-zone {
-    position: relative;
-    overflow: hidden;
-}
-
-.upload-zone::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(215,255,63,0.06),
-            transparent
-        );
-
-    transform: translateX(-100%);
-    transition: transform 800ms ease;
-}
-
-.upload-zone:hover::before,
-.upload-zone.is-dragging::before {
-    transform: translateX(100%);
-}
-
-.upload-cross {
-    transition:
-        transform 400ms cubic-bezier(.16,1,.3,1),
-        box-shadow 400ms ease;
-}
-
-.upload-zone:hover .upload-cross,
-.upload-zone.is-dragging .upload-cross {
-    transform: rotate(90deg);
-    box-shadow:
-        0 0 20px rgba(215,255,63,0.15);
-}
-
-.upload-zone.has-file .upload-cross {
-    transform: rotate(45deg);
-    background: rgba(215,255,63,0.06);
-}
-
-
-/* ---------------------------------------------------------
-   ANALYSIS STATE
-   --------------------------------------------------------- */
-
-.inspection-analysis {
-    animation: analysisReveal 900ms cubic-bezier(.16,1,.3,1);
-}
-
-.analysis-console {
-    position: relative;
-    overflow: hidden;
-}
-
-.analysis-console::before {
-    content: "";
-
-    position: absolute;
-    top: 0;
-    left: -100%;
-
-    width: 45%;
-    height: 1px;
-
-    background: #d7ff3f;
-
-    box-shadow:
-        0 0 16px rgba(215,255,63,0.65);
-
-    animation: analysisSweep 3s linear infinite;
-}
-
-.analysis-console::after {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    pointer-events: none;
-
-    background:
-        linear-gradient(
-            transparent 49.5%,
-            rgba(215,255,63,0.018) 50%,
-            transparent 50.5%
-        );
-
-    background-size: 100% 8px;
-
-    opacity: 0.25;
-}
-
-@keyframes analysisReveal {
-    from {
-        opacity: 0;
-        transform: translateY(35px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes analysisSweep {
-    from {
-        left: -45%;
-    }
-
-    to {
-        left: 100%;
-    }
-}
-
-
-/* ---------------------------------------------------------
-   PROCESSING TIMER
-   --------------------------------------------------------- */
-
-.analysis-timer strong {
-    position: relative;
-
-    font-variant-numeric: tabular-nums;
-
-    text-shadow:
-        0 0 14px rgba(215,255,63,0.18);
-}
-
-.analysis-timer strong::after {
-    content: "";
-
-    display: inline-block;
-
-    width: 5px;
-    height: 5px;
-
-    margin-left: 8px;
-
-    vertical-align: middle;
-
-    border-radius: 50%;
-
-    background: #d7ff3f;
-
-    box-shadow:
-        0 0 10px rgba(215,255,63,0.8);
-
-    animation: timerLive 900ms ease-in-out infinite;
-}
-
-@keyframes timerLive {
-    0%, 100% {
-        opacity: 0.25;
-    }
-
-    50% {
-        opacity: 1;
-    }
-}
-
-
-/* ---------------------------------------------------------
-   ANALYSIS ROWS
-   --------------------------------------------------------- */
-
-.analysis-line {
-    transition:
-        opacity 300ms ease,
-        transform 300ms ease;
-}
-
-.analysis-line:hover {
-    transform: translateX(5px);
-}
-
-.analysis-bar {
-    position: relative;
-}
-
-.analysis-bar span {
-    position: relative;
-    box-shadow:
-        0 0 10px rgba(215,255,63,0.25);
-}
-
-
-/* ---------------------------------------------------------
-   IMAGE PREVIEW — FRAME ACQUIRED
-   --------------------------------------------------------- */
-
-.inspection-preview {
-    animation: frameAcquired 800ms cubic-bezier(.16,1,.3,1);
-}
-
-.preview-stage {
-    position: relative;
-}
-
-.preview-stage::before {
-    content: "FRAME ACQUIRED";
-
-    position: absolute;
-    top: 18px;
-    left: 20px;
-
-    z-index: 4;
-
-    padding: 6px 9px;
-
-    background: rgba(5,6,9,0.75);
-
-    border-left: 1px solid #d7ff3f;
-
-    font-family: "DM Mono", monospace;
-    font-size: 8px;
-    letter-spacing: 0.16em;
-
-    color: #d7ff3f;
-
-    opacity: 0;
-
-    animation: frameLabel 700ms 350ms ease forwards;
-}
-
-.preview-stage::after {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            circle at center,
-            transparent 45%,
-            rgba(0,0,0,0.22)
-        );
-}
-
-@keyframes frameAcquired {
-    from {
-        opacity: 0;
-        transform: scale(0.985);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-@keyframes frameLabel {
-    from {
-        opacity: 0;
-        transform: translateX(-8px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-
-/* ---------------------------------------------------------
-   SCAN LINE
-   --------------------------------------------------------- */
-
-.scan-line {
-    height: 1px;
-
-    box-shadow:
-        0 0 8px rgba(215,255,63,0.8),
-        0 0 28px rgba(215,255,63,0.3);
-}
-
-
-/* ---------------------------------------------------------
-   RESULTS — INTELLIGENCE REVEAL
-   --------------------------------------------------------- */
-
-.inspection-results {
-    animation:
-        resultReveal 1000ms cubic-bezier(.16,1,.3,1);
-}
-
-.results-header {
-    position: relative;
-}
-
-.results-header h2 {
-    animation:
-        resultTitleReveal 900ms 100ms cubic-bezier(.16,1,.3,1) both;
-}
-
-.result-visual,
-.result-intelligence,
-.location-panel,
-.diagnosis-actions {
-    animation:
-        resultBlockReveal 700ms cubic-bezier(.16,1,.3,1) both;
-}
-
-.result-visual {
-    animation-delay: 180ms;
-}
-
-.result-intelligence {
-    animation-delay: 300ms;
-}
-
-.location-panel {
-    animation-delay: 430ms;
-}
-
-.diagnosis-actions {
-    animation-delay: 520ms;
-}
-
-@keyframes resultReveal {
-    from {
-        opacity: 0;
-        transform: translateY(45px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes resultTitleReveal {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes resultBlockReveal {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
-/* ---------------------------------------------------------
-   RESULT IMAGE
-   --------------------------------------------------------- */
-
-.result-image-stage::before {
-    content: "VISUAL EVIDENCE";
-
-    position: absolute;
-    top: 16px;
-    left: 18px;
-
-    z-index: 3;
-
-    font-family: "DM Mono", monospace;
-    font-size: 8px;
-    letter-spacing: 0.15em;
-
-    color: rgba(255,255,255,0.45);
-}
-
-.result-overlay {
-    animation:
-        anomalyLock 1000ms 600ms cubic-bezier(.16,1,.3,1) both;
-}
-
-@keyframes anomalyLock {
-    from {
-        opacity: 0;
-        transform: scale(0.92);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.result-overlay::before,
-.result-overlay::after {
-    content: "";
-
-    position: absolute;
-
-    width: 8px;
-    height: 8px;
-
-    border-color: #d7ff3f;
-}
-
-.result-overlay::before {
-    top: -1px;
-    right: -1px;
-
-    border-top: 1px solid;
-    border-right: 1px solid;
-}
-
-.result-overlay::after {
-    bottom: -1px;
-    left: -1px;
-
-    border-bottom: 1px solid;
-    border-left: 1px solid;
-}
-
-
-/* ---------------------------------------------------------
-   INTELLIGENCE VALUES
-   --------------------------------------------------------- */
-
-.intelligence-block strong {
-    transition:
-        color 250ms ease,
-        transform 250ms ease;
-}
-
-.intelligence-block:hover strong {
-    color: #d7ff3f;
-    transform: translateX(4px);
-}
-
-.location-panel {
-    position: relative;
-    overflow: hidden;
-}
-
-.location-panel::after {
-    content: "";
-
-    position: absolute;
-
-    right: -30px;
-    bottom: -30px;
-
-    width: 100px;
-    height: 100px;
-
-    border: 1px solid rgba(215,255,63,0.15);
-    border-radius: 50%;
-
-    animation: locationPulse 5s ease-in-out infinite;
-}
-
-@keyframes locationPulse {
-    0%, 100% {
-        transform: scale(0.8);
-        opacity: 0.2;
-    }
-
-    50% {
-        transform: scale(1.15);
-        opacity: 0.7;
-    }
-}
-
-
-/* ---------------------------------------------------------
-   BUTTONS
-   --------------------------------------------------------- */
-
-.lens-button {
-    position: relative;
-    overflow: hidden;
-}
-
-.lens-button::before {
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    bottom: -1px;
-
-    width: 0;
-    height: 1px;
-
-    background: #f2f1ec;
-
-    transition: width 350ms cubic-bezier(.16,1,.3,1);
-}
-
-.lens-button:hover:not(:disabled)::before {
-    width: 100%;
-}
-
-.lens-button:hover:not(:disabled) span {
-    display: inline-block;
-    transform: translateX(4px);
-}
-
-
-/* ---------------------------------------------------------
-   FOOTER SIGNAL
-   --------------------------------------------------------- */
-
-.lens-footer {
-    position: relative;
-}
-
-.lens-footer::before {
-    content: "";
-
-    position: absolute;
-
-    top: -1px;
-    left: 0;
-
-    width: 35px;
-    height: 1px;
-
-    background: #d7ff3f;
-
-    box-shadow:
-        0 0 12px rgba(215,255,63,0.5);
-}
-
-
-/* ---------------------------------------------------------
-   MOBILE
-   --------------------------------------------------------- */
 
 @media (max-width: 800px) {
 
-    .lens-page::before {
-        background-size: 48px 48px;
+    .lens-page .system-header {
+
+        backdrop-filter:
+            none;
+
+        -webkit-backdrop-filter:
+            none;
+
+        background:
+            rgba(8,10,15,.98);
+
     }
 
-    .lens-geometry {
-        opacity: 0.28;
+
+    .lens-page::before,
+    .lens-page::after {
+
+        animation:
+            none !important;
+
     }
 
 
-    .lens-inspection h1 {
-        animation-duration: 700ms;
-    }
+    .upload-zone:hover,
+    .lens-button:hover:not(:disabled),
+    .observation-card:hover {
 
-    .preview-stage::before {
-        left: 12px;
-        top: 12px;
-    }
+        transform:
+            none;
 
-    .analysis-console::before {
-        animation-duration: 4s;
-    }
-
-    .result-overlay {
-        animation-delay: 350ms;
-    }
-}
-
-
-/* ---------------------------------------------------------
-   REDUCED MOTION
-   --------------------------------------------------------- */
-
-@media (prefers-reduced-motion: reduce) {
-
-    .lens-geometry,
-    .lens-ring-a,
-    .lens-ring-b,
-    .lens-ring-c,
-    .lens-focus,
-    .analysis-timer strong::after,
-    .analysis-console::before,
-    .location-panel::after {
-        animation: none !important;
-    }
-}
- /* =========================================================
-    LENS V2 — STRUCTURED SCENE PRESENTATION
-    ========================================================= */
-
-.result-intelligence {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-}
-
-
-/* ---------------------------------------------------------
-   SCENE IDENTITY
-   --------------------------------------------------------- */
-
-.scene-identity {
-    padding: 28px 0 30px;
-    border-bottom: 1px solid rgba(128, 255, 177, .16);
-}
-
-.scene-identity strong {
-    display: block;
-
-    margin-top: 8px;
-
-    font-size: clamp(32px, 4vw, 52px);
-    line-height: 1;
-
-    letter-spacing: -.045em;
-}
-
-.scene-state {
-    display: inline-block;
-
-    margin-top: 14px;
-
-    padding: 6px 9px;
-
-    border: 1px solid rgba(128,255,177,.28);
-
-    color: #7dffad;
-
-    font: 9px monospace;
-    letter-spacing: .14em;
-}
-
-
-/* ---------------------------------------------------------
-   TELEMETRY
-   --------------------------------------------------------- */
-
-.scene-telemetry {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-
-    border-bottom: 1px solid rgba(128,255,177,.16);
-}
-
-.scene-telemetry .intelligence-block {
-    min-height: 105px;
-
-    padding: 22px 20px;
-
-    border-right: 1px solid rgba(128,255,177,.12);
-}
-
-.scene-telemetry .intelligence-block:last-child {
-    border-right: 0;
-}
-
-.scene-telemetry strong {
-    display: block;
-
-    margin-top: 7px;
-
-    font-size: 17px;
-    line-height: 1.35;
-}
-
-
-/* ---------------------------------------------------------
-   SUMMARY
-   --------------------------------------------------------- */
-
-.scene-summary-block {
-    padding: 28px 0;
-
-    border-bottom: 1px solid rgba(128,255,177,.16);
-}
-
-.scene-summary-block p {
-    margin: 12px 0 0;
-
-    max-width: 760px;
-
-    color: rgba(233,244,236,.72);
-
-    font-size: 16px;
-    line-height: 1.65;
-}
-
-
-/* ---------------------------------------------------------
-   OBSERVATION MATRIX
-   --------------------------------------------------------- */
-
-.observation-matrix {
-    display: grid;
-
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    gap: 1px;
-
-    margin-top: 1px;
-
-    background: rgba(128,255,177,.12);
-}
-
-.observation-card {
-    padding: 23px 20px;
-
-    background: rgba(5,8,6,.94);
-
-    min-width: 0;
-}
-
-.observation-card-wide {
-    grid-column: 1 / -1;
-}
-
-.observation-row {
-    display: grid;
-
-    grid-template-columns: 105px 1fr;
-
-    gap: 15px;
-
-    padding: 11px 0;
-
-    border-bottom: 1px solid rgba(128,255,177,.08);
-}
-
-.observation-row:last-child {
-    border-bottom: 0;
-}
-
-.observation-row > span {
-    color: rgba(129,144,135,.85);
-
-    font: 8px monospace;
-    letter-spacing: .1em;
-
-    line-height: 1.5;
-}
-
-.observation-row strong {
-    color: rgba(233,244,236,.86);
-
-    font: 11px monospace;
-
-    line-height: 1.5;
-
-    overflow-wrap: anywhere;
-}
-
-.observation-list strong {
-    color: rgba(125,255,173,.82);
-}
-
-.observation-card-wide p {
-    margin: 12px 0 0;
-
-    color: rgba(233,244,236,.72);
-
-    font: 12px monospace;
-
-    line-height: 1.7;
-}
-
-
-/* ---------------------------------------------------------
-   EVIDENCE MATRIX
-   --------------------------------------------------------- */
-
-.evidence-matrix {
-    display: grid;
-
-    grid-template-columns: repeat(3, 1fr);
-
-    gap: 1px;
-
-    margin-top: 1px;
-
-    background: rgba(128,255,177,.12);
-}
-
-.evidence-matrix > div {
-    padding: 21px 20px;
-
-    background: rgba(5,8,6,.96);
-}
-
-.evidence-matrix strong {
-    display: block;
-
-    margin-top: 7px;
-
-    color: #e9f4ec;
-
-    font: 18px monospace;
-}
-
-
-/* ---------------------------------------------------------
-   HANDOFF
-   --------------------------------------------------------- */
-
-.result-intelligence .intelligence-action {
-    margin-top: 1px;
-
-    padding: 24px 0 5px;
-}
-
-.result-intelligence .intelligence-action p {
-    margin: 10px 0 0;
-
-    max-width: 700px;
-
-    color: rgba(125,255,173,.78);
-
-    font-size: 13px;
-    line-height: 1.6;
-}
-
-
-/* ---------------------------------------------------------
-   MOBILE
-   --------------------------------------------------------- */
-
-@media (max-width: 700px) {
-
-    .scene-telemetry {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .scene-telemetry .intelligence-block:nth-child(2) {
-        border-right: 0;
-    }
-
-    .scene-telemetry .intelligence-block:last-child {
-        grid-column: 1 / -1;
-
-        border-top: 1px solid rgba(128,255,177,.12);
-        border-right: 0;
-    }
-
-    .observation-matrix {
-        grid-template-columns: 1fr;
-    }
-
-    .observation-card-wide {
-        grid-column: auto;
-    }
-
-    .evidence-matrix {
-        grid-template-columns: 1fr;
-    }
-
-    .evidence-matrix > div {
-        border-bottom: 1px solid rgba(128,255,177,.08);
-    }
-
-    .observation-row {
-        grid-template-columns: 90px 1fr;
     }
 
 }
 
 
-/* ---------------------------------------------------------
-   REDUCED MOTION
-   --------------------------------------------------------- */
+/* =========================================================
+   HIDDEN STATE
+   ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
+[hidden] {
 
-    .scene-identity,
-    .observation-card,
-    .evidence-matrix {
-        transition: none !important;
-    }
+    display:
+        none !important;
 
 }
