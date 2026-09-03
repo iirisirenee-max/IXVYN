@@ -1865,28 +1865,43 @@ uploadZone.addEventListener(
         "IXVYN LENS: interface initialized."
     );
 });
+
 // ==========================================
-// VISION ZERO MOBILE/TAP FIX (GATEWAY HACKS)
+// VISION ZERO SMART TAP-SCANNER FIX
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Look for your drop zone using your existing class or ID name
-    // (Change '#drop-zone' to match whatever your actual HTML element uses)
-    const hackathonDropZone = document.querySelector('#drop-zone') || document.querySelector('.drop-zone');
     const hackathonFileInput = document.getElementById('hidden-file-input');
+    let hackathonDropZone = null;
 
+    // 1. Automatically scan the page to find the element containing "DROP ROAD FRAME"
+    const allElements = document.querySelectorAll('*');
+    for (let el of allElements) {
+        if (el.textContent && el.textContent.includes('DROP ROAD FRAME') && el.children.length === 0) {
+            // Find its outer container box (going up a couple levels if needed)
+            hackathonDropZone = el.closest('div'); 
+            break;
+        }
+    }
+
+    // 2. If it found the container box, attach the tap-to-upload logic
     if (hackathonDropZone && hackathonFileInput) {
-        // Force the file browser to open when tapped
-        hackathonDropZone.addEventListener('click', () => {
+        console.log("Found your Drop Frame container box automatically!");
+
+        // Prevent standard clicking from causing conflicts
+        hackathonDropZone.style.cursor = 'pointer';
+
+        hackathonDropZone.addEventListener('click', (e) => {
+            // Stop any parent elements from overriding the click
+            e.stopPropagation(); 
             hackathonFileInput.click();
         });
 
-        // Forward the chosen file directly to the browser's DataTransfer API
-        // This tricks your existing 1800+ line desktop drag/drop handler into thinking a file was dropped!
+        // Forward the chosen file directly to your existing drag/drop logic
         hackathonFileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
                 const targetFile = e.target.files[0];
 
-                // Simulate a desktop drop event
+                // Create a simulated drop event with your file attached
                 const simulatedDropEvent = new DragEvent('drop', {
                     bubbles: true,
                     cancelable: true,
@@ -1897,5 +1912,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 hackathonDropZone.dispatchEvent(simulatedDropEvent);
             }
         });
+    } else {
+        console.log("Could not find the container or hidden file input.");
     }
 });
+
