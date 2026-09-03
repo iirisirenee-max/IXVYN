@@ -181,13 +181,11 @@
 
 
 
-                <div
+               <label
     class="upload-zone"
     id="upload-zone"
-    role="button"
-    tabindex="0"
+    for="image-input"
 >
-
     <div class="upload-cross">
         +
     </div>
@@ -199,8 +197,14 @@
     <span>
         OR SELECT A SCENE FOR OBSERVATION
     </span>
+</label>
 
-</div>
+<input
+    type="file"
+    id="image-input"
+    accept="image/*"
+    class="visually-hidden"
+>
 
 <input
     type="file"
@@ -535,7 +539,7 @@
     <!-- SCENE IDENTITY -->
     <div class="scene-identity">
         <span class="metric-label">ROAD SCENE</span>
-        <strong id="result-defect">—</strong>
+        <strong id="result-scene-type">—</strong>
         <span class="scene-state">OBSERVED</span>
     </div>
 
@@ -963,8 +967,6 @@
 
     <script src="lens.js?v=3"></script>
 
-    <input type="file" id="hidden-file-input" accept="image/*" style="display: none;" />
-    
 </body>
 
 </html>
