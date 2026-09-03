@@ -1865,3 +1865,37 @@ uploadZone.addEventListener(
         "IXVYN LENS: interface initialized."
     );
 });
+// ==========================================
+// VISION ZERO MOBILE/TAP FIX (GATEWAY HACKS)
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Look for your drop zone using your existing class or ID name
+    // (Change '#drop-zone' to match whatever your actual HTML element uses)
+    const hackathonDropZone = document.querySelector('#drop-zone') || document.querySelector('.drop-zone');
+    const hackathonFileInput = document.getElementById('hidden-file-input');
+
+    if (hackathonDropZone && hackathonFileInput) {
+        // Force the file browser to open when tapped
+        hackathonDropZone.addEventListener('click', () => {
+            hackathonFileInput.click();
+        });
+
+        // Forward the chosen file directly to the browser's DataTransfer API
+        // This tricks your existing 1800+ line desktop drag/drop handler into thinking a file was dropped!
+        hackathonFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const targetFile = e.target.files[0];
+
+                // Simulate a desktop drop event
+                const simulatedDropEvent = new DragEvent('drop', {
+                    bubbles: true,
+                    cancelable: true,
+                    dataTransfer: new DataTransfer()
+                });
+                
+                simulatedDropEvent.dataTransfer.items.add(targetFile);
+                hackathonDropZone.dispatchEvent(simulatedDropEvent);
+            }
+        });
+    }
+});
