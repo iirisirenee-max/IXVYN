@@ -149,6 +149,34 @@ document.addEventListener("DOMContentLoaded", () => {
         processFile(file);
     });
 
+   /* =====================================================
+   EXPLICIT FILE PICKER
+   ===================================================== */
+
+function openFilePicker() {
+    imageInput.click();
+}
+
+uploadZone.addEventListener(
+    "click",
+    openFilePicker
+);
+
+uploadZone.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Enter" ||
+            event.key === " "
+        ) {
+            event.preventDefault();
+            openFilePicker();
+        }
+
+    }
+);
+
     /* =====================================================
        PROCESS FILE
     ===================================================== */
