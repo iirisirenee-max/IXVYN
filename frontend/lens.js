@@ -637,70 +637,355 @@ document.addEventListener("DOMContentLoaded", () => {
        RENDER OBSERVATION
     ===================================================== */
 
-    function renderResult(result) {
+   function renderResult(result) {
 
-        if (!result) return;
+    if (!result) return;
 
-        currentAnalysisResult = result;
+    currentAnalysisResult = result;
 
-        const safe = (
-            value,
-            fallback = "NOT OBSERVABLE FROM FRAME"
-        ) => {
+    const text = (value, fallback = "NOT OBSERVABLE") => {
 
-            if (
-                value === null ||
-                value === undefined ||
-                value === ""
-            ) {
-                return fallback;
-            }
+        if (
+            value === null ||
+            value === undefined ||
+            value === ""
+        ) {
+            return fallback;
+        }
 
-            if (Array.isArray(value)) {
+        return String(value);
+    };
 
-                return value.length
-                    ? value.join(" · ")
-                    : fallback;
-            }
 
-            if (typeof value === "object") {
+    const list = (
+        value,
+        fallback = "NONE OBSERVED"
+    ) => {
 
-                return Object.entries(value)
-                    .map(
-                        ([key, val]) =>
-                            `${key.toUpperCase()}: ${val ?? fallback}`
-                    )
-                    .join(" · ");
-            }
+        if (
+            !Array.isArray(value) ||
+            !value.length
+        ) {
+            return fallback;
+        }
 
-            return String(value);
-        };
+        return value
+            .map(item => {
 
-        const list = value => {
+                if (
+                    typeof item === "string"
+                ) {
+                    return item;
+                }
 
-            if (
-                !Array.isArray(value) ||
-                !value.length
-            ) {
-                return "NONE OBSERVED";
-            }
+                return (
+                    item?.label ||
+                    item?.type ||
+                    item?.description ||
+                    ""
+                );
 
-            return value
-                .map(item => {
+            })
+            .filter(Boolean)
+            .join(" · ");
+    };
 
-                    if (typeof item === "string") {
-                        return item;
-                    }
 
-                    return (
-                        item?.label ||
-                        item?.type ||
-                        item?.description ||
-                        JSON.stringify(item)
-                    );
-                })
-                .join(" · ");
-        };
+    const confidence =
+        Number(result.confidence);
+
+
+    /* =====================================================
+       CORE
+    ===================================================== */
+
+    if (resultDefect) {
+
+        resultDefect.textContent =
+            result.sceneType ||
+            result.road?.sceneType ||
+            "ROAD SCENE";
+
+    }
+
+
+    if (resultConfidence) {
+
+        resultConfidence.textContent =
+            Number.isFinite(confidence)
+
+                ? `${Math.round(
+                    confidence <= 1
+                        ? confidence * 100
+                        : confidence
+                )}%`
+
+                : "UNKNOWN";
+
+    }
+
+
+    if (resultPriority) {
+
+        const clear =
+            result.evidence?.clear?.length || 0;
+
+        const uncertain =
+            result.evidence?.uncertain?.length || 0;
+
+        const unknown =
+            result.evidence?.notObservable?.length || 0;
+
+        resultPriority.textContent =
+            `${clear} CLEAR / ${uncertain} UNCERTAIN / ${unknown} NOT OBSERVABLE`;
+
+    }
+
+
+    /* =====================================================
+       SCENE SUMMARY
+    ===================================================== */
+
+    if (resultDescription) {
+
+        resultDescription.textContent =
+            result.sceneSummary ||
+            result.analysis ||
+            "Road-scene observation completed.";
+
+    }
+
+
+    /* =====================================================
+       ROAD
+    ===================================================== */
+
+    const road =
+        result.road || {};
+
+    const set = (id, value, fallback) => {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) return;
+
+        element.textContent =
+            text(value, fallback);
+
+    };
+
+
+    set(
+        "obs-road-geometry",
+        road.geometry,
+        "NOT OBSERVABLE"
+    );
+
+    set(
+        "obs-road-markings",
+        road.laneMarkings,
+        "NOT OBSERVABLE"
+    );
+
+    set(
+        "obs-road-intersection",
+        road.intersection,
+        "UNKNOWN"
+    );
+
+    set(
+        "obs-road-crossing",
+        road.crossing,
+        "UNKNOWN"
+    );
+
+
+    /* =====================================================
+       PEOPLE
+    ===================================================== */
+
+    const people =
+        result.people || {};
+
+    set(
+        "obs-people-presence",
+        people.presence,
+        "UNKNOWN"
+    );
+
+    set(
+        "obs-people-vulnerable",
+        list(
+            people.vulnerableRoadUsers
+        ),
+        "NONE OBSERVED"
+    );
+
+
+    /* =====================================================
+       VEHICLES
+    ===================================================== */
+
+    const vehicles =
+        result.vehicles || {};
+
+    set(
+        "obs-vehicles-presence",
+        vehicles.presence,
+        "UNKNOWN"
+    );
+
+    set(
+        "obs-vehicles-types",
+        list(
+            vehicles.types
+        ),
+        "NONE OBSERVED"
+    );
+
+
+    /* =====================================================
+       INFRASTRUCTURE
+    ===================================================== */
+
+    const infrastructure =
+        result.infrastructure || {};
+
+    set(
+        "obs-road-surface",
+        infrastructure.roadSurface,
+        "NOT OBSERVABLE"
+    );
+
+    set(
+        "obs-road-edge",
+        infrastructure.roadEdge,
+        "NOT OBSERVABLE"
+    );
+
+    set(
+        "obs-lighting",
+        infrastructure.lighting,
+        "NOT OBSERVABLE"
+    );
+
+
+    /* =====================================================
+       VISIBILITY
+    ===================================================== */
+
+    const visibility =
+        result.visibility || {};
+
+    set(
+        "obs-visibility-state",
+        visibility.state,
+        "UNKNOWN"
+    );
+
+    set(
+        "obs-visibility-factors",
+        list(
+            visibility.factors
+        ),
+        "NONE OBSERVED"
+    );
+
+
+    /* =====================================================
+       INTERACTIONS
+    ===================================================== */
+
+    set(
+        "obs-interactions",
+        list(
+            result.interactions
+        ),
+        "NONE OBSERVED"
+    );
+
+
+    /* =====================================================
+       EVIDENCE COUNTS
+    ===================================================== */
+
+    set(
+        "evidence-clear",
+        result.evidence?.clear?.length || 0,
+        "0"
+    );
+
+    set(
+        "evidence-uncertain",
+        result.evidence?.uncertain?.length || 0,
+        "0"
+    );
+
+    set(
+        "evidence-unknown",
+        result.evidence?.notObservable?.length || 0,
+        "0"
+    );
+
+
+    /* =====================================================
+       HANDOFF
+    ===================================================== */
+
+    if (resultAction) {
+
+        resultAction.textContent =
+            "Observed evidence is ready for SIGNAL. " +
+            "LENS does not determine risk or prescribe an intervention.";
+
+    }
+
+
+    /* =====================================================
+       LOCATION
+    ===================================================== */
+
+    if (resultLat) {
+
+        resultLat.textContent =
+            currentLatitude ??
+            "NOT RECORDED";
+
+    }
+
+    if (resultLon) {
+
+        resultLon.textContent =
+            currentLongitude ??
+            "NOT RECORDED";
+
+    }
+
+
+    /* =====================================================
+       VISUAL STATE
+    ===================================================== */
+
+    if (resultOverlay) {
+
+        const overlayLabel =
+            resultOverlay.querySelector("span");
+
+        if (overlayLabel) {
+
+            overlayLabel.textContent =
+                "SCENE EVIDENCE";
+
+        }
+
+    }
+
+
+    systemState.textContent =
+        "SCENE OBSERVED";
+
+}
 
         /* ---------------------------------------------
            SCENE
